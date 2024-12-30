@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import ShopFilters from '../components/ShopFilter';
 import { useEffect, useRef, useState } from 'react';
-import { X ,EllipsisVertical} from 'lucide-react'; // For hamburger and close icons
+import { X ,SlidersHorizontal} from 'lucide-react'; // For hamburger and close icons
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 const Shop = () => {
   const [drawerOpen, setDrawerOpen] = useState(false); // State for sidebar visibility
@@ -63,7 +64,7 @@ const Shop = () => {
             onClick={() => setDrawerOpen(!drawerOpen)}
             className="md:hidden block p-2 text-black  rounded-lg"
           >
-            {drawerOpen ? <X className="w-6 h-6" /> : <EllipsisVertical className="w-6 h-6" />}
+            {drawerOpen ? <X className="w-6 h-6" /> : <SlidersHorizontal className="w-6 h-6" />}
           </button>
         </div>
       </div>
@@ -88,31 +89,46 @@ const Shop = () => {
         )}
 
         {/* Products Section */}
-        <div className="bg-headerBackGround md:w-4/4 w-full forum-regular p-6">
-          <h1 className="forum-regular text-5xl mb-5 text-left pt-1">All Products</h1>
+        <div className="bg-headerBackGround md:w-4/4 w-full forum-regular mb-3 ">
+          <h1 className="forum-regular text-5xl mb-5 text-left pt-2 pl-3">All Products</h1>
 
           {/* Product Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.map((product) => (
-              <div key={product.id} className="overflow-hidden">
+          <div className="ml-2 mr-2 gap-2 mb-28 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 md:gap-4 ">
+            {products.map((product)  => (
+              <div key={product.id} className="overflow-hidden h-full">
                 <img
                   src={product.imageSrc}
                   alt={product.imageAlt}
-                  className="mx-auto w-96 h-96 object-cover px-4 mb-4"
+                  className="h-60 rounded-lg md:h-96 mb-2 w-full object-cover mx-auto"
                 />
                 <div className="">
-                  <h3 className="text-2xl font-semibold text-gray-900">{product.name}</h3>
-                  <p className="text-xl text-gray-700">{product.price}</p>
+                <div className="flex  ">
+                  <h3 className="text-lg w-full font-semibold text-gray-900">{product.name}</h3>
+                  <FavoriteBorderIcon className="cursor-pointer hover:scale-110 transition-transform md:ml-48" sx={{ color:"red" ,fontSize: { xs: 24, sm: 30 },fontWeight: 'normal', }} />
+                  {/* Deal of the Day Badge */}
+        
+           
+         
+                  </div>
+                  <div className='flex items-center '>
+                  <p className="text-xl md:text-2xl mr-3 font-bold text-gray-700">{product.price}</p>
+                  <p className="text-sm md:text-xl text-gray-700 line-through">₹1599</p>
+                  </div>
+                  <span className=" inline-block px-1 py-1 text-sm text-white bg-red-600 rounded-lg">
+              Deal of the Day
+            </span>
                   <Link to="/product-details">
-                    <button className="w-full mt-4 py-3 text-xl bg-homePage text-white hover:bg-gray-900">
+                    <button className="w-full mt-4 py-3 text-xl rounded-lg bg-homePage text-white hover:bg-gray-900">
                       Add to Cart
                     </button>
                   </Link>
                 </div>
-              </div>
+                </div>
+             
             ))}
           </div>
         </div>
+
       </div>
     </>
   );

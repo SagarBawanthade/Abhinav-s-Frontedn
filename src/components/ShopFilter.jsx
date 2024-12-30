@@ -189,3 +189,5 @@ const ShopFilters = () => {
 };
 
 export default ShopFilters;
+
+
