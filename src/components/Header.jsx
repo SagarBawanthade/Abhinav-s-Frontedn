@@ -1,9 +1,11 @@
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
+
 
 
 const Header = () => {
@@ -64,15 +66,17 @@ const Header = () => {
     <header href="/" className="text-allFontColor bg-headerBackGround flex items-center justify-between px-8 py-4 md:py-6  shadow-lg font-avenir">
       {/* Left: Logo */}
       <div className="logo">
-        <Link to="/" className="text-left text-2xl md:text-xl lg:text-2xl font-forumNormal">
+        <Link to="/" className="text-left text-xl
+        md:text-xl lg:text-2xl font-forumNormal">
           Abhinav's Best of World
         </Link>
       </div>
 
       {/* Right: Navigation Icons */}
       <div className="ml-3 nav-items flex gap-5 relative">
-        {/* Shopping Cart Icon */}
-        <ShoppingCartOutlinedIcon
+
+      <Link to="/wish-list"><FavoriteBorderIcon sx={{ color:"red" ,fontSize: { xs: 24, sm: 30 },fontWeight: 'normal', }} className="cursor-pointer hover:scale-110 transition-transform"/></Link> 
+       <ShoppingCartOutlinedIcon
           onClick={toggleCart}
           sx={{
             fontSize: { xs: 24, sm: 30 },
@@ -80,7 +84,7 @@ const Header = () => {
           }}
           className="cursor-pointer hover:scale-110 transition-transform"
         />
-
+       
         {/* Menu Icon - Toggles Dropdown */}
         <MenuIcon
           onClick={toggleMenu}
