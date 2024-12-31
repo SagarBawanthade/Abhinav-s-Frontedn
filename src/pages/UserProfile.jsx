@@ -1,14 +1,53 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const UserProfile = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [password, setPassword] = useState("");
+  // States for user data and loading state
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const userId = useSelector((state) => state.auth.id);
+  const userRole = useSelector((state) => state.auth.role);
 
-  const handlePasswordToggle = () => {
-    setShowPassword(!showPassword);
-  };
+  console.log(userId,userRole);
 
+  // Fetch user data using userId
+  useEffect(() => {
+    const fetchUserData = async () => {
+      setLoading(true);
+      try {
+        // Replace with your actual API endpoint for fetching user details
+        const response = await fetch(`https://abhinasv-s-backend.onrender.com/api/auth//getuser/${userId}`);
+        const data = await response.json();
+        
+        if (response.ok) {
+          setUserData(data);
+        } else {
+          // Handle errors if necessary
+          console.error(data.error || "Failed to fetch user data");
+        }
+      } catch (error) {
+        console.error("Error fetching data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userId) {
+      fetchUserData();
+    }
+  }, [userId]); // Re-fetch if userId changes
+
+  // Show loading spinner if still fetching data
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="loader"></div> {/* Your loading spinner or style here */}
+      </div>
+    );
+  }
+
+  // Display user profile with the fetched data
   return (
     <section className="font-forumNormal bg-headerBackGround">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -18,10 +57,11 @@ const UserProfile = () => {
               Your Profile
             </h1>
             <form className="space-y-4 md:space-y-6">
+              {/* Name Field */}
               <div className="space-y-2">
                 <label
                   htmlFor="firstName"
-                  className="block text-xl text-gray-900 dark:text-white"
+                  className="block text-xl  text-gray-900 dark:text-white"
                 >
                   Your Name
                 </label>
@@ -29,11 +69,13 @@ const UserProfile = () => {
                   type="text"
                   name="firstName"
                   id="firstName"
-                  className="bg-headerBackGround border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Your First Name"
-                  required
+                  className="bg-headerBackGround border border-gray-300 text-gray-900 text-lg font-semibold rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  value={userData?.firstName || ''}
+                 
                 />
               </div>
+
+              {/* Last Name Field */}
               <div className="space-y-2">
                 <label
                   htmlFor="lastName"
@@ -45,11 +87,13 @@ const UserProfile = () => {
                   type="text"
                   name="lastName"
                   id="lastName"
-                  className="bg-headerBackGround border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Your Last Name"
-                  required
+                  className="bg-headerBackGround border border-gray-300 font-semibold text-gray-900 text-lg rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  value={userData?.lastName || ''}
+                  
                 />
               </div>
+
+              {/* Email Field */}
               <div className="space-y-2">
                 <label
                   htmlFor="email"
@@ -61,11 +105,13 @@ const UserProfile = () => {
                   type="email"
                   name="email"
                   id="email"
-                  className="bg-headerBackGround border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="name@gmail.com"
-                  required
+                  className="bg-headerBackGround border font-semibold border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  value={userData?.email || ''}
+                  
                 />
               </div>
+
+              {/* Password Field */}
               <div className="space-y-2">
                 <label
                   htmlFor="password"
@@ -73,32 +119,33 @@ const UserProfile = () => {
                 >
                   Password
                 </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="bg-headerBackGround border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Enter your password"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={handlePasswordToggle}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                  >
-                    {showPassword ? "Hide" : "Show"}
-                  </button>
-                </div>
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  value="********" // Static placeholder for security reasons
+                  className="bg-headerBackGround border font-semibold border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  
+                />
               </div>
+
+              {/* Update button */}
               <button
                 type="submit"
                 className="w-full text-white bg-homePage text-xl hover:bg-[#0f302f] focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
                 Update Details
               </button>
+
+              {/* Conditional Admin Panel Link */}
+              {userRole === "admin" && (
+                <Link to="/admin-panel">
+                  <button className="w-full text-white bg-primary-900 text-xl hover:bg-[#0f302f] focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                    Admin Panel
+                  </button>
+                </Link>
+              )}
+
               <p className="text-sm text-gray-700 dark:text-gray-800">
                 Want to change your password?{" "}
                 <Link

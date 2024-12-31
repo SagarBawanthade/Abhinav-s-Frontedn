@@ -4,7 +4,10 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector , useDispatch} from 'react-redux';
+import { logout } from '../feature/authSlice';
+import { toast } from "react-toastify";
 
 
 
@@ -12,6 +15,11 @@ const Header = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); 
   const menuRef = useRef(null); 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // Get authentication state from Redux store
+  const { id, token , role} = useSelector((state) => state.auth);
   const products = [
     {
       id: 1,
@@ -36,6 +44,13 @@ const Header = () => {
     },
     // More products...
   ];
+
+  const handleLogout = () => {
+   
+    dispatch(logout(id, token ));
+    toast.success('Logged out successfully!');
+    navigate('/login');
+  };
 
   const toggleCart = () => {
     setCartOpen(!cartOpen);
@@ -94,70 +109,57 @@ const Header = () => {
           }}
           className="cursor-pointer hover:scale-110 transition-transform"
         />
-       
-{menuOpen && (
-  <div
-    ref={menuRef} // Attach the ref to the menu dropdown
-    className="absolute right-0 z-20 mt-2 w-40 font-semibold border border-gray-300 rounded-lg font-forumNormal bg-headerBackGround  "
-  >
-    <ul className="py-2 text-gray-700">
-      {/* Profile */}
-      <Link to="/register">
-        <li>
-          <a
-            href="#"
-            className="flex items-center justify-between px-3 py-2 text-sm hover:bg-gray hover:text-black hover:bg-gray-300 transition duration-300"
-          >
-            <span>Register</span>
-            
-          
-          </a>
-        </li>
-      </Link>
-      {/* Sign In */}
-      <Link to="/login">
-        <li>
-          <a
-            href="#"
-            className="flex items-center justify-between px-4 py-3 text-sm  hover:text-black  hover:bg-gray-300 transition duration-300"
-          >
-            <span>Log In</span>
-         
-          </a>
-        </li>
-      </Link>
-      {/* Sign Up */}
-      <Link to="/user-profile">
-        <li>
-          <a
-            href="#"
-            className="flex items-center  justify-between px-4 py-3 text-sm hover:bg-gray-300 hover:text-black transition duration-300"
-          >
-           
-            <span>Profile</span>
-           
-          </a>
-          <hr className="border-thin border-gray-300"/>
-        </li>
-      </Link>
-       {/* Logout */}
-       <Link to="/logout">
-        <li>
-          <a
-            href="#"
-            className="flex items-center justify-between  px-4 py-3 text-sm hover:bg-gray-300 hover:text-gray-900  transition duration-300"
-          >
-            <span>Log out</span>
-           
-          </a>
-        </li>
-      </Link>
-    </ul>
-  </div>
-)}
-
-
+       {menuOpen && (
+          <div ref={menuRef} className="absolute right-0 z-20 mt-2 w-40 font-semibold border border-gray-300 rounded-lg font-forumNormal bg-headerBackGround">
+            <ul className="py-2 text-gray-700">
+              {!id && !token && ( // If user is not logged in
+                <>
+                  <Link to="/register">
+                    <li>
+                      <a href="#" className="flex items-center justify-between px-3 py-2 text-sm hover:bg-gray hover:text-black hover:bg-gray-300 transition duration-300">
+                        <span>Register</span>
+                      </a>
+                    </li>
+                  </Link>
+                  <Link to="/login">
+                    <li>
+                      <a href="#" className="flex items-center justify-between px-4 py-3 text-sm hover:text-black hover:bg-gray-300 transition duration-300">
+                        <span>Log In</span>
+                      </a>
+                    </li>
+                  </Link>
+                </>
+              )}
+              {id && token && ( // If user is logged in
+                <>
+                  <Link to="/user-profile">
+                    <li>
+                      <a href="#" className="flex items-center justify-between px-4 py-3 text-sm hover:bg-gray-300 hover:text-black transition duration-300">
+                        <span>Profile</span>
+                      </a>
+                      <hr className="border-thin border-gray-300"/>
+                    </li>
+                  </Link>
+                  <Link to="/">
+                    <li>
+                      <a
+                        href="#"
+                        className="flex items-center justify-between px-4 py-3 text-sm hover:bg-gray-300 hover:text-gray-900 transition duration-300"
+                        onClick={handleLogout}
+                      >
+                        <span>Log out</span>
+                      </a>
+                    </li>
+                  </Link>
+                </>
+              )}
+              
+            </ul>
+          </div>
+        )}
       </div>
+
+    
 
       {/* Cart Panel - Sliding from right */}
       <Dialog open={cartOpen} onClose={setCartOpen} className="relative z-50">

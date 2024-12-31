@@ -34,7 +34,7 @@ function App() {
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/shop" element={<Shop />} />
        <Route path="/cart" element={<Cart />} /> 
-       <Route path='/product-details' element={<ProductDetails/>} />{/* Render Shop when route is /shop */}
+       <Route path='/product-details/:productId' element={<ProductDetails/>} />{/* Render Shop when route is /shop */}
        <Route path='/login' element={<Login/>} />
        <Route path='/register' element={<Register/>} />
        <Route path='/forgot-password' element={<ForgotPassword/>} />
