@@ -7,9 +7,8 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector , useDispatch} from 'react-redux';
 import { logout } from '../feature/authSlice';
-import { toast } from "react-toastify";
-
-
+import { toast } from "react-hot-toast";
+import { removeItemFromCart } from '../feature/cartSlice';
 
 const Header = () => {
   const [cartOpen, setCartOpen] = useState(false);
@@ -20,36 +19,20 @@ const Header = () => {
 
   // Get authentication state from Redux store
   const { id, token , role} = useSelector((state) => state.auth);
-  const products = [
-    {
-      id: 1,
-      name: 'Unisex Snowman Hoodie',
-      href: '#',
-      color: 'White',
-      price: '₹999.00',
-      quantity: 2,
-      imageSrc: '/images/shoplogo.jpg',
-      imageAlt: 'Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.',
-    },
-    {
-      id: 2,
-      name: 'Unisex Lavender Edition Hoodie',
-      href: '#',
-      color: 'Lavender',
-      price: '₹1299.00',
-      quantity: 1,
-      imageSrc: '/images/AWESOME 1.jpg',
-      imageAlt:
-        'Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.',
-    },
-    // More products...
-  ];
+  const cartItems = useSelector((state) => state.cart.items);
+  
+  const userId = useSelector((state) => state.auth.id);
+ 
+  
+ 
+ 
 
   const handleLogout = () => {
    
     dispatch(logout(id, token ));
     toast.success('Logged out successfully!');
     navigate('/login');
+    
   };
 
   const toggleCart = () => {
@@ -75,8 +58,26 @@ const Header = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []); // Empty dependency array to run this effect once on mount
+  }, [cartItems]); // Empty dependency array to run this effect once on mount
 
+
+  const subtotal = cartItems.reduce(
+    (acc, product) => acc + product.price * product.quantity,
+    0
+  );
+
+
+  const handleRemoveItem = (productId) => {
+    
+    dispatch(removeItemFromCart({ userId, token, productId })).then(() => {
+   
+    window.location.reload();
+    setMenuOpen(true);
+  }).catch((error) => {
+      toast.error("Error removing item: ", error);
+        
+    });
+  }
   return (
     <header href="/" className="text-allFontColor bg-headerBackGround flex items-center justify-between px-8 py-4 md:py-6  shadow-lg font-avenir">
       {/* Left: Logo */}
@@ -91,14 +92,26 @@ const Header = () => {
       <div className="ml-3 nav-items flex gap-5 relative">
 
       <Link to="/wish-list"><FavoriteBorderIcon sx={{ color:"red" ,fontSize: { xs: 24, sm: 30 },fontWeight: 'normal', }} className="cursor-pointer hover:scale-110 transition-transform"/></Link> 
-       <ShoppingCartOutlinedIcon
-          onClick={toggleCart}
-          sx={{
-            fontSize: { xs: 24, sm: 30 },
-            fontWeight: 'normal',
-          }}
-          className="cursor-pointer hover:scale-110 transition-transform"
-        />
+       
+        
+      <div className="relative">
+  {/* Cart item count */}
+  {cartItems.length >= 0 && (
+    <p className="absolute -top-2 -right-2 flex items-center justify-center rounded-full bg-red-500 text-xs font-forumNormal font-semibold text-white w-5 h-5 text-center">
+      {cartItems.length }
+    </p>
+  )}
+
+  <ShoppingCartOutlinedIcon
+    onClick={toggleCart}
+    sx={{
+      fontSize: { xs: 24, sm: 30 },
+      fontWeight: 'normal',
+    }}
+    className="cursor-pointer "
+  />
+</div>
+
        
         {/* Menu Icon - Toggles Dropdown */}
         <MenuIcon
@@ -114,17 +127,17 @@ const Header = () => {
             <ul className="py-2 text-gray-700">
               {!id && !token && ( // If user is not logged in
                 <>
-                  <Link to="/register">
+                  <Link to="/login">
                     <li>
                       <a href="#" className="flex items-center justify-between px-3 py-2 text-sm hover:bg-gray hover:text-black hover:bg-gray-300 transition duration-300">
-                        <span>Register</span>
+                        <span>Log In</span>
                       </a>
                     </li>
                   </Link>
-                  <Link to="/login">
+                  <Link to="/register">
                     <li>
-                      <a href="#" className="flex items-center justify-between px-4 py-3 text-sm hover:text-black hover:bg-gray-300 transition duration-300">
-                        <span>Log In</span>
+                      <a href="#" className="flex items-center justify-between px-3 py-3 text-sm hover:text-black hover:bg-gray-300 transition duration-300">
+                        <span>Register</span>
                       </a>
                     </li>
                   </Link>
@@ -193,45 +206,58 @@ const Header = () => {
                     </div>
 
                     <div className="mt-8">
-                      <div className="flow-root">
-                        <ul role="list" className="-my-6 divide-y divide-gray-200">
-                          {products.map((product) => (
-                            <li key={product.id} className="flex py-6">
-                              <div className="size-24 shrink-0 overflow-hidden rounded-md border border-gray-200">
-                                <img alt={product.imageAlt} src={product.imageSrc} className="size-full object-cover" />
-                              </div>
+  <div className="flow-root">
+    <ul role="list" className="-my-6 divide-y divide-gray-200">
+      {cartItems.length === 0 ? (
+        <div className=' mt-48 justify-center text-center'>No products found</div>
+      ) : (
+        cartItems.map((item) => (
+          <li key={item._id} className="flex py-6">
+            <div className="size-24 shrink-0 overflow-hidden rounded-md border border-gray-200">
+              <img
+                alt={item.name}
+                src={item.images}
+                className="size-full object-cover"
+              />
+            </div>
 
-                              <div className="ml-4 flex flex-1 flex-col">
-                                <div>
-                                  <div className="flex justify-between text-base font-medium text-gray-900">
-                                    <h3>
-                                      <a href={product.href}>{product.name}</a>
-                                    </h3>
-                                    <p className="ml-4">{product.price}</p>
-                                  </div>
-                                  <p className="mt-1 text-sm text-gray-500">{product.color}</p>
-                                </div>
-                                <div className="flex flex-1 items-end justify-between text-sm">
-                                  <p className="text-gray-500">Qty {product.quantity}</p>
+            <div className="ml-4 flex flex-1 flex-col">
+              <div>
+                <div className="flex justify-between text-base font-medium text-gray-900">
+                  <h3>
+                    <a href={item.href}>{item.name}</a>
+                  </h3>
+                  <p className="ml-4">₹{item.price}</p>
+                </div>
+                <p className="mt-1 text-sm text-gray-500">{item.color}</p>
+              </div>
+              <div className="flex flex-1 items-end justify-between text-sm">
+                <p className="text-gray-500">Qty: {item.quantity}</p>
 
-                                  <div className="flex">
-                                    <button type="button"  onClick={() => setCartOpen(false)} className="font-medium text-red-500 hover:text-red-800">
-                                      Remove
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
+                <div className="flex">
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveItem(item.product?._id)}
+                    className="font-medium cursor-pointer text-red-500 hover:text-red-800"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+          </li>
+        ))
+      )}
+    </ul>
+  </div>
+</div>
+</div>
+
 
                   <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                     <div className="flex justify-between text-base font-medium text-gray-900">
                       <p>Subtotal</p>
-                      <p className='font-semibold'>₹262.00</p>
+                      <p className='font-semibold'>₹{subtotal}</p>
                     </div>
                     <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
                     <div className="mt-6">

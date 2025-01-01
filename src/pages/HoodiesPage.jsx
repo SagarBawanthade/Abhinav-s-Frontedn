@@ -1,18 +1,90 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import Spinner from "../components/Spinner";
 
 const HoodiesPage = () => {
   const [cartItem, setCartItem] = useState(null);
   const [showHeading, setShowHeading] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [products, setProducts] = useState([]);
+  
 
+  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedColor, setSelectedColor] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const [cartLoading, setCartLoading] = useState(false);
+  const [giftWrapping, setGiftWrapping] = useState(false);
+  const navigate = useNavigate();
+
+
+  const userId = useSelector((state) => state.auth.id);
+  const token = useSelector((state) => state.auth.token);
+
+  
   useEffect(() => {
+    // Fetching products from the backend API
+    fetch("http://localhost:5000/api/product/getproducts")
+      .then((response) => response.json())
+      .then((data) => {
+        // Assuming the API response contains an array of products
+        setProducts(data.slice(0, 3)); // Displaying only the first 3 products
+      })
+      .catch((error) => console.error("Error fetching products:", error));
+    
     setShowHeading(true);
   }, []);
 
-  const addToCart = (item) => {
-    setCartItem(item);
-    window.history.pushState({ modalOpen: true }, "", window.location.href);
+  const addToCart = async () => {
+    if (!userId) {
+      navigate("/login");
+      return;
+    }
+    if (!selectedSize || !selectedColor) {
+      toast.error("Please select size and color before adding to cart!");
+      return;
+    }
+
+    const cartData = {
+      productId: cartItem._id,
+      quantity,
+      color: selectedColor,
+      size: selectedSize,
+      giftWrapping: giftWrapping,
+    };
+
+    console.log(cartData)
+
+    try {
+      setCartLoading(true);
+
+      const response = await fetch("http://localhost:5000/api/cart/add-to-cart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ userId, ...cartData }),
+      });
+
+      const data = await response.json();
+      if (data.cart) {
+        toast.success("Product added to Cart Successfully!");
+      } else {
+        throw new Error(data.message || "Failed to add product to cart");
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast.error("Failed to add product to cart.");
+    } finally {
+      setCartLoading(false);
+    }
+  
+
+
+
+    
   };
 
   const closeModal = () => {
@@ -36,11 +108,12 @@ const HoodiesPage = () => {
     };
   }, [cartItem]);
 
-  const items = [
-    { id: 1, name: "Unisex Snowman Hoodie", price: 1499, images: ["/images/1.jpg", "/images/AWESOME 1.jpg", "/images/shoplogo.jpg"] },
-    { id: 2, name: "Winter Hoodie", price: 1999, images: ["/images/AWESOME 1.jpg", "/images/shoplogo.jpg", "/images/shoplogo.jpg"] },
-    { id: 3, name: "Sporty Hoodie", price: 2199, images: ["/images/shoplogo.jpg", "/images/shoplogo.jpg", "/images/shoplogo.jpg"] },
-  ];
+  const handlecart = (item) => {
+    setCartItem(item);
+    window.history.pushState({ modalOpen: true }, "", window.location.href);
+  };
+
+  console.log(cartItem)
 
   return (
     <div className="forum-regular bg-[#E9EBCA] min-h-screen py-10">
@@ -59,8 +132,8 @@ const HoodiesPage = () => {
 
   {/* Hoodie Items Section */}
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-6">
-    {items.map((item) => (
-      <div key={item.id} className="overflow-hidden">
+    {products.map((item) => (
+      <div key={item._id} className="overflow-hidden">
         <img
           src={item.images[0]}
           alt={item.name}
@@ -71,7 +144,7 @@ const HoodiesPage = () => {
           <p className="text-lg text-gray-600 mb-4">₹{item.price}</p>
           <button
             className="w-full bg-gray-800 text-white text-xl py-2 opacity-80 hover:opacity-100 transition-opacity duration-300"
-            onClick={() => addToCart(item)}
+            onClick={() => handlecart(item)}
           >
             Add to Cart
           </button>
@@ -189,6 +262,9 @@ const HoodiesPage = () => {
             <h2 className="text-2xl font-bold text-gray-800">{cartItem.name}</h2>
             <p className="text-lg text-gray-600 mt-4 mb-6">₹{cartItem.price}</p>
 
+              
+
+
             {/* Quantity */}
             <div className="mb-6">
               <label className="block text-gray-800 text-lg mb-2">Quantity</label>
@@ -197,36 +273,80 @@ const HoodiesPage = () => {
                 min="1"
                 className="w-20 border border-gray-900 rounded-md p-2"
                 defaultValue="1"
+                value={quantity}
+                onChange={(e) => setQuantity(Number(e.target.value))}
               />
             </div>
 
             {/* Size Dropdown */}
-            <div className="mb-6">
-              <label className="block text-gray-800 text-lg mb-2">Size</label>
-              <select className="w-full border-gray-300 border p-2 text-lg">
-                <option value="s">S</option>
-                <option value="m">M</option>
-                <option value="l">L</option>
-                <option value="xl">XL</option>
-              </select>
-            </div>
-
+                        {/* Size Section with Radio Buttons */}
+<div className="mt-6 mb-6">
+  <h3 className="text-lg font-semibold mb-2">Size:</h3>
+  <div className="flex gap-4">
+    {cartItem.size.map((size) => (
+      <label key={size} className="flex items-center">
+        <input 
+          type="radio" 
+          name="size" 
+          value={size}
+          className="hidden" 
+          onChange={() => setSelectedSize(size)}
+        />
+        <span 
+          className={`w-10 h-10 flex items-center justify-center rounded-full border text-gray-800 cursor-pointer hover:bg-gray-500 hover:text-white transition duration-300 
+          ${selectedSize === size ? "bg-gray-500 text-white border-gray-500" : "bg-white border-gray-400"}`}
+        >
+          {size}
+        </span>
+      </label>
+    ))}
+  </div>
+  </div>
             {/* Color Dropdown */}
             <div className="mb-6">
               <label className="block text-gray-800 text-lg mb-2">Color</label>
-              <select className="w-full border-gray-300 border p-2 text-lg">
-                <option value="black">Black</option>
-                <option value="white">White</option>
-                <option value="blue">Blue</option>
-                <option value="red">Red</option>
+              <select 
+               value={selectedColor}
+               onChange={(e) => setSelectedColor(e.target.value)}
+                className="w-full border-gray-300 border p-2 text-lg">
+                <option value="black">Select Color</option>
+                {cartItem.color.map((color) => ( 
+                  <option key={color} value={color}>
+                    {color}
+                  </option>
+                ))}
               </select>
             </div>
 
+            {/* Gift Wrapping Option */}
+<div className="flex items-center mb-3 mt-4">
+ 
+ <label htmlFor="giftWrapping" className="flex items-center gap-2 text-gray-700 cursor-pointer">
+   <img
+     src="https://cdn-icons-png.flaticon.com/512/6664/6664427.png" // Replace with your preferred gift icon
+     alt="Gift Icon"
+     className="w-6 h-6"
+   />
+   Gift Wrapping available for an extra <span className="font-semibold">₹30</span>.
+ </label>
+ <input
+   type="checkbox"
+   id="giftWrapping"
+   className="w-5 h-5 cursor-pointer rounded-lg accent-gray-600"
+   checked={giftWrapping}
+   onChange={() => setGiftWrapping((prev) => !prev)}
+ />
+</div>
+
+
             {/* Add to Cart Button */}
-            <Link to="/cart">
-            <button className="w-full font-bold bg-[#E6FF87] text-black font-forumNormal text-lg py-3 mt-4 rounded-md hover:bg-[#cdff18] transition">
-              Add to Cart
-            </button></Link>
+            <a href="/cart">
+            <button 
+             onClick={addToCart}
+             disabled={cartLoading}
+             className="w-full font-bold bg-[#E6FF87] text-black font-forumNormal text-lg py-3 mt-4 rounded-md hover:bg-[#cdff18] transition">
+             {cartLoading ? <Spinner className="w-5 h-5 text-center justify-center"/> : "Add to Cart"}
+            </button></a>
           </div>
         </div>
       </div>

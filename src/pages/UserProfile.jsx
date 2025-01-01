@@ -1,15 +1,21 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { toast } from "react-hot-toast";
 
 const UserProfile = () => {
   // States for user data and loading state
-  const [userData, setUserData] = useState(null);
+  
   const [loading, setLoading] = useState(true);
   const userId = useSelector((state) => state.auth.id);
   const userRole = useSelector((state) => state.auth.role);
 
-  console.log(userId,userRole);
+  const [updatedUserData, setUpdatedUserData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
 
   // Fetch user data using userId
   useEffect(() => {
@@ -17,11 +23,11 @@ const UserProfile = () => {
       setLoading(true);
       try {
         // Replace with your actual API endpoint for fetching user details
-        const response = await fetch(`https://abhinasv-s-backend.onrender.com/api/auth//getuser/${userId}`);
+        const response = await fetch(`http://localhost:5000/api/auth/getuser/${userId}`);
         const data = await response.json();
         
         if (response.ok) {
-          setUserData(data);
+          setUpdatedUserData(data);
         } else {
           // Handle errors if necessary
           console.error(data.error || "Failed to fetch user data");
@@ -38,7 +44,45 @@ const UserProfile = () => {
     }
   }, [userId]); // Re-fetch if userId changes
 
-  // Show loading spinner if still fetching data
+
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUpdatedUserData((prev) => ({ ...prev, [name]: value }));
+  };
+
+
+  
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await fetch(`http://localhost:5000/api/auth/updateuser/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedUserData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUpdatedUserData(data);
+        toast.success("Profile updated successfully!");
+        
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.error || "Failed to update profile.");
+      }
+    } catch (error) {
+      console.error("Error updating profile", error);
+      toast.error("An error occurred while updating the profile.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -56,7 +100,7 @@ const UserProfile = () => {
             <h1 className="text-3xl text-center gap 7 font-bold font-forumNormal leading-tight tracking-tight text-black md:text-4xl dark:text-white">
               Your Profile
             </h1>
-            <form className="space-y-4 md:space-y-6">
+            <form onSubmit={handleFormSubmit} className="space-y-4 md:space-y-6">
               {/* Name Field */}
               <div className="space-y-2">
                 <label
@@ -69,8 +113,10 @@ const UserProfile = () => {
                   type="text"
                   name="firstName"
                   id="firstName"
+                  value={updatedUserData.firstName}
+                  onChange={handleInputChange}
                   className="bg-headerBackGround border border-gray-300 text-gray-900 text-lg font-semibold rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  value={userData?.firstName || ''}
+                 
                  
                 />
               </div>
@@ -88,7 +134,8 @@ const UserProfile = () => {
                   name="lastName"
                   id="lastName"
                   className="bg-headerBackGround border border-gray-300 font-semibold text-gray-900 text-lg rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  value={userData?.lastName || ''}
+                  value={updatedUserData.lastName}
+                  onChange={handleInputChange}
                   
                 />
               </div>
@@ -106,7 +153,8 @@ const UserProfile = () => {
                   name="email"
                   id="email"
                   className="bg-headerBackGround border font-semibold border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  value={userData?.email || ''}
+                  value={updatedUserData.email}
+                  onChange={handleInputChange}
                   
                 />
               </div>
@@ -123,16 +171,19 @@ const UserProfile = () => {
                   type="password"
                   name="password"
                   id="password"
-                  value="********" // Static placeholder for security reasons
+                  value={updatedUserData.password}
+                  onChange={handleInputChange}
+                 // Static placeholder for security reasons
                   className="bg-headerBackGround border font-semibold border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   
                 />
               </div>
 
               {/* Update button */}
+              <div className="items-center justify-between">
               <button
                 type="submit"
-                className="w-full text-white bg-homePage text-xl hover:bg-[#0f302f] focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                className="w-full mb-3 text-white rounded-lg bg-homePage text-xl hover:bg-[#0f302f] focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
                 Update Details
               </button>
@@ -140,11 +191,12 @@ const UserProfile = () => {
               {/* Conditional Admin Panel Link */}
               {userRole === "admin" && (
                 <Link to="/admin-panel">
-                  <button className="w-full text-white bg-primary-900 text-xl hover:bg-[#0f302f] focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                  <button className="w-full text-white  rounded-lg bg-primary-900 text-xl hover:bg-[#0f302f] focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                     Admin Panel
                   </button>
                 </Link>
               )}
+              </div>
 
               <p className="text-sm text-gray-700 dark:text-gray-800">
                 Want to change your password?{" "}
@@ -164,3 +216,5 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
+
+
