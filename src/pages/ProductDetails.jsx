@@ -1,21 +1,32 @@
 import { useState, useEffect, useRef } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import { FaTruck, FaTimesCircle, FaExchangeAlt } from "react-icons/fa";
 import Spinner from "../components/Spinner";
+import { useSelector } from "react-redux";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 function ProductDetails() {
   const [mainImage, setMainImage] = useState(
     "https://rukminim2.flixcart.com/image/832/832/xif0q/sweatshirt/a/a/r/xl-lavender-abhinavs-best-of-world-original-imah75prsgfbrsxf.jpeg?q=70&crop=false"
   );
   const [openSection, setOpenSection] = useState(null);
-  const { productId } = useParams(); // Retrieve the product ID from route parameters
   const [product, setProduct] = useState(null); // State to store product details
   const [isLoading, setIsLoading] = useState(true); // Loading state
+
+  const { productId } = useParams();
   const productDetailsRef = useRef(null);
-  const { userId } = 123; 
-  const navigate = useNavigate();
+  const userId = useSelector((state) => state.auth.id); 
+  const token = useSelector((state) => state.auth.token);
+ const navigate = useNavigate();
   const [cartLoading, setCartLoading] = useState(false);
+ 
+  const [quantity, setQuantity] = useState(1); // Highlighted for quantity updates
+  const [selectedSize, setSelectedSize] = useState(""); // Highlighted for size updates
+  const [selectedColor, setSelectedColor] = useState(""); // Highlighted for color updates
+  const [giftWrapping, setGiftWrapping] = useState(false);
+
 
    // Fetch product details using the ID
    useEffect(() => {
@@ -26,64 +37,76 @@ function ProductDetails() {
           `https://abhinasv-s-backend.onrender.com/api/product/getproduct/${productId}` // API endpoint for fetching product details
         );
         const data = await response.json();
-        console.log(data);
+        
         setProduct(data);
-        setMainImage(data?.images?.[0]); // Set the first image as default
+        setMainImage(data?.images?.[0]); 
       } catch (error) {
         console.error("Error fetching product details:", error);
       } finally {
-        setIsLoading(false); // Stop loading
+        setIsLoading(false); 
       }
     };
 
     fetchProductDetails();
   }, [productId]);
 
-  const handleAddToCart = async (productDetails) => {
+  const handleAddToCart = async () => {
     if (!userId) {
-      // If the user is not logged in, you can redirect them to the login page
       navigate("/login");
       return;
     }
+    if (!selectedSize || !selectedColor) {
+      toast.error("Please select size and color before adding to cart!");
+      return;
+    }
+
+    
+  
     const cartItem = {
-      id: productDetails._id,
-      size: "M", // Adjust based on your UI input for size
-      color: "Lavender", // Adjust based on your UI input for color
-      quantity: 1, // Adjust based on your UI input for quantity
-      image: productDetails.images[0], // Use appropriate image
-      title: productDetails.name,
-      price: productDetails.price,
+      productId: productId,  
+      quantity: quantity,  
+      color: selectedColor,  
+      size: selectedSize,            
+     giftWrapping: false, 
+           
+
     };
 
+  
     try {
-      setCartLoading(true); // Set the loading spinner for cart action
-      const response = await fetch(
-        `https://abhinasv-s-backend.onrender.com/api/cart/addtocart`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId,
-            productId: productDetails._id,
-            items: [cartItem],
-          }),
-        }
-      );
+      setCartLoading(true);
+  
+      // Directly call the add-to-cart API
+      const response = await fetch("http://localhost:5000/api/cart/add-to-cart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          userId,               // Send userId along with cart item details
+          productId: productId, // The selected product
+          quantity,             // Item quantity
+          color: selectedColor, // Item color
+          size: selectedSize,   // Item size
+          giftWrapping: giftWrapping,  // Example, adjust as needed
+        }),
+      });
+  
       const data = await response.json();
       if (data.cart) {
-        alert("Product added to cart successfully!");
-        // Optionally, you can update the cart state here or navigate to the cart page
-        navigate("/cart");
+        toast.success("Product added to Cart Successfully!");
+      } else {
+        throw new Error(data.message || "Failed to add product to cart");
       }
     } catch (error) {
       console.error("Error adding to cart:", error);
+      toast.error("Failed to add product to cart.");
     } finally {
-      setCartLoading(false); // Hide spinner after cart action is complete
+      setCartLoading(false);
     }
   };
-
+  
 
 
   // Adjusting scroll behavior with offset to account for potential fixed header or margin
@@ -167,7 +190,10 @@ function ProductDetails() {
               <select
                 className="block w-40 p-3 border bg-headerBackGround  text-lg focus:outline-none "
                 defaultValue=""
+                value={selectedColor} // Bind value to state
+                onChange={(e) => setSelectedColor(e.target.value)} // Update state on change
               >
+              
                 <option value="" disabled>
                   Select color
                 </option>
@@ -181,38 +207,69 @@ function ProductDetails() {
             </div>
 
             {/* Size Section with Radio Buttons */}
-            <div className="mt-6 mb-6">
-              <h3 className="text-lg font-semibold mb-2">Size:</h3>
-              <div className="flex gap-4">
-                {product.size.map((size) => (
-                  <label key={size} className="flex items-center">
-                    <input type="radio" name="size" value={size} className="hidden" />
-                    <span className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-400 bg-white text-gray-800 cursor-pointer hover:bg-gray-200 transition duration-300">
-                      {size}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Delivery and Return Info */}
-            <div className="mt-6 mb-6">
-              <div className="flex items-center gap-3 mb-4">
-                <FaTruck className="text-green-600" size={20} />
-                <span className="text-gray-700">Free Delivery Available </span>
-              </div>
-              <div className="flex items-center gap-3 mb-4">
-                <FaTimesCircle className="text-red-600" size={20} />
-                <span className="text-gray-700">No Cash on Delivery</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <FaExchangeAlt className="text-blue-600" size={20} />
-                <span className="text-gray-700">2-Day Size Exchange Only</span>
-              </div>
-            </div>
+<div className="mt-6 mb-6">
+  <h3 className="text-lg font-semibold mb-2">Size:</h3>
+  <div className="flex gap-4">
+    {product.size.map((size) => (
+      <label key={size} className="flex items-center">
+        <input 
+          type="radio" 
+          name="size" 
+          value={size}
+          className="hidden" 
+          onChange={() => setSelectedSize(size)}
+        />
+        <span 
+          className={`w-10 h-10 flex items-center justify-center rounded-full border text-gray-800 cursor-pointer hover:bg-gray-500 hover:text-white transition duration-300 
+          ${selectedSize === size ? "bg-gray-500 text-white border-gray-500" : "bg-white border-gray-400"}`}
+        >
+          {size}
+        </span>
+      </label>
+    ))}
+  </div>
+</div>
 
 
-  {/* Gift Wrapping Option */}
+{/* Quantity Selection */}
+<div className="mt-6 mb-6">
+  <h3 className="text-lg font-semibold mb-2">Quantity:</h3>
+  <div className="flex items-center">
+    <button
+      className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-gray-800 cursor-pointer hover:bg-gray-700 transition duration-300"
+      onClick={() => setQuantity((prev) => Math.max(1, prev - 1))} // Ensure quantity doesn't go below 1
+    >
+      -
+    </button>
+    <span className="mx-4 text-lg font-medium">{quantity}</span>
+    <button
+      className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-gray-800 cursor-pointer hover:bg-gray-300 transition duration-300"
+      onClick={() => setQuantity((prev) => prev + 1)}
+    >
+      +
+    </button>
+  </div>
+</div>
+
+{/* Delivery and Return Info */}
+<div className="mt-6 mb-6">
+  <div className="flex items-center gap-3 mb-4">
+    <FaTruck className="text-green-600" size={20} />
+    <span className="text-gray-700">Free Delivery Available </span>
+  </div>
+  <div className="flex items-center gap-3 mb-4">
+    <FaTimesCircle className="text-red-600" size={20} />
+    <span className="text-gray-700">No Cash on Delivery</span>
+  </div>
+  <div className="flex items-center gap-3">
+    <FaExchangeAlt className="text-blue-600" size={20} />
+    <span className="text-gray-700">2-Day Size Exchange Only</span>
+  </div>
+</div>
+
+
+
+  
 {/* Gift Wrapping Option */}
 <div className="flex items-center mb-3 mt-4">
  
@@ -228,17 +285,19 @@ function ProductDetails() {
     type="checkbox"
     id="giftWrapping"
     className="w-5 h-5 cursor-pointer rounded-lg accent-gray-600"
+    checked={giftWrapping}
+    onChange={() => setGiftWrapping((prev) => !prev)}
   />
 </div>
 
 
             {/* Add to Cart Button */}
             <div className="flex w-full gap-4">
-  <Link to="/cart" className="w-1/2">
+  <a href="/cart" className="w-1/2">
     <button onClick={handleAddToCart} className="w-full py-3 text-lg rounded-lg font-semibold bg-[#E6FF87] text-black hover:bg-[#bac68f] transition duration-300">
       Add to Cart
     </button>
-  </Link>
+  </a>
 
   {/* Add to Wishlist Button */}
   <button className="w-1/2 py-3 text-lg rounded-lg font-semibold bg-red-500 text-white hover:bg-red-700 transition duration-300">

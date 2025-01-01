@@ -1,8 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 const Register = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -20,7 +21,7 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("https://abhinasv-s-backend.onrender.com/api/auth/register", {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -31,9 +32,16 @@ const Register = () => {
       const data = await response.json();
 
       if (response.ok) {
-        toast.success("Registration successful! Please log in.");
+        toast.success("Registration successful!");
+      navigate("/login");
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+      });
       } else {
-        toast.success(data.message || "Something went wrong, please try again.");
+        toast.error(data.message || "Something went wrong, please try again.");
       }
     } catch (error) {
       toast.success("An error occurred: " + error.message);

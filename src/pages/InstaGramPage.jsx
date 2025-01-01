@@ -63,7 +63,7 @@ const InstagramPage = () => {
         {/* Instagram Follow Text */}
         <div className="mt-8 text-center">
           <p className="text-2xl text-gray-700 font-medium">
-            Follow us on Instagram @Abhinavs's
+            Follow us on Instagram @Abhinav's
           </p>
         </div>
       </div>

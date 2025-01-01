@@ -1,22 +1,30 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';  
-import { authReducer } from '../feature/authSlice.jsx';  
+import storage from 'redux-persist/lib/storage'; // localStorage or sessionStorage
+import { authReducer } from '../feature/authSlice';
+import { cartReducer } from '../feature/cartSlice'; // Assuming you have cartSlice
 
-// Persist configuration
+
+
+
+
 const persistConfig = {
-  key: 'root',      // This is the key for your persistent store
-  storage,          // This indicates that the user data will persist in localStorage
+  key: 'root',
+  storage,
+
+ 
 };
 
-const persistedReducer = persistReducer(persistConfig, authReducer);
+const persistedAuthReducer = persistReducer(persistConfig, authReducer);
+
 
 const store = configureStore({
   reducer: {
-    auth: persistedReducer, // Use the persisted reducer
+    auth: persistedAuthReducer,
+    cart: cartReducer,
   },
 });
 
-const persistor = persistStore(store); // Create the persistor for managing persistence
+const persistor = persistStore(store);
 
 export { store, persistor };

@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../feature/authSlice";
 
@@ -18,7 +18,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("https://abhinasv-s-backend.onrender.com/api/auth/login", {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

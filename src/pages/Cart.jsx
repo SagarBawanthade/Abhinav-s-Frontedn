@@ -1,35 +1,39 @@
 import { useEffect, useRef, useState } from "react";
-import { FaTrashAlt } from "react-icons/fa"; 
+import { FaTrashAlt, FaGift } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import axios from "axios"; 
 import Spinner from "../components/Spinner.jsx"; 
+import { useDispatch } from "react-redux";
+import { removeItemFromCart } from "../feature/cartSlice.jsx";
+import { toast } from "react-hot-toast";
 
 const Cart = () => {
+  
   const userId = useSelector((state) => state.auth.id);
   const token = useSelector((state) => state.auth.token);
+
+  const isLoggedIn = Boolean(userId && token);
+ 
   
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Function to handle deleting a cart item
-  const handleDelete = (itemId) => {
-    setCartItems(cartItems.filter((item) => item.id !== itemId));
-  };
-
-  // Calculate Subtotal
-  const subtotal = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  );
-  const delivery = 100; // Delivery fee
-  const tax = 799; // Tax
-  const total = subtotal + delivery + tax;
-
   const Cart = useRef(null);
+  const cartItems = useSelector((state) => state.cart.items);
 
-  
+ 
+
+// Calculate Subtotal
+const subtotal = cartItems.reduce(
+  (acc, item) => acc + item.price * item.quantity + (item.giftWrapping ? 30 : 0), // Add 30 for gift wrapping if applicable
+  0
+);
+
+  const delivery = 100; // Delivery fee
+
+  const total = subtotal + delivery;
+
   useEffect(() => {
     if (Cart.current) {
       window.scrollTo({
@@ -37,34 +41,27 @@ const Cart = () => {
         behavior: "smooth", 
       });
     }
+  }, []);
 
-    // Fetch cart items from API
-    if (token && userId) {
-      const fetchCartItems = async () => {
-        try {
-          const response = await axios.get(`https://abhinasv-s-backend.onrender.com/api/cart/cart/${userId}`, {
-            
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          console.log(response);
-          setCartItems(response.data.cart);
-          setLoading(false);
-          console.log(response.data);
-        } catch (error) {
-          setError("Failed to load cart items. Please try again.");
-          setLoading(false);
-        }
-      };
-      fetchCartItems();
-    } else {
+  // Show loading or error if cartItems is empty or still loading
+  useEffect(() => {
+    if (!userId || !token) {
       setError("No user logged in.");
-      setLoading(false);
     }
   }, [userId, token]);
 
+
+  const handleRemoveItem = (productId) => {
+    dispatch(removeItemFromCart({ userId, token, productId })).then(() => {
+      toast.success("Item removed successfully");
+      window.location.reload();
+      
+    }).catch((error) => {
+      toast.error("Error removing item: ", error);
+      
+    });
+  }
+  
   return (
     <section ref={Cart} className="bg-headerBackGround py-8 antialiased dark:bg-gray-900 md:py-16">
       <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
@@ -74,83 +71,100 @@ const Cart = () => {
         {loading && <Spinner />}
 
         {/* Show error message if loading fails */}
-        {error && <div className="text-red-600">{error}</div>}
+        {error && console.log(error)}
 
         {/* If cart is loaded */}
-        {!loading && !error && cartItems.length > 0 && (
+        {!loading &&  (
           <div className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
             <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
-              <div className="space-y-6 font-forumNormal">
-                {/* Map through cart items */}
-                {cartItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className="relative rounded-lg border border-gray-300 bg-headerBackGround p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6"
-                  >
-                    <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
-                      <a href="#" className="shrink-0 md:order-1">
-                        <img className="h-28 w-28" src={item.image} alt={item.name} />
-                      </a>
+            <div className="space-y-6 font-forumNormal">
+            <div className="space-y-6 font-forumNormal">
+            {!isLoggedIn ? (
+        // Show message if the user is not logged in
+        <p className="text-center justify-center font-forumNormal mt-36 text-lg text-gray-500 dark:text-gray-300">
+          Please Log In to add items to the cart
+          <Link to="/login">
+            <p className="text-sm hover:underline font-bold font-forumNormal">Go to Login &rarr;</p>
+          </Link>
+        </p>
+      ) : cartItems.length === 0 ? (
+        // Show message if no items in the cart
+        <p className="text-center justify-center font-forumNormal mt-36 text-lg text-gray-500 dark:text-gray-300">
+          No Products Found
+          <Link to="/shop">
+            <p className="text-sm hover:underline font-bold font-forumNormal">Continue Shopping &rarr;</p>
+          </Link>
+        </p>
+      ) : (
+   
+    cartItems.map((item) => (
+      <div
+        key={item._id}
+        className="relative rounded-lg border border-gray-300 bg-headerBackGround p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6"
+      >
+        <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
+          <a href="#" className="shrink-0 md:order-1">
+            <img className="h-28 w-28" src={item.images} alt={item.name} />
+          </a>
 
-                      <label htmlFor={`counter-input-${item.id}`} className="sr-only">
-                        Choose quantity:
-                      </label>
-                      <div className="flex items-center justify-between md:order-3 md:justify-end">
-                        <div className="flex items-center">
-                          <button
-                            type="button"
-                            id={`decrement-button-${item.id}`}
-                            className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
-                          >
-                            -
-                          </button>
-                          <input
-                            type="text"
-                            id={`counter-input-${item.id}`}
-                            className="w-10 shrink-0 text-lg font-forumNormal border-0 bg-transparent text-center text-gray-900 focus:outline-none focus:ring-0 dark:text-white"
-                            value={item.quantity}
-                            readOnly
-                          />
-                          <button
-                            type="button"
-                            id={`increment-button-${item.id}`}
-                            className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700"
-                          >
-                            +
-                          </button>
-                        </div>
-                        <div className="text-end md:order-4 md:w-32">
-                          <p className="text-lg font-forumNormal font-semibold text-gray-900 dark:text-white">
-                            ₹{item.price * item.quantity}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
-                        <p className="text-2xl font-forumNormal text-gray-900 hover:underline dark:text-white">
-                          {item.name}
-                        </p>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
-                          <p className="text-black text-lg font-forumNormal">
-                            Color: <span className="font-forumNormal text-black">{item.color}</span>
-                          </p>
-                          <p className="font-forumNormal text-black text-lg">
-                            Size: <span className="font-forumNormal text-black">{item.size}</span>
-                          </p>
-                        </div>
-                      </div>
+          <label htmlFor={`counter-input-${item._id}`} className="sr-only">
+            Quantity:
+          </label>
+          <div className="flex items-center justify-between md:order-3 md:justify-end">
+            <div className="flex items-center">
+              <label className="font-forumNormal text-lg">Qty :</label>
+              <input
+                type="text"
+                id={`counter-input-${item._id}`}
+                className="w-10 shrink-0 text-lg font-forumNormal font-semibold border-0 bg-transparent text-center text-gray-900 focus:outline-none focus:ring-0 dark:text-white"
+                value={item.quantity}
+                readOnly
+              />
+            </div>
+            <div className="text-end md:order-4 md:w-32">
+              <p className="text-lg font-forumNormal font-semibold text-gray-900 dark:text-white">
+                ₹{item.price * item.quantity}
+              </p>
+            </div>
+          </div>
+          <div className="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
+            <Link to={`/product-details/${item.product._id}`}>
+              <p className="text-2xl font-forumNormal text-gray-900 hover:underline dark:text-white">
+                {item.name}
+              </p>
+            </Link>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-black text-lg font-forumNormal">
+                Color: <span className="font-forumNormal text-black">{item.color}</span>
+              </p>
+              <p className="font-forumNormal text-black text-lg">
+                Size: <span className="font-forumNormal text-black">{item.size}</span>
+              </p>
+            </div>
 
-                      {/* Delete button positioned bottom-right */}
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(item.id)}
-                        className="absolute bottom-2 right-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-500"
-                      >
-                        <FaTrashAlt className="text-xl" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+            {/* Gift Wrap Icon (conditionally render if gift wrap is true) */}
+            {item.giftWrapping && (
+              <div className="absolute top-2 right-2 flex items-center text-xl text-red-500">
+                <FaGift />
+                <span className="ml-2 text-sm text-gray-600 dark:text-gray-300">Gift Wrapped</span>
               </div>
+            )}
+          </div>
+
+          {/* Delete button positioned bottom-right */}
+          <button
+            type="button"
+            onClick={() => handleRemoveItem(item.product._id)}
+            className="absolute bottom-2 right-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-500"
+          >
+            <FaTrashAlt className="text-xl" />
+          </button>
+        </div>
+      </div>
+    ))
+  )}
+</div>
+</div>
             </div>
 
             {/* Order Summary Section */}
@@ -175,7 +189,7 @@ const Cart = () => {
 
                   <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
                     <dt className="font-forumNormal text-lg font-bold text-gray-900 dark:text-white">Total</dt>
-                    <dd className="font-forumNormal text-lg font-bold text-gray-900 dark:text-white">₹{total}</dd>
+                    <dd className="font-forumNormal text-lg font-bold text-gray-900 dark:text-white">₹{subtotal === 0 ? "0":total}</dd>
                   </dl>
                 </div>
 
