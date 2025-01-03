@@ -9,6 +9,7 @@ import { useSelector , useDispatch} from 'react-redux';
 import { logout } from '../feature/authSlice';
 import { toast } from "react-hot-toast";
 import { removeItemFromCart } from '../feature/cartSlice';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const Header = () => {
   const [cartOpen, setCartOpen] = useState(false);
@@ -32,6 +33,8 @@ const Header = () => {
     dispatch(logout(id, token ));
     toast.success('Logged out successfully!');
     navigate('/login');
+    setMenuOpen(false);
+    window.location.reload();
     
   };
 
@@ -89,16 +92,25 @@ const Header = () => {
       </div>
 
       {/* Right: Navigation Icons */}
-      <div className="ml-3 nav-items flex gap-5 relative">
+<div className="ml-3 nav-items flex gap-4 relative">
 
-      <Link to="/wish-list"><FavoriteBorderIcon sx={{ color:"red" ,fontSize: { xs: 24, sm: 30 },fontWeight: 'normal', }} className="cursor-pointer hover:scale-110 transition-transform"/></Link> 
-       
-        
-      <div className="relative">
-  {/* Cart item count */}
+{/* Wishlist Icon */}
+<Link to="/wish-list">
+  <FavoriteBorderIcon
+    sx={{
+      color: "red",
+      fontSize: { xs: 24, sm: 30 },
+      fontWeight: "normal",
+    }}
+    className="cursor-pointer hover:scale-110 transition-transform"
+  />
+</Link>
+
+{/* Cart Icon with Item Count */}
+<div className="relative">
   {cartItems.length >= 0 && (
     <p className="absolute -top-2 -right-2 flex items-center justify-center rounded-full bg-red-500 text-xs font-forumNormal font-semibold text-white w-5 h-5 text-center">
-      {cartItems.length }
+      {cartItems.length}
     </p>
   )}
 
@@ -106,71 +118,98 @@ const Header = () => {
     onClick={toggleCart}
     sx={{
       fontSize: { xs: 24, sm: 30 },
-      fontWeight: 'normal',
+      fontWeight: "normal",
     }}
     className="cursor-pointer "
   />
 </div>
 
-       
-        {/* Menu Icon - Toggles Dropdown */}
-        <MenuIcon
-          onClick={toggleMenu}
-          sx={{
-            fontSize: { xs: 24, sm: 30 },
-            fontWeight: 'normal',
-          }}
-          className="cursor-pointer hover:scale-110 transition-transform"
-        />
-       {menuOpen && (
-          <div ref={menuRef} className="absolute right-0 z-20 mt-2 w-40 font-semibold border border-gray-300 rounded-lg font-forumNormal bg-headerBackGround">
-            <ul className="py-2 text-gray-700">
-              {!id && !token && ( // If user is not logged in
-                <>
-                  <Link to="/login">
-                    <li>
-                      <a href="#" className="flex items-center justify-between px-3 py-2 text-sm hover:bg-gray hover:text-black hover:bg-gray-300 transition duration-300">
-                        <span>Log In</span>
-                      </a>
-                    </li>
-                  </Link>
-                  <Link to="/register">
-                    <li>
-                      <a href="#" className="flex items-center justify-between px-3 py-3 text-sm hover:text-black hover:bg-gray-300 transition duration-300">
-                        <span>Register</span>
-                      </a>
-                    </li>
-                  </Link>
-                </>
-              )}
-              {id && token && ( // If user is logged in
-                <>
-                  <Link to="/user-profile">
-                    <li>
-                      <a href="#" className="flex items-center justify-between px-4 py-3 text-sm hover:bg-gray-300 hover:text-black transition duration-300">
-                        <span>Profile</span>
-                      </a>
-                      <hr className="border-thin border-gray-300"/>
-                    </li>
-                  </Link>
-                  <Link to="/">
-                    <li>
-                      <a
-                        href="#"
-                        className="flex items-center justify-between px-4 py-3 text-sm hover:bg-gray-300 hover:text-gray-900 transition duration-300"
-                        onClick={handleLogout}
-                      >
-                        <span>Log out</span>
-                      </a>
-                    </li>
-                  </Link>
-                </>
-              )}
-              
-            </ul>
-          </div>
-        )}
-      </div>
+{/* Menu or User Profile Icon */}
+{!id && !token ? (
+  // Hamburger menu for unauthenticated users
+  <MenuIcon
+    onClick={toggleMenu}
+    sx={{
+      fontSize: { xs: 24, sm: 30 },
+      fontWeight: "normal",
+    }}
+    className="cursor-pointer hover:scale-110 transition-transform"
+  />
+) : (
+  // User profile icon for authenticated users
+  <AccountCircleIcon
+    onClick={toggleMenu}
+    sx={{
+      fontSize: { xs: 24, sm: 30 },
+      fontWeight: "normal",
+    }}
+    className="cursor-pointer hover:scale-110 transition-transform"
+  />
+)}
+
+{/* Dropdown Menu */}
+{menuOpen && (
+  <div
+    ref={menuRef}
+    className="absolute right-0 z-20 mt-8 w-40 font-semibold border border-gray-300 rounded-lg font-forumNormal bg-headerBackGround"
+  >
+    <ul className="py-2 text-gray-700">
+      {!id && !token ? (
+        // Unauthenticated User Menu
+        <>
+          <Link to="/login">
+            <li>
+              <a
+                href="#"
+                className="flex items-center justify-between px-3 py-2 text-sm hover:bg-gray hover:text-black hover:bg-gray-300 transition duration-300"
+              >
+                <span>Log In</span>
+              </a>
+            </li>
+          </Link>
+          <Link to="/register">
+            <li>
+              <a
+                href="#"
+                className="flex items-center justify-between px-3 py-3 text-sm hover:text-black hover:bg-gray-300 transition duration-300"
+              >
+                <span>Register</span>
+              </a>
+            </li>
+          </Link>
+        </>
+      ) : (
+        // Authenticated User Menu
+        <>
+          <Link to="/user-profile">
+            <li>
+              <a
+                href="#"
+                className="flex items-center justify-between px-4 py-3 text-sm hover:bg-gray-300 hover:text-black transition duration-300"
+              >
+                <span>Profile</span>
+              </a>
+              <hr className="border-thin border-gray-300" />
+            </li>
+          </Link>
+          <Link to="/">
+            <li>
+              <a
+                href="#"
+                className="flex items-center justify-between px-4 py-3 text-sm hover:bg-gray-300 hover:text-gray-900 transition duration-300"
+                onClick={handleLogout}
+              >
+                <span>Log out</span>
+              </a>
+            </li>
+          </Link>
+        </>
+      )}
+    </ul>
+  </div>
+)}
+</div>
+
 
     
 

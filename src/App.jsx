@@ -16,6 +16,10 @@ import TermsAndConditions from './pages/Terms.jsx';
 import UserProfile from './pages/UserProfile.jsx';
 import ForgotPassword from './pages/ForgotPassword.jsx';
 import WishList from './pages/WishList.jsx';
+import CheckoutPage from './pages/CheckoutPage.jsx';
+import OrderConfirmationPage from './pages/OrderConfirmationPage.jsx';
+import OrderFailedPage from './pages/OrderFailedPage.jsx';
+
 
 
 function App() {
@@ -42,6 +46,13 @@ function App() {
        <Route path='/privacy' element={<PolicyPage/>} />
        <Route path='/terms' element={<TermsAndConditions/>} />
        <Route path='/wish-list' element={<WishList/>} />
+       <Route path='/checkout' element={<CheckoutPage/>} />
+       <Route path="/shop/:category" element={<Shop />} />
+       <Route path="/order-confirm" element={<OrderConfirmationPage />} />
+       <Route path="/order-fail" element={<OrderFailedPage />} />
+      
+     
+
       </Routes>
 
       <Footer />

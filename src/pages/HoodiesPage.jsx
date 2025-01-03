@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import Spinner from "../components/Spinner";
+import { Swiper, SwiperSlide } from "swiper/react"; 
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 const HoodiesPage = () => {
   const [cartItem, setCartItem] = useState(null);
@@ -25,7 +29,7 @@ const HoodiesPage = () => {
   
   useEffect(() => {
     // Fetching products from the backend API
-    fetch("http://localhost:5000/api/product/getproducts")
+    fetch("https://abhinasv-s-backend.onrender.com/api/product/getproducts")
       .then((response) => response.json())
       .then((data) => {
         // Assuming the API response contains an array of products
@@ -130,28 +134,60 @@ const HoodiesPage = () => {
 
   <hr className="border-t mt-5 mb-10 border-black w-full" />
 
-  {/* Hoodie Items Section */}
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-6">
+ {/* Hoodie Items Section */}
+{/* Hoodie Items Section */}
+<div className="px-6">
+  <Swiper
+    className="sm:block lg:hidden"
+    slidesPerView="auto"
+    spaceBetween={16}
+    grabCursor={true}
+    scrollbar={{ draggable: true }}
+    breakpoints={{
+      640: {
+        slidesPerView: 2,
+      },
+      1024: {
+        slidesPerView: 3,
+      }
+    }}
+  >
     {products.map((item) => (
-      <div key={item._id} className="overflow-hidden">
-        <img
-          src={item.images[0]}
-          alt={item.name}
-          className="mx-auto w-96 h-96 object-cover "
-        />
-        <div className="p-4">
-          <h3 className="text-xl font-semibold text-gray-800">{item.name}</h3>
-          <p className="text-lg text-gray-600 mb-4">₹{item.price}</p>
-          <button
-            className="w-full bg-gray-800 text-white text-xl py-2 opacity-80 hover:opacity-100 transition-opacity duration-300"
-            onClick={() => handlecart(item)}
-          >
-            Add to Cart
-          </button>
+      <SwiperSlide key={item._id}>
+        <div className="flex-shrink-0 sm:w-60 lg:w-auto overflow-hidden">
+          <Link to={`/product-details/${item._id}`}>
+            <img
+              src={item.images[0]}
+              alt={item.name}
+              className="mx-auto w-96 h-96 object-cover"
+            />
+          </Link>
+          <div className="p-4">
+            <h3 className="text-xl font-semibold text-gray-800">{item.name}</h3>
+            <p className="text-lg text-gray-600 mb-4">₹{item.price}</p>
+            <button
+              className="w-full bg-homePage text-white text-2xl py-2 opacity-80 hover:bg-[#0f302f] transition-opacity duration-300"
+              onClick={() => handlecart(item)}
+            >
+              Add to Cart
+            </button>
+          </div>
+         
         </div>
-      </div>
+      </SwiperSlide>
     ))}
-  </div>
+  </Swiper>
+
+  
+</div>
+
+
+
+
+
+ 
+
+
 
   {/* Cart Modal */}
   {cartItem && (

@@ -34,7 +34,7 @@ function ProductDetails() {
       try {
         setIsLoading(true); // Start loading
         const response = await fetch(
-          `https://abhinasv-s-backend.onrender.com/api/product/getproduct/${productId}` // API endpoint for fetching product details
+          `http://localhost:5000/api/product/getproduct/${productId}` // API endpoint for fetching product details
         );
         const data = await response.json();
         

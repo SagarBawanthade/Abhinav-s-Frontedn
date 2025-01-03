@@ -8,7 +8,7 @@ const ServicesPage = () => {
   }, []);
 
   return (
-    <div className="forum-regular bg-[#E6FF87] py-10">
+    <div className="forum-regular  bg-[#E6FF87] py-10">
       {/* Services Heading */}
       <div className="text-center mt-20 mb-20">
         <h2
@@ -23,7 +23,8 @@ const ServicesPage = () => {
       {/* Services Section */}
       <div className="flex flex-col md:flex-row items-center justify-between max-w-screen-xl mx-auto px-6">
         {/* Left Section - Picture */}
-        <div className="w-full md:w-1/2 mb-8 md:mb-0">
+        <div className="hidden md:block md:w-1/2 w-full mb-8 md:mb-0">
+        {/* <div className="md:hidden w-full md:w-1/2 mb-8  md:mb-0"> */}
           <div className="overflow-hidden">
             <img
               src="/images/Services.jpg" // Replace with the actual image URL

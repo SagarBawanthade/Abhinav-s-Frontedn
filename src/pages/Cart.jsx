@@ -22,11 +22,13 @@ const Cart = () => {
   const Cart = useRef(null);
   const cartItems = useSelector((state) => state.cart.items);
 
+
+ 
  
 
 // Calculate Subtotal
 const subtotal = cartItems.reduce(
-  (acc, item) => acc + item.price * item.quantity + (item.giftWrapping ? 30 : 0), // Add 30 for gift wrapping if applicable
+  (acc, item) => acc + item.price * item.quantity + (item.giftWrapping ? 30 * item.quantity : 0), // Add 30 for gift wrapping if applicable
   0
 );
 
@@ -181,7 +183,7 @@ const subtotal = cartItems.reduce(
 
                     <dl className="flex items-center justify-between gap-4">
                       <dt className="font-forumNormal text-gray-500 dark:text-gray-400 mb-6">Delivery</dt>
-                      <dd className="font-forumNormal text-green-600">-₹FREE</dd>
+                      <dd className="font-forumNormal text-green-600">-₹100</dd>
                     </dl>
 
                     <p className="font-forumNormal underline text-green-600 dark:text-green-600">Maharashtra, India</p>
@@ -193,12 +195,24 @@ const subtotal = cartItems.reduce(
                   </dl>
                 </div>
 
-                <button
-                  href="#"
-                  className="flex w-full text-lg items-center justify-center font-forumNormal bg-homePage px-5 py-2.5  text-white hover:opacity:1 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                >
-                  Proceed to Checkout
-                </button>
+                <Link to={cartItems.length === 0 ? "#" : "/checkout"}>
+  <button
+    onClick={() => {
+      if (cartItems.length === 0) {
+        toast.error("No items in the cart");
+      }
+    }}
+    disabled={cartItems.length === 0}
+    className={`flex w-full text-lg items-center mt-3 rounded-lg justify-center font-forumNormal px-5 py-2.5 text-white focus:outline-none focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-800 ${
+      cartItems.length === 0
+        ? "bg-gray-400 cursor-not-allowed"
+        : "bg-homePage hover:opacity-80 dark:bg-primary-600 dark:hover:bg-primary-700"
+    }`}
+  >
+    Proceed to Checkout
+  </button>
+</Link>
+
 
                 <div className="flex items-center justify-center gap-2">
                   <span className="text-sm font-normal text-gray-500 dark:text-gray-400"> or </span>
