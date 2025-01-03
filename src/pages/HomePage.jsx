@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Slide from "../components/Slide";
 import HoodiesPage from "./HoodiesPage";
 import InstagramPage from "./InstaGramPage";
@@ -28,9 +29,10 @@ const HomePage = () => {
           <p className="text-lg font-forumNormal text-[#E9EBCA] md:text-2xl lg:text-xl leading-relaxed">
             At Abhinav's, we are committed to offering top-quality products and exceptional customer service. Our mission is to provide good quality products and different collection & styling for everyone at affordable value.
           </p>
+         
         </div>
       </section>
-      <Slide />
+      
       <ShopNowPage/>
       <HoodiesPage/>
       <InstagramPage/>

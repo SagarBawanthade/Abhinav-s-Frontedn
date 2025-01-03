@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { Plus, Minus, Check } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Plus, Minus, Check} from "lucide-react";
+import { Link } from "react-router-dom";
 
-const ShopFilters = () => {
+const ShopFilters = ({ onFiltersChange }) => {
   const [filters, setFilters] = useState({
     priceOpen: false,
     colorOpen: false,
@@ -13,11 +14,26 @@ const ShopFilters = () => {
   const [selectedSizes, setSelectedSizes] = useState([]);
 
   const colorOptions = ["Red", "Blue", "Green", "Yellow", "Black"];
-  const sizeOptions = ["XS", "S", "M", "L", "XL"];
+  const sizeOptions = [ "S", "M", "L", "XL"];
 
   const toggleFilter = (filterKey) => {
     setFilters((prev) => ({ ...prev, [filterKey]: !prev[filterKey] }));
   };
+
+  const clearFilters = () => {
+    setPriceRange(12500);
+    setSelectedColors([]);
+    setSelectedSizes([]);
+  };
+
+  const handleFiltersChange = (updatedFilters) => {
+    console.log("Updated filters:", updatedFilters);
+    setFilters(updatedFilters);
+  };
+
+  useEffect(() => {
+    onFiltersChange({ priceRange, selectedColors, selectedSizes });
+  }, [priceRange, selectedColors, selectedSizes]);
 
   const handleToggleSelection = (item, type) => {
     if (type === "color") {
@@ -31,23 +47,42 @@ const ShopFilters = () => {
     }
   };
 
+
+  console.log("selectedColors", selectedColors);
+  console.log("selectedSizes", selectedSizes);
+  
+
   return (
-    <div className="font-forumNormal pl-4 bg-headerBackGround  flex flex-col">
-      {/* Sidebar Content */}
+    <div className="font-forumNormal pl-4 bg-headerBackGround flex flex-col">
       <h3 className="font-bold text-3xl mb-6 forum-regular">Browse By</h3>
       <div className="border-b border-gray-700 mb-6"></div>
-      <ul className="space-y-3">
-        {["All Products", "Sweatshirts", "Hoodies", "T-Shirts"].map((category) => (
+      <ul className="space-y-5">
+        <li>
+          <Link to="/shop" className="text-left w-full mt-8 mb-8 text-gray-700 hover:underline">
+            All Products
+          </Link>
+        </li>
+        {[  "Hoodies", "Oversize-Tshirt", "Tshirt"].map((category) => (
           <li key={category}>
-            <button className="text-left w-full mb-4 text-gray-700 hover:underline">
+            <Link
+              to={`/shop/${category}`} 
+              className="text-left w-full mb-4 text-gray-700 hover:underline"
+            >
               {category}
-            </button>
+            </Link>
           </li>
         ))}
       </ul>
 
       <div className="mt-10">
-        <h3 className="font-bold text-3xl forum-regular mb-4">Filters</h3>
+        <h3 className="font-bold text-3xl forum-regular mb-4 flex items-center justify-between">
+          Filters
+          <button onClick={clearFilters} className="flex items-center mt-2 font-bold font-avenir text-sm text-red-500">
+           Clear All
+          </button>
+          
+        </h3>
+        
         <div className="border-b border-gray-700 mb-6"></div>
         <ul className="space-y-6 overflow-y-auto max-h-[80vh]">
           {/* Price Filter */}
@@ -57,11 +92,7 @@ const ShopFilters = () => {
               onClick={() => toggleFilter("priceOpen")}
             >
               Price
-              {filters.priceOpen ? (
-                <Minus className="w-5 h-5" />
-              ) : (
-                <Plus className="w-5 h-5" />
-              )}
+              {filters.priceOpen ? <Minus className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
             </button>
             {filters.priceOpen && (
               <div className="mt-4">
@@ -71,7 +102,7 @@ const ShopFilters = () => {
                   max="12500"
                   step="200"
                   value={priceRange}
-                  onChange={(e) => setPriceRange(e.target.value)}
+                  onChange={(e) => setPriceRange(Number(e.target.value))}
                   className="w-full h-0.5 appearance-none cursor-pointer"
                   style={{
                     background: `linear-gradient(to right, #000 ${((priceRange - 500) / (12500 - 500)) * 100}%, #D1D5DB 0%)`,
@@ -80,20 +111,6 @@ const ShopFilters = () => {
                 <style jsx>{`
                   input[type="range"]::-webkit-slider-thumb {
                     -webkit-appearance: none;
-                    height: 20px;
-                    width: 20px;
-                    border-radius: 50%;
-                    background: black;
-                    cursor: pointer;
-                  }
-                  input[type="range"]::-moz-range-thumb {
-                    height: 20px;
-                    width: 20px;
-                    border-radius: 50%;
-                    background: black;
-                    cursor: pointer;
-                  }
-                  input[type="range"]::-ms-thumb {
                     height: 20px;
                     width: 20px;
                     border-radius: 50%;
@@ -116,11 +133,7 @@ const ShopFilters = () => {
               onClick={() => toggleFilter("colorOpen")}
             >
               Color
-              {filters.colorOpen ? (
-                <Minus className="w-5 h-5" />
-              ) : (
-                <Plus className="w-5 h-5" />
-              )}
+              {filters.colorOpen ? <Minus className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
             </button>
             {filters.colorOpen && (
               <div className="mt-4 flex flex-col">
@@ -153,11 +166,7 @@ const ShopFilters = () => {
               onClick={() => toggleFilter("sizeOpen")}
             >
               Size
-              {filters.sizeOpen ? (
-                <Minus className="w-5 h-5" />
-              ) : (
-                <Plus className="w-5 h-5" />
-              )}
+              {filters.sizeOpen ? <Minus className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
             </button>
             {filters.sizeOpen && (
               <div className="mt-4 flex flex-col">
@@ -189,5 +198,3 @@ const ShopFilters = () => {
 };
 
 export default ShopFilters;
-
-
