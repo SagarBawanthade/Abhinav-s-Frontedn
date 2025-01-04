@@ -10,7 +10,7 @@ import 'swiper/css/pagination';
 import "swiper/css";
 import "swiper/css/pagination";
 import { Heart, ShoppingCart, TrendingUp, Stars } from 'lucide-react';
-import { addToWishlist, removeFromWishlist } from "../feature/WishListSlice";
+import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
 
 const HoodiesPage = () => {
   const dispatch = useDispatch();
