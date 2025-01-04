@@ -5,9 +5,31 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { Link } from 'react-router-dom';
 import { Tag, Heart, Clock } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { addToWishlist, removeFromWishlist } from '../feature/WishListSlice';
 
 function MoreProduct2() {
   const [products, setProducts] = useState([]);
+  const wishlist = useSelector(state => state.wishlist.items);
+  const dispatch = useDispatch();
+
+
+  const isProductInWishlist = (productId) => {
+    return wishlist.some(item => item._id === productId);
+  };
+  
+  // Modify your toggleLike function:
+  const toggleLike = (item) => {
+    if (isProductInWishlist(item._id)) {
+      dispatch(removeFromWishlist(item._id));
+      toast.success("Product removed from Wishlist!");
+    } else {
+      dispatch(addToWishlist(item));
+      toast.success("Product Added to Wishlist!");
+    }
+  };
+
 
   useEffect(() => {
     fetch('https://abhinasv-s-backend.onrender.com/api/product/getproducts')
@@ -51,8 +73,14 @@ function MoreProduct2() {
               <SwiperSlide key={product.id}>
                 <div className="group relative bg-gray-700 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-400">
                   <div className="absolute top-2 right-2 z-10">
-                    <button className="p-2 bg-gray-800/80 backdrop-blur-sm rounded-full shadow-md hover:bg-gray-700 transition-colors duration-300 transform hover:scale-110">
-                      <Heart className="w-4 h-4 text-white hover:text-red-500 transition-colors" />
+                    <button 
+                    onClick={() => toggleLike(product)}
+                    className="p-2 bg-gray-800/80 backdrop-blur-sm rounded-full shadow-md hover:bg-gray-700 transition-colors duration-300 transform hover:scale-110">
+                    <Heart
+    className={`w-5 h-5 ${
+      isProductInWishlist(product._id) ? 'text-red-500 fill-red-500' : 'text-red-600'
+    } transition-colors`}
+  />
                     </button>
                   </div>
 

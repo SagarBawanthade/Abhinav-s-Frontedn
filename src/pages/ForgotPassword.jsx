@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Spinner from "../components/Spinner";
 

@@ -7,7 +7,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector , useDispatch} from 'react-redux';
 import { logout } from '../feature/authSlice';
-import { toast } from "react-hot-toast";
+import { toast } from 'react-toastify';
 import { fetchCartItems, removeItemFromCart } from '../feature/cartSlice';
 import { User , LogOut, LogIn,Package, UserPen , ShoppingBag} from 'lucide-react';
 import { persistor } from '../utils/store';
@@ -30,13 +30,16 @@ const Header = () => {
  
 
   const handleLogout = () => {
+  
    
     dispatch(logout(id, token ));
+   dispatch(fetchCartItems({ userId, token }));
     persistor.purge(); 
     toast.success('Logged out successfully!');
     navigate('/login');
     setMenuOpen(false);
     window.location.reload();
+   
     
   };
 
@@ -64,6 +67,8 @@ const Header = () => {
       }
     };
 
+  
+
     // Attach the event listener
     document.addEventListener('mousedown', handleClickOutside);
 
@@ -81,6 +86,7 @@ const Header = () => {
 
 
   const handleRemoveItem = (productId) => {
+    
     
     dispatch(removeItemFromCart({ userId, token, productId })).then(() => {
    
