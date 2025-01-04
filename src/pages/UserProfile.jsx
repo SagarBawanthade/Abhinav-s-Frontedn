@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
 import { BsArrowRightCircle } from "react-icons/bs";
 
@@ -28,7 +28,7 @@ const UserProfile = () => {
     const fetchUserData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:5000/api/auth/getuser/${userId}`);
+        const response = await fetch(`http://192.168.1.33:5000/api/auth/getuser/${userId}`);
         const data = await response.json();
         if (response.ok) {
           setUpdatedUserData(data);
@@ -56,7 +56,7 @@ const UserProfile = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/auth/updateuser/${userId}`, {
+      const response = await fetch(`http://192.168.1.33:5000/api/auth/updateuser/${userId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Route, Routes} from 'react-router-dom';
 import Header from './components/Header.jsx';
 import Footer from './components/Footer.jsx';
 import HomePage from './pages/HomePage.jsx';
@@ -24,8 +24,11 @@ import OrderHistory from './pages/OrderHistory.jsx';
 
 
 function App() {
+
+ 
+
   return (
-    <BrowserRouter>
+    <>
       <Header /> 
     
       
@@ -58,7 +61,7 @@ function App() {
       </Routes>
 
       <Footer />
-    </BrowserRouter>
+      </>
   );
 }
  

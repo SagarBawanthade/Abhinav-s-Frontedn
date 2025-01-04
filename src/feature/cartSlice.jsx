@@ -6,13 +6,13 @@ import axios from 'axios';
 export const fetchCartItems = createAsyncThunk('cart/fetchCartItems',async ({userId, token },{ rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/cart/cart/${userId}`,
+        `http://192.168.1.33:5000/api/cart/cart/${userId}`,
         { 
           headers: 
           { Authorization: `Bearer ${token}` } 
         }
       );
-      console.log("Response of CartSlice: ", response);
+      
       return response.data.cart.items; 
       
     } catch (error) {
@@ -27,7 +27,7 @@ export const removeItemFromCart = createAsyncThunk(
   async ({ userId, token, productId }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/cart/cart/remove-item`,
+        `http://192.168.1.33:5000/api/cart/cart/remove-item`,
         {
           userId: userId,
           productId: productId,
@@ -69,17 +69,17 @@ const cartSlice = createSlice({
     builder
       .addCase(fetchCartItems.pending, (state) => {
         state.status = 'loading';
-        console.log("Fetching cart items..."); // Debug
+        
       })
       .addCase(fetchCartItems.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.items = Array.isArray(action.payload) ? action.payload : [];
-        console.log("Cart items updated: ", action.payload); // Debug
+        
       })
       .addCase(fetchCartItems.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
-        console.error("Failed to fetch cart items: ", action.payload); // Debug
+       
       })
       // Add the handling for removing item
     .addCase(removeItemFromCart.fulfilled, (state, action) => {

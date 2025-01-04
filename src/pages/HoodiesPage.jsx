@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Spinner from "../components/Spinner";
@@ -7,55 +7,59 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-
-import "swiper/css"; // Swiper styles
-import "swiper/css/pagination"; // Swiper pagination styles
-
+import "swiper/css";
+import "swiper/css/pagination";
 import { Heart, ShoppingCart, TrendingUp, Stars } from 'lucide-react';
-
-
-
+import { addToWishlist, removeFromWishlist } from "../feature/WishListSlice";
 
 const HoodiesPage = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [cartItem, setCartItem] = useState(null);
   const [showHeading, setShowHeading] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [products, setProducts] = useState([]);
   const [products2, setProducts2] = useState([]);
-  
   const [activeIndex, setActiveIndex] = useState(0);
-
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [cartLoading, setCartLoading] = useState(false);
   const [giftWrapping, setGiftWrapping] = useState(false);
 
-  
-  const [liked, setLiked] = useState({});
 
-  const toggleLike = (productId) => {
-    setLiked(prev => ({
-      ...prev,
-      [productId]: !prev[productId]
-    }));
-  };
-
-  const navigate = useNavigate();
   const userId = useSelector((state) => state.auth.id);
   const token = useSelector((state) => state.auth.token);
+  const wishlist = useSelector(state => state.wishlist.items);
+ 
 
+ 
+const isProductInWishlist = (productId) => {
+  return wishlist.some(item => item._id === productId);
+};
+
+// Modify your toggleLike function:
+const toggleLike = (item) => {
+  if (isProductInWishlist(item._id)) {
+    dispatch(removeFromWishlist(item._id));
+    toast.success("Product removed from Wishlist!");
+  } else {
+    dispatch(addToWishlist(item));
+    toast.success("Product Added to Wishlist!");
+  }
+};
+
+  
   const handleSlideChange = (swiper) => {
     setActiveIndex(swiper.activeIndex);
   };
 
   
   useEffect(() => {
-    // Fetching products from the backend API
-    fetch("https://abhinasv-s-backend.onrender.com/api/product/getproducts")
+    fetch("http://192.168.1.33:5000/api/product/getproducts")
       .then((response) => response.json())
       .then((data) => {
-      setProducts2(data.slice(5,8));
+      setProducts2(data.slice(28,32));
         // Assuming the API response contains an array of products
         setProducts(data.slice(2, 5)); // Displaying only the first 3 products
       })
@@ -88,7 +92,7 @@ const HoodiesPage = () => {
     try {
       setCartLoading(true);
 
-      const response = await fetch("http://localhost:5000/api/cart/add-to-cart", {
+      const response = await fetch("http://192.168.1.33:5000/api/cart/add-to-cart", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +104,7 @@ const HoodiesPage = () => {
       const data = await response.json();
       if (data.cart) {
         navigate("/cart");
-        window.location.reload();
+      
        
        
         toast.success("Product added to Cart Successfully!");
@@ -146,6 +150,7 @@ const HoodiesPage = () => {
 
   const handlecart = (item) => {
     setCartItem(item);
+    console.log(item)
     window.history.pushState({ modalOpen: true }, "", window.location.href);
   };
 
@@ -165,7 +170,7 @@ const HoodiesPage = () => {
         showHeading ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
       }`}
     >
-      Collections
+      Hoodies
     </h1>
   </div>
 
@@ -177,7 +182,7 @@ const HoodiesPage = () => {
           <div className="flex items-center space-x-2">
             <TrendingUp className="w-6 h-6 text-gray-700" />
             <h2 className="text-2xl md:text-3xl font-semibold font-forumNormal text-gray-800">
-              {products2[2]?.category || "Category"}
+              { "Hoodies"}
             </h2>
           </div>
           <span className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center">
@@ -214,14 +219,15 @@ const HoodiesPage = () => {
                   </Link>
 
                   <button
-                    onClick={() => toggleLike(item._id)}
+                  
+                    onClick={() => toggleLike(item)}
                     className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-gray-100 transition-all duration-300 transform hover:scale-110"
                   >
-                    <Heart
-                      className={`w-5 h-5 ${
-                        liked[item._id] ? 'text-red-500 fill-red-500' : 'text-gray-600'
-                      } transition-colors`}
-                    />
+                     <Heart
+    className={`w-5 h-5 ${
+      isProductInWishlist(item._id) ? 'text-red-500 fill-red-500' : 'text-gray-600'
+    } transition-colors`}
+  />
                   </button>
 
                   <div className="absolute top-2 left-2">
@@ -264,7 +270,7 @@ const HoodiesPage = () => {
         </Swiper>
 
         <div className="flex justify-center gap-2 md:hidden mt-6">
-          {products.map((_, index) => (
+          {products2.map((_, index) => (
             <button
               key={index}
               onClick={() => setActiveIndex(index)}
@@ -330,14 +336,15 @@ const HoodiesPage = () => {
                   </Link>
 
                   <button
-                    onClick={() => toggleLike(item._id)}
+                    onClick={() => toggleLike(item)}
                     className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-gray-100 transition-all duration-300 transform hover:scale-110"
                   >
-                    <Heart
-                      className={`w-5 h-5 ${
-                        liked[item._id] ? 'text-red-500 fill-red-500' : 'text-gray-600'
-                      } transition-colors`}
-                    />
+                   
+                      <Heart
+    className={`w-5 h-5 ${
+      isProductInWishlist(item._id) ? 'text-red-500 fill-red-500' : 'text-gray-600'
+    } transition-colors`}
+  />
                   </button>
 
                   <div className="absolute top-2 left-2">
@@ -569,11 +576,11 @@ const HoodiesPage = () => {
                onChange={(e) => setSelectedColor(e.target.value)}
                 className="w-full border-gray-300 border p-2 text-lg">
                 <option value="black">Select Color</option>
-                {cartItem.color.map((color) => ( 
-                  <option key={color} value={color}>
-                    {color}
+                 
+                  <option>
+                    {cartItem.color}
                   </option>
-                ))}
+               
               </select>
             </div>
 

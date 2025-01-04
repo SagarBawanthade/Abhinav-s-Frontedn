@@ -3,13 +3,16 @@ import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import {  useParams } from "react-router-dom";
 import { FaTruck, FaTimesCircle, FaExchangeAlt } from "react-icons/fa";
 import Spinner from "../components/Spinner";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import MoreProducts from "../components/MoreProducts1";
 import { useLocation } from "react-router-dom";
 import MoreProduct3 from "../components/MoreProduct3";
 import MoreProduct2 from "../components/MoreProduct2";
+import { fetchCartItems } from "../feature/cartSlice";
+import { addToWishlist, removeFromWishlist } from "../feature/WishListSlice";
+import { ShoppingCart, Heart } from 'lucide-react'; 
+
 
 function ProductDetails() {
   const [mainImage, setMainImage] = useState(
@@ -18,18 +21,59 @@ function ProductDetails() {
   const [openSection, setOpenSection] = useState(null);
   const [product, setProduct] = useState(null); // State to store product details
   const [isLoading, setIsLoading] = useState(true); // Loading state
-
+  
   const { productId } = useParams();
   const productDetailsRef = useRef(null);
+
+
   const userId = useSelector((state) => state.auth.id); 
   const token = useSelector((state) => state.auth.token);
- const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const wishlist = useSelector(state => state.wishlist.items);
+  
+  const isInWishlist = wishlist.some(item => item._id === productId);
+
+  const handleWishlist = () => {
+    if (isInWishlist) {
+      dispatch(removeFromWishlist(productId));
+      toast.success("Product removed from Wishlist!");
+      console.log("After Removing Wishlist:- ",wishlist);
+    } else {
+      dispatch(addToWishlist(product));
+      toast.success("Product Added to Wishlist!");
+      console.log("After Adding Wishlist:- ",wishlist);
+    }
+  };
+
   const [cartLoading, setCartLoading] = useState(false);
+  console.log("cartLoading :", cartLoading);
  
   const [quantity, setQuantity] = useState(1); // Highlighted for quantity updates
   const [selectedSize, setSelectedSize] = useState(""); // Highlighted for size updates
   const [selectedColor, setSelectedColor] = useState(""); // Highlighted for color updates
   const [giftWrapping, setGiftWrapping] = useState(false);
+
+
+
+  const returnPolicyRef = useRef(null);
+  const [productDetailsHeight, setProductDetailsHeight] = useState(0);
+  const [returnPolicyHeight, setReturnPolicyHeight] = useState(0);
+ 
+  useEffect(() => {
+    if (productDetailsRef.current) {
+      setProductDetailsHeight(productDetailsRef.current.scrollHeight);
+    }
+    if (returnPolicyRef.current) {
+      setReturnPolicyHeight(returnPolicyRef.current.scrollHeight);
+    }
+  }, [openSection]);
+ 
+ 
+
+  const toggleSection = (section) => {
+    setOpenSection(openSection === section ? null : section);
+  };
+
 
 
    // Fetch product details using the ID
@@ -66,6 +110,8 @@ function ProductDetails() {
           toast.error("Please select size and color before adding to cart!");
           return;
         }
+
+
     
   
     const cartItem = {
@@ -85,7 +131,7 @@ function ProductDetails() {
       setCartLoading(true);
   
       // Directly call the add-to-cart API
-      const response = await fetch("http://localhost:5000/api/cart/add-to-cart", {
+      const response = await fetch("http://192.168.1.33:5000/api/cart/add-to-cart", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -104,6 +150,7 @@ function ProductDetails() {
       const data = await response.json();
       if (data.cart) {
         toast.success("Product added to Cart Successfully!");
+        dispatch(fetchCartItems({ userId, token }));
       } else {
         throw new Error(data.message || "Failed to add product to cart");
       }
@@ -120,6 +167,7 @@ function ProductDetails() {
     const location = useLocation();
   
     useEffect(() => {
+      
       window.scrollTo(0, 0); // Scroll to top of the page
     }, [location]);
     
@@ -135,10 +183,7 @@ function ProductDetails() {
     }
   }, []);
 
-  const toggleSection = (section) => {
-    setOpenSection(openSection === section ? null : section);
-  };
-
+ 
   const handleThumbnailClick = (src) => {
     setMainImage(src);
   };
@@ -308,79 +353,106 @@ function ProductDetails() {
 </div>
 
 <div className="flex w-full gap-4">
-      <button 
-        onClick={handleAddToCart} 
-        className="flex-1 rounded-lg bg-gray-800 py-3 text-lg font-semibold text-white transition duration-300 hover:bg-gray-600"
-      >
-        Add to Cart
-      </button>
+<button 
+  onClick={handleAddToCart} 
+  className="flex-1 rounded-lg bg-gray-800 py-3 text-lg font-semibold text-white transition duration-300 hover:bg-gray-600"
+>
+  <div className="flex items-center justify-center space-x-2">
+    <ShoppingCart className="w-5 h-5" />
+    <span>Add to Cart</span>
+  </div>
+</button>
 
-      <button 
-        className="flex-1 rounded-lg bg-red-500 py-3 text-lg font-semibold text-white transition duration-300 hover:bg-red-700"
-      >
-        Add to Wishlist
-      </button>
+<button
+  onClick={handleWishlist}
+  className="flex-1 rounded-lg bg-red-500 py-3 text-lg font-semibold text-white transition duration-300 hover:bg-red-700"
+>
+  <div className="flex items-center justify-center space-x-2">
+    <Heart className={`w-5 h-5 ${isInWishlist ? 'fill-white' : ''}`} />
+    <span>{isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}</span>
+  </div>
+</button>
     </div>
 
            
 
             {/* Product Details Dropdown */}
-            <div className="mt-4 ">
-              <button
-                onClick={() => toggleSection("productDetails")}
-                className="flex items-center justify-between w-40 text-lg mb-2  py-3 text-gray-800 bg-headerBackGround font-semibold focus:outline-none"
-              >
-                <span>Product Details</span>
-                {openSection === "productDetails" ? (
-                  <FaChevronUp className="ml-2 transition-transform duration-300" />
-                ) : (
-                  <FaChevronDown className=" ml-2 transition-transform duration-300" />
-                )}
-              </button>
-              {openSection === "productDetails" && (
-                <div className="px-4 py-3 bg-headerBackGround text-gray-700 font-forumNormal">
-                 <p><strong>Fabric:- </strong> {product.details.fabric}</p>
-                  <p><strong>Care Instructions:- </strong> {product.details.careInstructions}</p>
-                  <p><strong>FabricCare:- </strong>{product.details.fabricCare}</p>
-                  <p><strong>Hooded:- </strong> {product.details.hooded}</p>
-                  <p><strong>KnitType:- </strong> {product.details.knitType}</p>
-                  <p><strong>Material:- </strong> {product.details.material}</p>
-                  <p><strong>Neck:- </strong> {product.details.neck}</p>
-                  <p><strong>NetQuantity:- </strong> {product.details.netQuantity}</p>
-                  <p><strong>Occasion:- </strong>{product.details.occasion}</p>
-                  <p><strong>Origin:- </strong> {product.details.origin}</p>
-                  <p><strong>Pattern:- </strong> {product.details.pattern}</p>
-                  <p><strong>Pockets:- </strong> {product.details.pockets}</p>
-                  <p><strong>Reversible:- </strong> {product.details.reversible}</p>
-                  <p><strong>SecondaryColor:- </strong> {product.details.secondaryColor}</p>
-                  <p><strong>ShippingInfo:- </strong> {product.details.shippingInfo}</p>
-                  <p><strong>Sleeve:- </strong> {product.details.sleeve}</p>
-                  <p><strong>StyleCode:- </strong> {product.details.styleCode}</p>
-                  <p><strong>SuitableFor:- </strong> {product.details.suitableFor}</p>
-                  {/* Add more details as needed */}
-                </div>
-              )}
-            </div>
 
-            {/* Return and Exchange Policy Dropdown */}
-            <div className="mb-6">
-              <button
-                onClick={() => toggleSection("returnPolicy")}
-                className="flex items-center justify-between w-64 text-lg mb-2 py-3 text-gray-800 bg-headerBackGround font-semibold focus:outline-none"
-              >
-                <span>Return & Exchange Policy</span>
-                {openSection === "returnPolicy" ? (
-                  <FaChevronUp className="ml-2 transition-transform duration-300" />
-                ) : (
-                  <FaChevronDown className="ml-2 transition-transform duration-300" />
-                )}
-              </button>
-              {openSection === "returnPolicy" && (
-                <div className="px-4 py-3 bg-headerBackGround text-gray-700 font-forumNormal">
-                  The brand does not accept returns, but replacements are possible subject to availability. Please initiate replacements from the 'My Orders' section in the App within 2 days of Delivery. The product must be in its original condition with all tags attached.
-                </div>
-              )}
-            </div>
+             {/* Product Details Dropdown */}
+      <div className="mt-4">
+        <button
+          onClick={() => toggleSection("productDetails")}
+          className="flex items-center justify-between w-40 text-lg mb-2 py-3 text-gray-800 bg-headerBackGround font-semibold focus:outline-none"
+        >
+          <span>Product Details</span>
+          {openSection === "productDetails" ? (
+            <FaChevronUp className="ml-2 transform transition-transform duration-300" />
+          ) : (
+            <FaChevronDown className="ml-2 transform transition-transform duration-300" />
+          )}
+        </button>
+        <div
+          ref={productDetailsRef}
+          className="overflow-hidden transition-all duration-300 ease-in-out bg-headerBackGround"
+          style={{
+            maxHeight: openSection === "productDetails" ? `${productDetailsHeight}px` : "0",
+            opacity: openSection === "productDetails" ? 1 : 0
+          }}
+        >
+          <div className="px-4 py-3 text-gray-700 font-forumNormal">
+            <p><strong>Fabric:- </strong> {product.details.fabric}</p>
+            <p><strong>Care Instructions:- </strong> {product.details.careInstructions}</p>
+            <p><strong>FabricCare:- </strong>{product.details.fabricCare}</p>
+            <p><strong>Hooded:- </strong> {product.details.hooded}</p>
+            <p><strong>KnitType:- </strong> {product.details.knitType}</p>
+            <p><strong>Material:- </strong> {product.details.material}</p>
+            <p><strong>Neck:- </strong> {product.details.neck}</p>
+            <p><strong>NetQuantity:- </strong> {product.details.netQuantity}</p>
+            <p><strong>Occasion:- </strong>{product.details.occasion}</p>
+            <p><strong>Origin:- </strong> {product.details.origin}</p>
+            <p><strong>Pattern:- </strong> {product.details.pattern}</p>
+            <p><strong>Pockets:- </strong> {product.details.pockets}</p>
+            <p><strong>Reversible:- </strong> {product.details.reversible}</p>
+            <p><strong>SecondaryColor:- </strong> {product.details.secondaryColor}</p>
+            <p><strong>ShippingInfo:- </strong> {product.details.shippingInfo}</p>
+            <p><strong>Sleeve:- </strong> {product.details.sleeve}</p>
+            <p><strong>StyleCode:- </strong> {product.details.styleCode}</p>
+            <p><strong>SuitableFor:- </strong> {product.details.suitableFor}</p>
+          </div>
+        </div>
+      </div>
+ 
+      {/* Return and Exchange Policy Dropdown */}
+      <div className="mb-6">
+        <button
+          onClick={() => toggleSection("returnPolicy")}
+          className="flex items-center justify-between w-64 text-lg mb-2 py-3 text-gray-800 bg-headerBackGround font-semibold focus:outline-none"
+        >
+          <span>Return & Exchange Policy</span>
+          {openSection === "returnPolicy" ? (
+            <FaChevronUp className="ml-2 transform transition-transform duration-300" />
+          ) : (
+            <FaChevronDown className="ml-2 transform transition-transform duration-300" />
+          )}
+        </button>
+        <div
+          ref={returnPolicyRef}
+          className="overflow-hidden transition-all duration-300 ease-in-out bg-headerBackGround"
+          style={{
+            maxHeight: openSection === "returnPolicy" ? `${returnPolicyHeight}px` : "0",
+            opacity: openSection === "returnPolicy" ? 1 : 0
+          }}
+        >
+          <div className="px-4 py-3 text-gray-700 font-forumNormal">
+            <p>The brand does not accept returns, but replacements are possible subject to availability. 
+            Please initiate replacements from the &#39;My Orders&#39; section in the App within 2 days of Delivery. 
+            The product must be in its original condition with all tags attached.</p>
+          </div>
+        </div>
+      </div>
+
+
+       
           </div>
         </div>
       </div>

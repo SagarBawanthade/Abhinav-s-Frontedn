@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../feature/authSlice";
+import { setUserId } from "../feature/WishListSlice";
+
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -18,7 +20,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch("http://192.168.1.33:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -28,7 +30,8 @@ const Login = () => {
 
       if (response.ok) {
         const { id, token, role } = data;
-        dispatch(loginSuccess({ id, token, role })); // Store user info in Redux state
+        dispatch(loginSuccess({ id, token, role }));
+        dispatch(setUserId(id));
         toast.success('Successfully logged in');
         navigate("/"); // Navigate to home after login
       } else {

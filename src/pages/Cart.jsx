@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Spinner from "../components/Spinner.jsx"; 
 import { useDispatch } from "react-redux";
-import { removeItemFromCart } from "../feature/cartSlice.jsx";
+import { fetchCartItems, removeItemFromCart } from "../feature/cartSlice.jsx";
 import { toast } from "react-toastify";
 
 const Cart = () => {
@@ -22,6 +22,11 @@ const Cart = () => {
   const Cart = useRef(null);
   const cartItems = useSelector((state) => state.cart.items);
 
+  useEffect(() => {
+    if (userId && token) {
+      dispatch(fetchCartItems({ userId, token }));
+    }
+  }, [dispatch, userId, token]);
 
  
  
@@ -32,7 +37,7 @@ const subtotal = cartItems.reduce(
   0
 );
 
-  const delivery = 100; // Delivery fee
+  const delivery = 0; // Delivery fee
 
   const total = subtotal + delivery;
 
@@ -56,7 +61,7 @@ const subtotal = cartItems.reduce(
   const handleRemoveItem = (productId) => {
     dispatch(removeItemFromCart({ userId, token, productId })).then(() => {
       toast.success("Item removed successfully");
-      window.location.reload();
+     dispatch(fetchCartItems({ userId, token }));
       
       
     }).catch((error) => {
@@ -133,7 +138,7 @@ const subtotal = cartItems.reduce(
             </div>
             <div className="text-end md:order-4 md:w-32">
               <p className="text-lg font-forumNormal font-semibold text-gray-900 dark:text-white">
-                ₹{item.price * item.quantity}
+                ₹{item.price }
               </p>
             </div>
           </div>
@@ -191,7 +196,7 @@ const subtotal = cartItems.reduce(
 
                     <dl className="flex items-center justify-between gap-4">
                       <dt className="font-forumNormal text-gray-500 dark:text-gray-400 mb-6">Delivery</dt>
-                      <dd className="font-forumNormal text-green-600">-₹100</dd>
+                      <dd className="font-forumNormal text-green-600">-₹FREE</dd>
                     </dl>
 
                     <p className="font-forumNormal underline text-green-600 dark:text-green-600">Maharashtra, India</p>

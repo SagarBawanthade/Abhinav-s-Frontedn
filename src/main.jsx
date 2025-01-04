@@ -3,8 +3,8 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import { ThemeProvider } from "@material-tailwind/react";
-
-import { ToastContainer, Bounce } from 'react-toastify';
+import { BrowserRouter } from 'react-router-dom';
+import { ToastContainer, Slide } from 'react-toastify';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './utils/store.js';
@@ -12,6 +12,7 @@ import AppLayout from './components/AppLayout.jsx';
 
 createRoot(document.getElementById('root')).render(
   
+  <BrowserRouter>
 <ThemeProvider>
   <StrictMode>
   <Provider store={store}>
@@ -24,19 +25,20 @@ createRoot(document.getElementById('root')).render(
     
     <ToastContainer
 position="top-center"
-autoClose={2000}
-hideProgressBar={false}
+autoClose={1000}
+hideProgressBar={true}
 newestOnTop={false}
 closeOnClick={false}
 rtl={false}
 pauseOnFocusLoss
 draggable
-pauseOnHover
-theme="light"
-transition={Bounce}
+
+theme="dark"
+transition={Slide}
 />
   </StrictMode>
   </ThemeProvider>
+  </BrowserRouter>
  
   
 

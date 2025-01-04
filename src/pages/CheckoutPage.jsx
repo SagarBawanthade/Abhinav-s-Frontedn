@@ -3,7 +3,8 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
-import Spinner from "../components/Spinner";
+
+import { CreditCard, Package, Truck, Mail, Phone, User, Home, MapPin } from "lucide-react";
 
 const loadRazorpayScript = () => {
   return new Promise((resolve) => {
@@ -15,7 +16,26 @@ const loadRazorpayScript = () => {
   });
 };
 const razorpayKeyId = import.meta.env.RAZORPAY_KEY_ID;
-console.log("razorpayKeyId : ",razorpayKeyId);
+
+const Spinner = () => (
+  <div className="flex justify-center items-center">
+    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-600"></div>
+  </div>
+);
+
+// Input Field Component
+const InputField = ({ icon: Icon, ...props }) => (
+  <div className="relative">
+    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+      <Icon className="h-5 w-5 text-gray-400" />
+    </div>
+    <input
+      {...props}
+      className="pl-10 w-full px-4 py-3 bg-headerBackGround border border-gray-200 rounded-lg text-gray-800 text-sm  transition duration-200"
+    />
+  </div>
+);
+
 
 const CheckoutPage = () => {
 
@@ -124,7 +144,7 @@ const CheckoutPage = () => {
     try {
       // Step 1: Create Razorpay order on the backend
       const razorpayOrder = await axios.post(
-        "http://localhost:5000/api/order/create-razorpay-order",
+        "http://192.168.1.33:5000/api/order/create-razorpay-order",
         { amount: (totalCartPrice +0  + totalCartPrice * 0.05) * 100 } // Convert to paise
       );
   
@@ -152,7 +172,7 @@ const CheckoutPage = () => {
         handler: async (response) => {
           try {
             const verifyPayment = await axios.post(
-              "http://localhost:5000/api/order/verify-razorpay-payment",
+              "http://192.168.1.33:5000/api/order/verify-razorpay-payment",
               response
             );
             console.log("paymentResponse:", response);
@@ -165,7 +185,7 @@ const CheckoutPage = () => {
               };
       
               const orderResponse = await axios.post(
-                "http://localhost:5000/api/order/create-order",
+                "http://192.168.1.33:5000/api/order/create-order",
                 finalizedOrderData
               );
 
@@ -218,148 +238,201 @@ useEffect(() => {
 }, [location]);
 
   return (
-    <div className="font-sans bg-headerBackGround min-h-screen p-4">
-      <div className="container mx-auto grid lg:grid-cols-3 gap-8">
-        {/* Sidebar Section */}
-        <div className="bg-headerBackGround border border-gray-300 rounded-lg shadow-md lg:col-span-1 max-h-full">
+    <div className="font-forumNormal bg-headerBackGround min-h-screen p-4">
+      <div className="container mx-auto max-w-7xl">
+        <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center lg:text-left">
+          Checkout
+        </h1>
+        
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Cart Summary Section */}
+          <div className="lg:col-span-1 order-2 lg:order-1">
+            <div className="bg-headerBackGround  rounded-xl shadow-sm border border-gray-300 sticky top-4">
+              <div className="p-6">
+                <div className="flex items-center gap-2 mb-6">
+                  <Package className="h-5 w-5 text-gray-600" />
+                  <h2 className="text-xl font-semibold text-gray-800">Your Cart</h2>
+                </div>
+                
+                <div className="space-y-6 divide-y divide-gray-100">
+                  {cartItems.map((product, index) => {
+                    const productTotal = product.quantity * product.price;
+                    const additionalCost = product.giftWrapping ? product.quantity * 30 : 0;
+                    const finalPrice = productTotal + additionalCost;
 
-        {/* <div className="bg-headerBackGround border border-gray-300 rounded-lg shadow-md lg:col-span-1"> */}
+                    return (
+                      <div key={index} className="pt-6 first:pt-0">
+                        <div className="flex gap-4">
+                          <div className="w-20 h-20 rounded-lg border border-gray-300 overflow-hidden">
+                            <img
+                              src={product.images[0]}
+                              alt={product.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              <h3 className="font-medium text-gray-800">{product.name}</h3>
+                              {product.giftWrapping && (
+                                <span className="text-xl">🎁</span>
+                              )}
+                            </div>
+                            <div className="mt-2 space-y-1 text-sm text-gray-600">
+                              <p>Size: {product.size}</p>
+                              <p>Quantity: {product.quantity}</p>
+                              <p>Color: {product.color}</p>
+                              <p className="font-medium text-gray-800">₹{finalPrice.toLocaleString()}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              
+              <div className="border-t border-gray-300 p-6">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2 text-green-600">
+                      <Truck className="h-5 w-5" />
+                      <span>Free Delivery</span>
+                    </div>
+                    <span className="text-green-600">₹0</span>
+                  </div>
+                  <div className="flex justify-between items-center text-lg font-semibold">
+                    <span>Total</span>
+                    <span>₹{totalCartPrice.toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-       
-          <div className="px-6 py-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6 font-forumNormal">
-              Your Cart
-            </h2>
-            <div className="space-y-6">
-              {cartItems.map((product, index) => {
-               
-                const productTotal = product.quantity * product.price;
-                const additionalCost = product.giftWrapping ? product.quantity * 30 : 0;
-                const finalPrice = productTotal + additionalCost
-               
+          {/* Checkout Form */}
+          <div className="lg:col-span-2 order-1 lg:order-2">
+            <div className="bg-headerBackGround rounded-xl shadow-sm border border-gray-300 p-6">
+              <form onSubmit={handleSubmit} className="space-y-8">
+                {/* Personal Details */}
+                <div>
+                  <div className="flex items-center gap-2 mb-6">
+                    <User className="h-5 w-5 text-gray-600" />
+                    <h2 className="text-xl font-semibold text-gray-800">Personal Details</h2>
+                  </div>
+                  <div className="grid bg-headerBackGround md:grid-cols-2 gap-4">
+                    <InputField
+                    className=""
+                      icon={User}
+                      name="firstName"
+                      placeholder="First Name"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                    />
+                    <InputField
+                      icon={User}
+                      name="lastName"
+                      placeholder="Last Name"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                    />
+                    <InputField
+                      icon={Mail}
+                      type="email"
+                      name="email"
+                      placeholder="Email"
+                      value={formData.email}
+                      onChange={handleChange}
+                    />
+                    <InputField
+                      icon={Phone}
+                      type="tel"
+                      name="phoneNo"
+                      placeholder="Phone Number"
+                      value={formData.phoneNo}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
 
-                return (
-                  <div key={index} className="flex gap-4 items-start">
-                    <div className="w-24 h-24 flex-shrink-0 bg-headerBackGround rounded-md p-1">
-                      <img
-                        src={product.images[0]}
-                        alt={product.name}
-                        className="object-contain w-full h-full"
+                {/* Shipping Address */}
+                <div>
+                  <div className="flex items-center gap-2 mb-6">
+                    <Home className="h-5 w-5 text-gray-600" />
+                    <h2 className="text-xl font-semibold text-gray-800">Shipping Address</h2>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="md:col-span-2">
+                      <InputField
+                        icon={Home}
+                        name="address"
+                        placeholder="Address Line"
+                        value={formData.address}
+                        onChange={handleChange}
                       />
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-base font-medium text-gray-800">{product.name}</h3>
-                        {product.giftWrapping && (
-                          <span className="ml-2 text-red-500 text-xl">🎁</span>
-                        )}
-                      </div>
-                      <ul className="text-sm text-gray-600 mt-2 space-y-1">
-                        <li className="flex justify-between">
-                          <span>Size:</span> <span>{product.size}</span>
-                        </li>
-                        <li className="flex justify-between">
-                          <span>Quantity:</span> <span>{product.quantity}</span>
-                        </li>
-                        <li className="flex justify-between">
-                          <span>Total Price:</span>{" "}
-                          <span>₹{finalPrice.toLocaleString()}</span>
-                        </li>
-                      </ul>
-                    </div>
+                    <InputField
+                      icon={MapPin}
+                      name="city"
+                      placeholder="City"
+                      value={formData.city}
+                      onChange={handleChange}
+                    />
+                    <InputField
+                      icon={MapPin}
+                      name="state"
+                      placeholder="State"
+                      value={formData.state}
+                      onChange={handleChange}
+                    />
+                    <InputField
+                      icon={MapPin}
+                      name="zipCode"
+                      placeholder="ZIP Code"
+                      value={formData.zipCode}
+                      onChange={handleChange}
+                    />
                   </div>
-                );
-              })}
+                </div>
+
+                {/* Payment Method */}
+                <div>
+                  <div className="flex items-center gap-2 mb-6">
+                    <CreditCard className="h-5 w-5 text-gray-600" />
+                    <h2 className="text-xl font-semibold text-gray-800">Payment Method</h2>
+                  </div>
+                  <div className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg">
+  <input
+    type="radio"
+    name="paymentMethod"
+    value="Razorpay"
+    checked
+    readOnly
+    className="h-4 w-4 border-gray-300 text-gray-600 accent-gray-500 focus:ring-gray-500"
+  />
+            <label className="flex items-center gap-2">
+                      <CreditCard className="h-5 w-5 text-gray-600" />
+                      <span>Razorpay</span>
+                    </label>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full px-6 py-3 bg-gray-800 text-white text-lg rounded-lg hover:bg-gray-600 transition duration-200 flex items-center justify-center gap-2 disabled:opacity-70"
+                >
+                  {loading ? (
+                    <Spinner />
+                  ) : (
+                    <>
+                      <CreditCard className="h-5 w-5" />
+                      Place Order
+                    </>
+                  )}
+                </button>
+              </form>
             </div>
           </div>
-          <div className="bg-headerBackGround px-6 py-4 border-gray-300 border-t">
-          <dl className="flex items-center justify-between gap-4">
-                      <dt className="font-forumNormal text-gray-500 dark:text-gray-400 font-semibold">Delivery</dt>
-                      <dd className="font-forumNormal text-green-600">-₹100</dd>
-                    </dl>
-            <h4 className="flex justify-between text-lg font-semibold text-gray-800">
-              Total: <span>₹{totalCartPrice.toLocaleString()}</span>
-            </h4>
-            
-
-          </div>
-        </div>
-
-        {/* Checkout Form */}
-        <div className="bg-headerBackGround border font-forumNormal border-gray-300 rounded-lg shadow-md lg:col-span-2 px-6 py-8">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-            Complete Your Order
-          </h2>
-          <form onSubmit={handleSubmit}>
-            {/* Personal Details */}
-            <div className="mb-8">
-              <h3 className="text-lg font-medium text-gray-800 mb-4">Personal Details</h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                {[
-                  { name: "firstName", placeholder: "First Name" },
-                  { name: "lastName", placeholder: "Last Name" },
-                  { name: "email", placeholder: "Email" },
-                  { name: "phoneNo", placeholder: "Phone No." },
-                ].map((field, index) => (
-                  <input
-                    key={index}
-                    type={field.name === "email" ? "email" : field.name === "phoneNo" ? "tel" : "text"}
-                    name={field.name}
-                    placeholder={field.placeholder}
-                    value={formData[field.name]}
-                    onChange={handleChange}
-                    className="px-4 py-3 bg-headerBackGround border border-gray-300 rounded-md text-gray-800 text-sm"
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Shipping Address */}
-            <div className="mb-8">
-              <h3 className="text-lg font-medium text-gray-800 mb-4">Shipping Address</h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                {[
-                  { name: "address", placeholder: "Address Line" },
-                  { name: "city", placeholder: "City" },
-                  { name: "state", placeholder: "State" },
-                  { name: "zipCode", placeholder: "Zip Code" },
-                ].map((field, index) => (
-                  <input
-                    key={index}
-                    type="text"
-                    name={field.name}
-                    placeholder={field.placeholder}
-                    value={formData[field.name]}
-                    onChange={handleChange}
-                    className="px-4 py-3 bg-headerBackGround border border-gray-300 rounded-md text-gray-800 text-sm"
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Payment Method */}
-            <div className="mb-8">
-              <h3 className="text-lg font-medium text-gray-800 mb-4">Payment Method</h3>
-              <div className="flex items-center gap-4">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="Razorpay"
-                  checked
-                  readOnly
-                  className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                />
-                <label>Razorpay</label>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full px-4 py-3 bg-homePage text-white text-lg rounded-md hover:bg-gray-900"
-            >
-            {loading ? <Spinner/> : "Place Order"}
-            </button>
-          </form>
         </div>
       </div>
     </div>

@@ -2,14 +2,20 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import ShopFilters from '../components/ShopFilter';
 import { useEffect, useRef, useState } from 'react';
 import { X, SlidersHorizontal,Heart, ShoppingCart } from 'lucide-react'; // For hamburger and close icons
-
+import { useDispatch, useSelector } from 'react-redux';
+import { addToWishlist, removeFromWishlist } from '../feature/WishListSlice';
+import { toast } from 'react-toastify';
 
 
 const Shop = () => {
-  const [drawerOpen, setDrawerOpen] = useState(false); // State for sidebar visibility
-  const [products, setProducts] = useState([]); // State for products
-  const [loading, setLoading] = useState(true); // State for loading status
+  const [drawerOpen, setDrawerOpen] = useState(false); 
+  const [products, setProducts] = useState([]); 
+  const [loading, setLoading] = useState(true); 
   const Shop = useRef(null);
+  const dispatch = useDispatch();
+  const location = useLocation();
+  
+  const wishlist = useSelector(state => state.wishlist.items);
 
   const [filters, setFilters] = useState({
     priceRange: 12500,
@@ -19,7 +25,7 @@ const Shop = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const { category } = useParams();
 
-  // Fetch products from the API
+ 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -49,16 +55,11 @@ const Shop = () => {
     }
   }, []);
 
-  const location = useLocation();
   
   useEffect(() => {
     window.scrollTo(0, 0); // Scroll to top of the page
   }, [location]);
-  
-  
 
-   // Filter products based on selected filters
-    // Apply filters and category-based filtering
   useEffect(() => {
     const applyFilters = () => {
       const { priceRange, selectedColors, selectedSizes } = filters;
@@ -67,7 +68,6 @@ const Shop = () => {
 
 
       const filtered = products.filter((product) => {
-
         const matchesCategory = !category || product.category.toLowerCase() === category.toLowerCase();
         const matchesPrice = product.price <= priceRange;
         const matchesColor = 
@@ -86,6 +86,25 @@ const Shop = () => {
     applyFilters();
   }, [filters, products, category]);
   
+
+ 
+
+ 
+  const isProductInWishlist = (productId) => {
+    return wishlist.some(item => item._id === productId);
+  };
+
+  const toggleLike = (item) => {
+    if (isProductInWishlist(item._id)) {
+      dispatch(removeFromWishlist(item._id));
+      toast.success("Product removed from Wishlist!");
+    } else {
+      dispatch(addToWishlist(item));
+      toast.success("Product Added to Wishlist!");
+    }
+  };
+
+
 
   return (
     <>
@@ -114,7 +133,7 @@ const Shop = () => {
       <div ref={Shop} className="bg-headerBackGround flex flex-col md:flex-row">
         {/* Sidebar */}
         <div
-          className={`fixed z-50 top-0 left-0 w-72 h-full bg-headerBackGround p-6 transition-transform transform ${
+          className={`fixed z-50 top-0 left-0 w-72 h-full bg-headerBackGround p-6 transition-transform duration-500 transform ${
             drawerOpen ? 'translate-x-0' : '-translate-x-full'
           } md:translate-x-0 md:relative md:block`}
         >
@@ -125,7 +144,7 @@ const Shop = () => {
         {drawerOpen && (
           <div
             onClick={() => setDrawerOpen(false)}
-            className="fixed inset-0 bg-black opacity-50 z-40 md:hidden"
+            className="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-40 md:hidden"
           ></div>
         )}
 
@@ -155,8 +174,15 @@ const Shop = () => {
                     </div>
                   </Link>
                   
-                  <button className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-gray-100 transition-colors duration-300 transform hover:scale-110">
-                    <Heart className="w-5 h-5 text-red-500" />
+                  <button 
+                  onClick={() => toggleLike(product)}
+                  className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-gray-100 transition-colors duration-300 transform hover:scale-110">
+                    {/* <Heart className="w-5 h-5 text-red-500" /> */}
+                    <Heart
+    className={`w-5 h-5 ${
+      isProductInWishlist(product._id) ? 'text-red-500 fill-red-500' : 'text-gray-600'
+    } transition-colors`}
+  />
                   </button>
                 </div>
 

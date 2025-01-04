@@ -1,89 +1,101 @@
 import { Link, useLocation } from "react-router-dom";
-import { FaCheckCircle, FaCreditCard, FaMapMarkerAlt, FaPhone , FaCalendarAlt, FaUser,FaHistory, FaShoppingCart} from "react-icons/fa";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+import { CheckCircle, ShoppingBag, ArrowRight, Package } from "lucide-react";
 
 const OrderConfirmationPage = () => {
-
-
-
+  const [show, setShow] = useState(false);
   const location = useLocation();
   
   useEffect(() => {
-    window.scrollTo(0, 0); // Scroll to top of the page
+    window.scrollTo(0, 0);
+    setShow(true);
   }, [location]);
-  
 
   return (
-    <section className="bg-headerBackGround py-8 antialiased dark:bg-gray-900 md:py-16">
-      <div className="mx-auto bg-headerBackGround max-w-3xl px-4 2xl:px-0">
-        <div className="text-center mb-8">
-          <FaCheckCircle className="mx-auto text-green-500 text-6xl mb-4" />
-          <h2 className="text-3xl font-semibold font-forumNormal text-gray-900 dark:text-white sm:text-4xl mb-4">
-            Thanks for your order!
-          </h2>
-          <p className="text-gray-500 font-forumNormal dark:text-gray-400 text-lg mb-6 md:mb-8">
-            Your order{' '}
-            <span className="font-medium text-gray-900 dark:text-white">#7564804</span> has been successfully placed! 
-            We will process it within 24 hours on business days, and you will receive an email once your order has been shipped.
+    <div className="min-h-screen bg-headerBackGround flex items-center justify-center p-4">
+      <div className={`max-w-lg w-full text-center transition-all duration-700 transform ${show ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+        {/* Success Animation */}
+        <div className="mb-8 relative">
+          <div className="absolute inset-0 animate-ping rounded-full bg-green-100 duration-1000" />
+          <div className="relative">
+            <CheckCircle className="w-24 h-24 mx-auto text-green-500 animate-bounce" />
+          </div>
+        </div>
+
+        {/* Order Success Message */}
+        <div className={`space-y-4 transition-all delay-300 duration-700 ${show ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-10'}`}>
+          <h1 className="text-4xl font-bold text-gray-800">
+            Order Confirmed!
+          </h1>
+          
+          <div className="flex justify-center items-center gap-2 text-gray-600">
+            <Package className="w-5 h-5" />
+            <p className="text-lg">Your package is on its way!</p>
+          </div>
+
+          <p className="text-gray-500 max-w-md mx-auto">
+            We'll send you shipping confirmation and tracking details to your email shortly.
           </p>
         </div>
 
-        <div className="space-y-4 sm:space-y-2 rounded-lg border border-gray-300 bg-headerBackGround p-6 dark:border-gray-700 dark:bg-gray-800 mb-6 md:mb-8">
-          <dl className="sm:flex items-center justify-between gap-4 mb-4">
-            <dt className="font-medium text-gray-500 dark:text-gray-400 flex items-center gap-2">
-              <FaCalendarAlt />
-              Date
-            </dt>
-            <dd className="font-medium text-gray-900 dark:text-white sm:text-end">3 Jan 2025</dd>
-          </dl>
-          <dl className="sm:flex items-center justify-between gap-4 mb-4">
-            <dt className="font-medium text-gray-500 dark:text-gray-400 flex items-center gap-2">
-              <FaCreditCard />
-              Payment Method
-            </dt>
-            <dd className="font-medium text-gray-900 dark:text-white sm:text-end">Razorpay</dd>
-          </dl>
-          <dl className="sm:flex items-center justify-between gap-4 mb-4">
-            <dt className="font-medium text-gray-500 dark:text-gray-400 flex items-center gap-2">
-              <FaUser />
-              Name
-            </dt>
-            <dd className="font-medium text-gray-900 dark:text-white sm:text-end">Sagar Bawanthade</dd>
-          </dl>
-          <dl className="sm:flex items-center justify-between gap-4 mb-4">
-            <dt className="font-medium text-gray-500 dark:text-gray-400 flex items-center gap-2">
-              <FaMapMarkerAlt />
-              Address
-            </dt>
-            <dd className="font-medium text-gray-900 dark:text-white sm:text-end">Mangal Chhaya Apartment - 411035 , Pune, Maharshtra, ,India</dd>
-          </dl>
-          <dl className="sm:flex items-center justify-between gap-4 mb-4">
-            <dt className="font-medium text-gray-500 dark:text-gray-400 flex items-center gap-2">
-              <FaPhone />
-              Phone
-            </dt>
-            <dd className="font-medium text-gray-900 dark:text-white sm:text-end">9511733122</dd>
-          </dl>
+        {/* Animated Divider */}
+        <div className="my-10 flex justify-center items-center gap-2">
+          <div className={`h-0.5 w-16 bg-gray-200 transition-all delay-500 duration-700 ${show ? 'w-16 opacity-100' : 'w-0 opacity-0'}`} />
+          <ShoppingBag className="w-6 h-6 text-gray-400" />
+          <div className={`h-0.5 w-16 bg-gray-200 transition-all delay-500 duration-700 ${show ? 'w-16 opacity-100' : 'w-0 opacity-0'}`} />
         </div>
 
-        <div className="flex items-center justify-center space-x-6 sm:space-x-8">
-          <Link
-            to="/user-order-history"
-            className="text-white bg-homePage hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-lg px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800 flex items-center gap-2"
-          >
-            <FaHistory />
-            View your Orders
-          </Link>
+        {/* Action Buttons */}
+        <div className={`flex flex-col sm:flex-row gap-4 justify-center items-center transition-all delay-700 duration-700 ${show ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-10'}`}>
           <Link
             to="/shop"
-            className="py-2 px-4 text-lg font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 flex items-center gap-2"
+            className="group flex items-center gap-2 px-6 py-3 bg-gray-800 text-white rounded-full hover:bg-gray-500 transition-all duration-300 transform hover:scale-105"
           >
-            <FaShoppingCart />
-            Return to shopping
+            <ShoppingBag className="w-5 h-5" />
+            <span>Continue Shopping</span>
+            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+          </Link>
+          
+          <Link
+            to="/order-history"
+            className="flex items-center gap-2 px-6 py-3 border-2 border-gray-200 text-gray-600 rounded-full hover:border-gray-300 hover:bg-gray-50 transition-all duration-300 transform hover:scale-105"
+          >
+            <Package className="w-5 h-5" />
+            <span>Track Order</span>
           </Link>
         </div>
+
+        {/* Celebration Confetti Effect */}
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+          {show && Array.from({ length: 50 }).map((_, i) => (
+            <div
+              key={i}
+              className="absolute animate-confetti"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `-5%`,
+                animationDelay: `${Math.random() * 3}s`,
+                animationDuration: `${3 + Math.random() * 2}s`,
+                backgroundColor: ['#FCD34D', '#60A5FA', '#34D399', '#F87171'][Math.floor(Math.random() * 4)],
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+              }}
+            />
+          ))}
+        </div>
       </div>
-    </section>
+
+      <style>{`
+        @keyframes confetti {
+          0% { transform: translateY(0) rotate(0deg); }
+          100% { transform: translateY(100vh) rotate(360deg); }
+        }
+        .animate-confetti {
+          animation: confetti linear infinite;
+        }
+      `}</style>
+    </div>
   );
 };
 

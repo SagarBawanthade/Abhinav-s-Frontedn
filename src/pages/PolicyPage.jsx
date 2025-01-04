@@ -1,25 +1,29 @@
-import { useEffect, useRef } from 'react';
-import { HiShieldCheck, HiUser, HiLockClosed, HiLink } from 'react-icons/hi'; // Icons for various sections
+import { useEffect} from 'react';
+import { HiShieldCheck, HiUser, HiLockClosed } from 'react-icons/hi'; // Icons for various sections
 import { useLocation } from 'react-router-dom';
 
 const PolicyPage = () => {
-  const policyRef = useRef(null);
-
-  // Scroll to the element when the component is mounted
-  useEffect(() => {
-    if (policyRef.current) {
-      policyRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, []);
+ 
   const location = useLocation();
   
-  useEffect(() => {
-    window.scrollTo(0, 0); // Scroll to top of the page
-  }, [location]);
   
+  useEffect(() => {
+    const currentScroll = window.scrollY;
+    if (currentScroll > 0) {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+      });
+    }
+  }, [location]); 
+
+  
+  
+ 
 
   return (
-    <div ref={policyRef} className="bg-headerBackGround min-h-screen py-8">
+    <div  className="bg-headerBackGround min-h-screen py-8">
       <div className="container mx-auto px-6 md:px-12">
         <h2 className="text-5xl forum-regular font-extrabold text-orange-800 mb-6">Privacy Policy</h2>
 

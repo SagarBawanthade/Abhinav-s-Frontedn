@@ -8,8 +8,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector , useDispatch} from 'react-redux';
 import { logout } from '../feature/authSlice';
 import { toast } from "react-hot-toast";
-import { removeItemFromCart } from '../feature/cartSlice';
-import { User } from 'lucide-react';
+import { fetchCartItems, removeItemFromCart } from '../feature/cartSlice';
+import { User , LogOut, LogIn,Package, UserPen , ShoppingBag} from 'lucide-react';
+import { persistor } from '../utils/store';
 
 const Header = () => {
   const [cartOpen, setCartOpen] = useState(false);
@@ -19,7 +20,7 @@ const Header = () => {
   const navigate = useNavigate();
 
   // Get authentication state from Redux store
-  const { id, token , role} = useSelector((state) => state.auth);
+  const { id, token } = useSelector((state) => state.auth);
   const cartItems = useSelector((state) => state.cart.items);
   
   const userId = useSelector((state) => state.auth.id);
@@ -31,6 +32,7 @@ const Header = () => {
   const handleLogout = () => {
    
     dispatch(logout(id, token ));
+    persistor.purge(); 
     toast.success('Logged out successfully!');
     navigate('/login');
     setMenuOpen(false);
@@ -40,11 +42,19 @@ const Header = () => {
 
   const toggleCart = () => {
     setCartOpen(!cartOpen);
+   
+      if (userId && token) {
+        dispatch(fetchCartItems({ userId, token }));
+      }
+  
   };
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen); // Toggle the menu visibility
   };
+ 
+
+
 
   useEffect(() => {
     // Close the menu if clicked outside of it
@@ -74,7 +84,7 @@ const Header = () => {
     
     dispatch(removeItemFromCart({ userId, token, productId })).then(() => {
    
-    window.location.reload();
+   dispatch(fetchCartItems({ userId, token }));
     setMenuOpen(true);
   }).catch((error) => {
       toast.error("Error removing item: ", error);
@@ -170,23 +180,34 @@ const Header = () => {
       {!id && !token ? (
         // Unauthenticated User Menu
         <>
-          <Link to="/login">
+          <Link to="/login" onClick={() => setMenuOpen(false)}>
             <li>
               <a
                 href="#"
-                className="flex items-center justify-between px-3 py-2 text-sm hover:bg-gray hover:text-black hover:bg-gray-300 transition duration-300"
+                className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray hover:text-black hover:bg-gray-300 transition duration-300"
               >
+                  <LogIn size={15} />
                 <span>Log In</span>
               </a>
             </li>
           </Link>
-          <Link to="/register">
+          <Link to="/register" onClick={() => setMenuOpen(false)}>
             <li>
               <a
                 href="#"
-                className="flex items-center justify-between px-3 py-3 text-sm hover:text-black hover:bg-gray-300 transition duration-300"
+                className="flex items-center gap-2 px-3 py-3 text-sm hover:text-black hover:bg-gray-300 transition duration-300"
               >
+                  <UserPen size={15}/>
                 <span>Register</span>
+              </a>
+            </li>
+          </Link>
+           {/* Wishlist - Shown Only in Dropdown for Small Screens */}
+           <Link to="/wish-list" className="md:hidden" onClick={() => setMenuOpen(false)}>
+            <li>
+              <a href="#" className="flex items-center gap-2  px-3 py-3 text-sm hover:bg-gray-300 transition duration-300">
+              <ShoppingBag  size={15}/>
+                <span>Wishlist</span>
               </a>
             </li>
           </Link>
@@ -194,46 +215,49 @@ const Header = () => {
       ) : (
         // Authenticated User Menu
         <>
-          <Link to="/user-profile">
+          <Link to="/user-profile" onClick={() => setMenuOpen(false)}>
+         
             <li>
               <a
                 href="#"
-                className="flex items-center justify-between px-4 py-3 text-sm hover:bg-gray-300 hover:text-black transition duration-300"
+                className="flex items-center gap-2 px-4 py-3 text-sm hover:bg-gray-300 hover:text-black transition duration-300"
               >
+                 <User size={16} />
                 <span>Profile</span>
               </a>
               
             </li>
           </Link>
           {/* Wishlist - Shown Only in Dropdown for Small Screens */}
-          <Link to="/wish-list" className="md:hidden">
+          <Link to="/wish-list" onClick={() => setMenuOpen(false)} className="md:hidden">
             <li>
-              <a href="#" className="flex items-center justify-between px-4 py-3 text-sm hover:bg-gray-300 transition duration-300">
+              <a href="#" className="flex items-center gap-2 px-4 py-3 text-sm hover:bg-gray-300 transition duration-300">
+              <ShoppingBag  size={15}/>
                 <span>Wishlist</span>
               </a>
             </li>
           </Link>
           
-          <Link to="/order-history">
+          <Link to="/order-history" onClick={() => setMenuOpen(false)}>
             <li>
               <a
                 href="#"
-                className="flex items-center justify-between px-4 py-3 text-sm hover:bg-gray-300 hover:text-gray-900 transition duration-300"
+                className="flex items-center gap-2  px-4 py-3 text-sm hover:bg-gray-300 hover:text-gray-900 transition duration-300"
                 
-              >
+              >  <Package size={15} />
                 <span>My Orders</span>
               </a>
               <hr className="border-thin border-gray-300" />
             </li>
           </Link>
           
-          <Link to="/">
+          <Link to="/" onClick={() => setMenuOpen(false)}>
             <li>
               <a
                 href="#"
-                className="flex items-center justify-between px-4 py-3 text-sm hover:bg-gray-300 hover:text-gray-900 transition duration-300"
+                className="flex items-center gap-2 px-4 py-3 text-sm hover:bg-gray-300 hover:text-gray-900 transition duration-300"
                 onClick={handleLogout}
-              >
+              ><LogOut  size={15}/>
                 <span>Log out</span>
               </a>
             </li>
@@ -252,12 +276,12 @@ const Header = () => {
       <Dialog open={cartOpen} onClose={setCartOpen} className="relative z-50">
         <DialogBackdrop
           transition
-          className="fixed inset-0 bg-gray-500/75 transition-opacity duration-500 ease-in-out data-[closed]:opacity-0"
+          className="fixed inset-0 bg-gray-900/50 backdrop-blur-[3px] transition-opacity duration-300 ease-in-out data-[closed]:opacity-0"
         />
 
         <div className="fixed inset-0 font-forumNormal overflow-hidden">
           <div className="absolute inset-0 z-30 overflow-hidden">
-            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full md:pl-10">
               <DialogPanel
                 transition
                 className="pointer-events-auto w-screen max-w-md transform transition duration-500 ease-in-out data-[closed]:translate-x-full sm:duration-700"

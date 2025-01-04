@@ -1,41 +1,180 @@
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { motion, useScroll, useTransform } from "framer-motion";
+import {  Sparkles, ShoppingBag } from 'lucide-react';
 
 const ShopNowPage = () => {
-
   const location = useLocation();
+  const { scrollY } = useScroll();
+  
+  // Parallax effect for background
+  const backgroundY = useTransform(scrollY, [0, 500], [0, 100]);
   
   useEffect(() => {
-    window.scrollTo(0, 0); // Scroll to top of the page
+    window.scrollTo(0, 0);
   }, [location]);
-  
 
-    return (
-      <div className="flex flex-col md:flex-row items-center text-center bg-headerBackGround">
-        {/* Left Section - Hoodie Image */}
-        <div className="w-full md:w-1/2">
-          <img
-            src="/images/shoplogo.jpg"
-            alt="Hoodie"
-            className="w-full h-auto object-cover"
+  return (
+    <section className="min-h-screen bg-[#f8f8f8] relative overflow-hidden">
+      {/* Animated Background Pattern */}
+      <motion.div 
+        className="absolute inset-0 bg-grid-pattern opacity-5"
+        style={{ y: backgroundY }}
+      />
+
+      {/* Floating Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(3)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-24 h-24 rounded-full bg-gray-900/5"
+            initial={{ 
+              x: Math.random() * 100,
+              y: Math.random() * 100,
+              scale: 0.8
+            }}
+            animate={{
+              x: [Math.random() * window.innerWidth, Math.random() * window.innerWidth],
+              y: [Math.random() * window.innerHeight, Math.random() * window.innerHeight],
+              scale: [0.8, 1.2, 0.8]
+            }}
+            transition={{
+              duration: 20 + i * 5,
+              repeat: Infinity,
+              ease: "linear"
+            }}
           />
-        </div>
-  
-        {/* Right Section - Text and Button */}
-        <div className="w-full r md:w-1/2 px-6 py-8 md:py-0 md:pl-12 flex flex-col  justify-center">
-          <h4 className="forum-regular text-center text-3xl md:text-5xl md:text-center font-bold text-gray-800 mb-4">
-            Unleash Your Style
-          </h4>
-          <p className="text-lg font-avenir text-gray-600 mb-6">
-            Discover the best in fashion online. Shop now to elevate your wardrobe.
-          </p>
-          <Link to="/shop" className="bg-homePage text-white px-8 py-4 w-30 rounded-full text-2xl shadow-md hover:bg-gray-700 transition">
-            Shop Now
-          </Link>
+        ))}
+      </div>
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 py-8 lg:py-16">
+          {/* Left Section - Image */}
+          <motion.div 
+            className="w-full lg:w-1/2"
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="relative group">
+              {/* Image Container with Enhanced Hover Effect */}
+              <div className="relative overflow-hidden rounded-3xl shadow-xl">
+                <motion.img
+                  src="/images/shoplogo.jpg"
+                  alt="Hoodie"
+                  className="w-full h-auto object-cover"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
+                />
+                {/* Dynamic Overlay */}
+                <motion.div 
+                  className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30"
+                  initial={{ opacity: 0 }}
+                  whileHover={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                />
+              </div>
+
+              {/* Animated Decorative Elements */}
+              <motion.div 
+                className="absolute -top-4 -left-4 w-24 h-24 border-t-2 border-l-2 border-gray-800 opacity-20"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              />
+              <motion.div 
+                className="absolute -bottom-4 -right-4 w-24 h-24 border-b-2 border-r-2 border-gray-800 opacity-20"
+                animate={{ rotate: -360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              />
+            </div>
+          </motion.div>
+
+          {/* Right Section - Content */}
+          <motion.div 
+            className="w-full lg:w-1/2 flex flex-col items-center lg:items-start gap-6 lg:gap-8"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, staggerChildren: 0.2 }}
+          >
+            {/* Animated Premium Badge */}
+            <motion.div
+              className="flex items-center gap-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+              >
+                <Sparkles className="w-4 h-4 text-yellow-500" />
+              </motion.div>
+              <span className="text-sm font-medium text-gray-800">Premium Collection</span>
+            </motion.div>
+
+            {/* Animated Heading */}
+            <motion.div className="text-center lg:text-left">
+              <motion.h4 
+                className="forum-regular text-4xl sm:text-5xl lg:text-6xl text-gray-800 leading-tight"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+              >
+                Unleash Your
+                <motion.span 
+                  className="block text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  Style
+                </motion.span>
+              </motion.h4>
+            </motion.div>
+
+            {/* Description with Staggered Animation */}
+            <motion.p 
+              className="text-md font-forumNormal sm:text-xl text-gray-600 max-w-md text-center lg:text-left"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              Discover the best in fashion online. Shop now to elevate your wardrobe with our premium collection.
+            </motion.p>
+
+            {/* Enhanced CTA Button */}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Link 
+                to="/shop"
+                className="group relative overflow-hidden bg-gray-900 text-white px-6 sm:px-8 py-4 rounded-full text-lg font-medium inline-flex items-center gap-2"
+              >
+                <ShoppingBag className="w-5 h-5" />
+                <span className="relative z-10">Shop Collection</span>
+                <motion.div
+                  className="absolute right-4"
+                  animate={{ x: [0, 4, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                 
+                </motion.div>
+                <motion.div 
+                  className="absolute inset-0 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800"
+                  animate={{ 
+                    x: ["0%", "100%", "0%"],
+                    backgroundColor: ["#1a202c", "#2d3748", "#1a202c"]
+                  }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                />
+              </Link>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
-    );
-  };
-  
-  export default ShopNowPage;
-  
+    </section>
+  );
+};
+
+export default ShopNowPage;

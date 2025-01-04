@@ -20,7 +20,7 @@ const OrderHistory = () => {
     // Fetch orders from the backend
     const fetchOrders = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/order/orders');
+        const response = await fetch('http://192.168.1.33:5000/api/order/orders');
         const data = await response.json();
         console.log('Orders:', data);
         setOrders(data);
