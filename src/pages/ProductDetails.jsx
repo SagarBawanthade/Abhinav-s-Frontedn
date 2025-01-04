@@ -124,6 +124,7 @@ function ProductDetails() {
 
     };
 
+    console.log("cartItem",cartItem);
     
 
   
