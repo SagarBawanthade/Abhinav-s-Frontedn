@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../feature/authSlice";
-import { setUserId } from "../feature/WishListSlice";
+
+import { setUserId } from "../feature/wishlistSlice";
 
 
 const Login = () => {
