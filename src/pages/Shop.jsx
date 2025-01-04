@@ -1,9 +1,9 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import ShopFilters from '../components/ShopFilter';
 import { useEffect, useRef, useState } from 'react';
-import { X, SlidersHorizontal } from 'lucide-react'; // For hamburger and close icons
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import Spinner from '../components/Spinner';
+import { X, SlidersHorizontal,Heart, ShoppingCart } from 'lucide-react'; // For hamburger and close icons
+
+
 
 const Shop = () => {
   const [drawerOpen, setDrawerOpen] = useState(false); // State for sidebar visibility
@@ -25,7 +25,7 @@ const Shop = () => {
       try {
         setLoading(true); // Set loading to true before fetching
         const response = await fetch(
-          'http://localhost:5000/api/product/getproducts'
+          'https://abhinasv-s-backend.onrender.com/api/product/getproducts'
         );
         const data = await response.json();
         setProducts(data);
@@ -49,6 +49,12 @@ const Shop = () => {
     }
   }, []);
 
+  const location = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to top of the page
+  }, [location]);
+  
   
 
    // Filter products based on selected filters
@@ -108,7 +114,7 @@ const Shop = () => {
       <div ref={Shop} className="bg-headerBackGround flex flex-col md:flex-row">
         {/* Sidebar */}
         <div
-          className={`fixed z-20 top-0 left-0 w-72 h-full bg-headerBackGround p-6 transition-transform transform ${
+          className={`fixed z-50 top-0 left-0 w-72 h-full bg-headerBackGround p-6 transition-transform transform ${
             drawerOpen ? 'translate-x-0' : '-translate-x-full'
           } md:translate-x-0 md:relative md:block`}
         >
@@ -119,75 +125,83 @@ const Shop = () => {
         {drawerOpen && (
           <div
             onClick={() => setDrawerOpen(false)}
-            className="fixed inset-0 bg-black opacity-50 z-0 md:hidden"
+            className="fixed inset-0 bg-black opacity-50 z-40 md:hidden"
           ></div>
         )}
 
         {/* Products Section */}
-        <div className="bg-headerBackGround md:w-4/4 w-full forum-regular mb-3">
-        <h1 className="forum-regular text-5xl mb-5 text-left pt-2 pl-3">
-            {category ? category.charAt(0).toUpperCase() + category.slice(1) : "All Products"}
-          </h1>
-          {/* Spinner for loading */}
-          {loading ? (
-            <div className="flex justify-center items-center h-60">
-              <Spinner/>
-            </div>
-          ) : (
-            /* Product Grid */
-            <div className="ml-2 mr-2 gap-2 mb-28 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 md:gap-4">
-               {filteredProducts.length > 0 ? (
-                filteredProducts.map((product) => (
-                  <div key={product._id} className="overflow-hidden h-full">
-                     <Link to={`/product-details/${product._id}`}>
-                    <img
-                      src={product.images && product.images[0]}
-                      alt={product.name}
-                      className="h-60 rounded-lg md:h-96 mb-2 w-full object-cover mx-auto"
-                    /></Link>
-                    <div>
-                      <div className="flex">
-                      <Link to={`/product-details/${product._id}`}><h3 className="text-sm font-forumNormal w-full mr-10 text-gray-900 md:text-lg">
-                          {product.name}
-                        </h3></Link>
-                        <FavoriteBorderIcon
-                          className="cursor-pointer hover:scale-110 transition-transform ml-45 md:ml-34"
-                          sx={{
-                            color: 'red',
-                            fontSize: { xs: 24, sm: 30 },
-                            fontWeight: 'normal',
-                          }}
-                        />
-                      </div>
-                      <div className="flex items-center">
-                        <p className="text-lg font-bold font-forumNormal md:text-lg mr-3 text-gray-700">
-                          ₹{product.price}
-                        </p>
-                        {product.price < 1599 && (
-                          <p className="text-sm font-forumNormal md:text-lg text-gray-700 line-through">
-                            ₹1599
-                          </p>
-                        )}
-                      </div>
-                      <span className="inline-block px-1 py-1 text-sm text-white bg-red-600 rounded-lg">
-                        Deal of the Day
-                      </span>
-                      <Link to={`/product-details/${product._id}`}>
-                        <button className="w-full mt-4 py-3 text-xl rounded-lg bg-homePage text-white hover:bg-gray-900">
-                          Add to Cart
-                        </button>
-                      </Link>
+        <div className="bg-headerBackGround w-full px-4 md:px-6 py-8">
+      <h1 className="font-forumNormal text-4xl md:text-5xl mb-8 text-left">
+        {category ? category.charAt(0).toUpperCase() + category.slice(1) : "All Products"}
+      </h1>
+
+      {loading ? (
+        <div className="flex justify-center items-center h-60">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6 mb-28">
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map((product) => (
+              <div key={product._id} className="group relative bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+                <div className="relative">
+                  <Link to={`/product-details/${product._id}`}>
+                    <div className="aspect-[5/5] overflow-hidden rounded-t-xl">
+                      <img
+                        src={product.images[0]}
+                        alt={product.name}
+                        className="h-full w-full object-cover object-center transform group-hover:scale-110 transition-transform duration-500"
+                      />
                     </div>
+                  </Link>
+                  
+                  <button className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-gray-100 transition-colors duration-300 transform hover:scale-110">
+                    <Heart className="w-5 h-5 text-red-500" />
+                  </button>
+                </div>
+
+                <div className="p-2">
+                  <Link to={`/product-details/${product._id}`}>
+                    <h3 className="font-forumNormal text-left text-sm md:text-lg text-gray-900 mb-1 truncate group-hover:text-black">
+                      {product.name}
+                    </h3>
+                  </Link>
+
+                  <div className="flex items-center space-x-2 mb-3">
+                    <span className="text-lg md:text-xl font-bold font-forumNormal text-gray-900">
+                      ₹{product.price}
+                    </span>
+                    {product.price < 1599 && (
+                      <span className="text-sm md:text-base font-forumNormal text-gray-500 line-through">
+                        ₹1599
+                      </span>
+                    )}
                   </div>
-                ))
-              ) : (
-                <p className="text-center text-gray-500 col-span-2 lg:col-span-3">
-                  No products available.
-                </p>
-              )}
-            </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="inline-flex items-center px-3.5 py-1 text-xs font-medium rounded-lg bg-red-100 text-red-800">
+                      Deal of the Day
+                    </span>
+                    
+                    <Link to={`/product-details/${product._id}`} className="hidden lg:block">
+                      <button className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg bg-gray-900 text-white hover:bg-gray-800 transition-colors">
+                        <ShoppingCart className="w-4 h-4 mr-2" />
+                        Add to Cart
+                      </button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="col-span-full text-center text-lg text-gray-500 py-12">
+              No products available.
+            </p>
           )}
         </div>
+      )}
+    </div>
+          
       </div>
     </>
   );

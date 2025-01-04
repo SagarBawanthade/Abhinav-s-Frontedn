@@ -1,7 +1,18 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { FaCheckCircle, FaCreditCard, FaMapMarkerAlt, FaPhone , FaCalendarAlt, FaUser,FaHistory, FaShoppingCart} from "react-icons/fa";
+import { useEffect } from "react";
 
 const OrderConfirmationPage = () => {
+
+
+
+  const location = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to top of the page
+  }, [location]);
+  
+
   return (
     <section className="bg-headerBackGround py-8 antialiased dark:bg-gray-900 md:py-16">
       <div className="mx-auto bg-headerBackGround max-w-3xl px-4 2xl:px-0">
@@ -57,7 +68,7 @@ const OrderConfirmationPage = () => {
 
         <div className="flex items-center justify-center space-x-6 sm:space-x-8">
           <Link
-            to="/order-history"
+            to="/user-order-history"
             className="text-white bg-homePage hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-lg px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800 flex items-center gap-2"
           >
             <FaHistory />

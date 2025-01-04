@@ -1,11 +1,18 @@
-import { Link } from "react-router-dom";
-import Slide from "../components/Slide";
+import {useLocation } from "react-router-dom";
 import HoodiesPage from "./HoodiesPage";
 import InstagramPage from "./InstaGramPage";
 import ServicesPage from "./ServicesPage";
 import ShopNowPage from "./ShopNowPage";
+import { useEffect } from "react";
 
 const HomePage = () => {
+
+  const location = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to top of the page
+  }, [location]);
+  
   return (
     <>
   

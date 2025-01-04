@@ -1,6 +1,15 @@
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const ShopNowPage = () => {
+
+  const location = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to top of the page
+  }, [location]);
+  
+
     return (
       <div className="flex flex-col md:flex-row items-center text-center bg-headerBackGround">
         {/* Left Section - Hoodie Image */}

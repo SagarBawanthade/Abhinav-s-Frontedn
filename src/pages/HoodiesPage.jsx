@@ -1,30 +1,53 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import Spinner from "../components/Spinner";
 import { Swiper, SwiperSlide } from "swiper/react"; 
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
+import "swiper/css"; // Swiper styles
+import "swiper/css/pagination"; // Swiper pagination styles
+
+import { Heart, ShoppingCart, TrendingUp, Stars } from 'lucide-react';
+
+
+
+
 const HoodiesPage = () => {
   const [cartItem, setCartItem] = useState(null);
   const [showHeading, setShowHeading] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [products, setProducts] = useState([]);
+  const [products2, setProducts2] = useState([]);
   
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [cartLoading, setCartLoading] = useState(false);
   const [giftWrapping, setGiftWrapping] = useState(false);
+
+  
+  const [liked, setLiked] = useState({});
+
+  const toggleLike = (productId) => {
+    setLiked(prev => ({
+      ...prev,
+      [productId]: !prev[productId]
+    }));
+  };
+
   const navigate = useNavigate();
-
-
   const userId = useSelector((state) => state.auth.id);
   const token = useSelector((state) => state.auth.token);
+
+  const handleSlideChange = (swiper) => {
+    setActiveIndex(swiper.activeIndex);
+  };
 
   
   useEffect(() => {
@@ -32,8 +55,9 @@ const HoodiesPage = () => {
     fetch("https://abhinasv-s-backend.onrender.com/api/product/getproducts")
       .then((response) => response.json())
       .then((data) => {
+      setProducts2(data.slice(5,8));
         // Assuming the API response contains an array of products
-        setProducts(data.slice(0, 3)); // Displaying only the first 3 products
+        setProducts(data.slice(2, 5)); // Displaying only the first 3 products
       })
       .catch((error) => console.error("Error fetching products:", error));
     
@@ -42,7 +66,8 @@ const HoodiesPage = () => {
 
   const addToCart = async () => {
     if (!userId) {
-      navigate("/login");
+      toast.error("Please login to add products to cart!");
+      
       return;
     }
     if (!selectedSize || !selectedColor) {
@@ -74,7 +99,12 @@ const HoodiesPage = () => {
 
       const data = await response.json();
       if (data.cart) {
+        navigate("/cart");
+        window.location.reload();
+       
+       
         toast.success("Product added to Cart Successfully!");
+       
       } else {
         throw new Error(data.message || "Failed to add product to cart");
       }
@@ -88,6 +118,8 @@ const HoodiesPage = () => {
 
 
 
+
+   
     
   };
 
@@ -117,7 +149,12 @@ const HoodiesPage = () => {
     window.history.pushState({ modalOpen: true }, "", window.location.href);
   };
 
-  console.log(cartItem)
+  const location = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to top of the page
+  }, [location]);
+  
 
   return (
     <div className="forum-regular bg-[#E9EBCA] min-h-screen py-10">
@@ -128,58 +165,244 @@ const HoodiesPage = () => {
         showHeading ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
       }`}
     >
-      HOODIES
+      Collections
     </h1>
   </div>
 
   <hr className="border-t mt-5 mb-10 border-black w-full" />
 
- {/* Hoodie Items Section */}
-{/* Hoodie Items Section */}
-<div className="px-6">
-  <Swiper
-    className="sm:block lg:hidden"
-    slidesPerView="auto"
-    spaceBetween={16}
-    grabCursor={true}
-    scrollbar={{ draggable: true }}
-    breakpoints={{
-      640: {
-        slidesPerView: 2,
-      },
-      1024: {
-        slidesPerView: 3,
-      }
-    }}
-  >
-    {products.map((item) => (
-      <SwiperSlide key={item._id}>
-        <div className="flex-shrink-0 sm:w-60 lg:w-auto overflow-hidden">
-          <Link to={`/product-details/${item._id}`}>
-            <img
-              src={item.images[0]}
-              alt={item.name}
-              className="mx-auto w-96 h-96 object-cover"
-            />
-          </Link>
-          <div className="p-4">
-            <h3 className="text-xl font-semibold text-gray-800">{item.name}</h3>
-            <p className="text-lg text-gray-600 mb-4">₹{item.price}</p>
-            <button
-              className="w-full bg-homePage text-white text-2xl py-2 opacity-80 hover:bg-[#0f302f] transition-opacity duration-300"
-              onClick={() => handlecart(item)}
-            >
-              Add to Cart
-            </button>
+  <div className="bg-[#E9EBCA] px-6 py-8">
+  <div className="max-w-8xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-2">
+            <TrendingUp className="w-6 h-6 text-gray-700" />
+            <h2 className="text-2xl md:text-3xl font-semibold font-forumNormal text-gray-800">
+              {products2[2]?.category || "Category"}
+            </h2>
           </div>
-         
+          <span className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center">
+            <Stars className="w-4 h-4 mr-2 text-black" />
+            Showing {products2.length} items
+          </span>
         </div>
-      </SwiperSlide>
-    ))}
-  </Swiper>
+
+        <Swiper
+          className="sm:block lg:hidden"
+          slidesPerView="auto"
+          spaceBetween={16}
+          grabCursor={true}
+          onSlideChange={handleSlideChange}
+          scrollbar={{ draggable: true }}
+          pagination={{ clickable: true }}
+          breakpoints={{
+            640: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 }
+          }}
+        >
+          {products2.map((item) => (
+            <SwiperSlide key={item._id}>
+              <div className="group relative bg-[#E9EBCA] rounded-xl shadow-sm hover:shadow-xl transition-all duration-300">
+                <div className="relative overflow-hidden">
+                  <Link to={`/product-details/${item._id}`}>
+                    <div className="aspect-square overflow-hidden rounded-t-xl">
+                      <img
+                        src={item.images[0]}
+                        alt={item.name}
+                        className="w-full h-full object-cover  transition-transform duration-500"
+                      />
+                    </div>
+                  </Link>
+
+                  <button
+                    onClick={() => toggleLike(item._id)}
+                    className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-gray-100 transition-all duration-300 transform hover:scale-110"
+                  >
+                    <Heart
+                      className={`w-5 h-5 ${
+                        liked[item._id] ? 'text-red-500 fill-red-500' : 'text-gray-600'
+                      } transition-colors`}
+                    />
+                  </button>
+
+                  <div className="absolute top-2 left-2">
+                    <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-gray-900/80 text-white backdrop-blur-sm">
+                      Premium
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-4">
+                  <h3 className="font-forumNormal text-lg text-gray-800 mb-2 truncate group-hover:text-gray-900">
+                    {item.name}
+                  </h3>
+
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-baseline space-x-2">
+                      <span className="text-xl font-semibold text-gray-900">
+                        ₹{item.price}
+                      </span>
+                      <span className="text-sm text-gray-500 line-through">
+                        ₹{(item.price * 1.2).toFixed(0)}
+                      </span>
+                    </div>
+                    <span className="text-xs font-medium text-green-600">
+                      20% OFF
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => handlecart(item)}
+                    className="w-full bg-gray-900 text-white rounded-lg py-3 flex items-center justify-center space-x-2 hover:bg-gray-800 transform transition-all duration-300 "
+                  >
+                      <ShoppingCart className="w-4 h-4 mr-2" />
+                    <span className="text-xl font-medium">Add to Cart</span>
+                  </button>
+                </div>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+
+        <div className="flex justify-center gap-2 md:hidden mt-6">
+          {products.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setActiveIndex(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 transform ${
+                activeIndex === index 
+                  ? 'bg-gray-800 scale-125' 
+                  : 'bg-gray-300 hover:bg-gray-400'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+      </div>
+
+
 
   
-</div>
+
+
+
+{/* Hoodie Items Section */}
+<div className="bg-[#E9EBCA] px-6 py-8">
+      <div className="max-w-8xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-2">
+            <TrendingUp className="w-6 h-6 text-gray-700" />
+            <h2 className="text-2xl md:text-3xl font-semibold font-forumNormal text-gray-800">
+              {products[2]?.category || "Category"}
+            </h2>
+          </div>
+          <span className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center">
+            <Stars className="w-4 h-4 mr-2 text-black" />
+            Showing {products.length} items
+          </span>
+        </div>
+
+        <Swiper
+          className="sm:block lg:hidden"
+          slidesPerView="auto"
+          spaceBetween={16}
+          grabCursor={true}
+          onSlideChange={handleSlideChange}
+          scrollbar={{ draggable: true }}
+          pagination={{ clickable: true }}
+          breakpoints={{
+            640: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 }
+          }}
+        >
+          {products.map((item) => (
+            <SwiperSlide key={item._id}>
+              <div className="group relative bg-[#E9EBCA] rounded-xl shadow-sm hover:shadow-xl transition-all duration-300">
+                <div className="relative overflow-hidden">
+                  <Link to={`/product-details/${item._id}`}>
+                    <div className="aspect-square overflow-hidden rounded-t-xl">
+                      <img
+                        src={item.images[0]}
+                        alt={item.name}
+                        className="w-full h-full object-cover  transition-transform duration-500"
+                      />
+                    </div>
+                  </Link>
+
+                  <button
+                    onClick={() => toggleLike(item._id)}
+                    className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-gray-100 transition-all duration-300 transform hover:scale-110"
+                  >
+                    <Heart
+                      className={`w-5 h-5 ${
+                        liked[item._id] ? 'text-red-500 fill-red-500' : 'text-gray-600'
+                      } transition-colors`}
+                    />
+                  </button>
+
+                  <div className="absolute top-2 left-2">
+                    <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-gray-900/80 text-white backdrop-blur-sm">
+                      Premium
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-4">
+                  <h3 className="font-forumNormal text-lg text-gray-800 mb-2 truncate group-hover:text-gray-900">
+                    {item.name}
+                  </h3>
+
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-baseline space-x-2">
+                      <span className="text-xl font-semibold text-gray-900">
+                        ₹{item.price}
+                      </span>
+                      <span className="text-sm text-gray-500 line-through">
+                        ₹{(item.price * 1.2).toFixed(0)}
+                      </span>
+                    </div>
+                    <span className="text-xs font-medium text-green-600">
+                      20% OFF
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => handlecart(item)}
+                    className="w-full bg-gray-900 text-white rounded-lg py-3 flex items-center justify-center space-x-2 hover:bg-gray-800 transform transition-all duration-300 "
+                  >
+                      <ShoppingCart className="w-4 h-4 mr-2" />
+                    <span className="text-xl font-medium">Add to Cart</span>
+                  </button>
+                </div>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+
+        <div className="flex justify-center gap-2 md:hidden mt-6">
+          {products.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setActiveIndex(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 transform ${
+                activeIndex === index 
+                  ? 'bg-gray-800 scale-125' 
+                  : 'bg-gray-300 hover:bg-gray-400'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
 
 
 
@@ -376,13 +599,13 @@ const HoodiesPage = () => {
 
 
             {/* Add to Cart Button */}
-            <a href="/cart">
+         
             <button 
              onClick={addToCart}
              disabled={cartLoading}
              className="w-full font-bold bg-[#E6FF87] text-black font-forumNormal text-lg py-3 mt-4 rounded-md hover:bg-[#cdff18] transition">
              {cartLoading ? <Spinner className="w-5 h-5 text-center justify-center"/> : "Add to Cart"}
-            </button></a>
+            </button>
           </div>
         </div>
       </div>

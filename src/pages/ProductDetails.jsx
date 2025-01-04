@@ -4,8 +4,12 @@ import {  useParams } from "react-router-dom";
 import { FaTruck, FaTimesCircle, FaExchangeAlt } from "react-icons/fa";
 import Spinner from "../components/Spinner";
 import { useSelector } from "react-redux";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import MoreProducts from "../components/MoreProducts1";
+import { useLocation } from "react-router-dom";
+import MoreProduct3 from "../components/MoreProduct3";
+import MoreProduct2 from "../components/MoreProduct2";
 
 function ProductDetails() {
   const [mainImage, setMainImage] = useState(
@@ -34,7 +38,7 @@ function ProductDetails() {
       try {
         setIsLoading(true); // Start loading
         const response = await fetch(
-          `http://localhost:5000/api/product/getproduct/${productId}` // API endpoint for fetching product details
+          `https://abhinasv-s-backend.onrender.com/api/product/getproduct/${productId}` // API endpoint for fetching product details
         );
         const data = await response.json();
         
@@ -52,14 +56,16 @@ function ProductDetails() {
 
   const handleAddToCart = async () => {
     if (!userId) {
-      navigate("/login");
+      toast.error("Please login to add products to cart!");
+     
       return;
     }
-    if (!selectedSize || !selectedColor) {
-      toast.error("Please select size and color before adding to cart!");
-      return;
-    }
+ 
 
+     if (!selectedSize || !selectedColor) {
+          toast.error("Please select size and color before adding to cart!");
+          return;
+        }
     
   
     const cartItem = {
@@ -71,6 +77,8 @@ function ProductDetails() {
            
 
     };
+
+    
 
   
     try {
@@ -108,6 +116,14 @@ function ProductDetails() {
   };
   
 
+  
+    const location = useLocation();
+  
+    useEffect(() => {
+      window.scrollTo(0, 0); // Scroll to top of the page
+    }, [location]);
+    
+  
 
   // Adjusting scroll behavior with offset to account for potential fixed header or margin
   useEffect(() => {
@@ -145,6 +161,7 @@ function ProductDetails() {
   }
 
   return (
+    <>
     <div ref={productDetailsRef} className="bg-headerBackGround">
       <div className="container bg-headerBackGround mx-auto px-4 py-8">
         <div className="font-forumNormal bg-headerBackGround flex flex-wrap -mx-4">
@@ -290,20 +307,20 @@ function ProductDetails() {
   />
 </div>
 
+<div className="flex w-full gap-4">
+      <button 
+        onClick={handleAddToCart} 
+        className="flex-1 rounded-lg bg-gray-800 py-3 text-lg font-semibold text-white transition duration-300 hover:bg-gray-600"
+      >
+        Add to Cart
+      </button>
 
-            {/* Add to Cart Button */}
-            <div className="flex w-full gap-4">
-  <a href="/cart" className="w-1/2">
-    <button onClick={handleAddToCart} className="w-full py-3 text-lg rounded-lg font-semibold bg-[#E6FF87] text-black hover:bg-[#bac68f] transition duration-300">
-      Add to Cart
-    </button>
-  </a>
-
-  {/* Add to Wishlist Button */}
-  <button className="w-1/2 py-3 text-lg rounded-lg font-semibold bg-red-500 text-white hover:bg-red-700 transition duration-300">
-    Add to Wishlist
-  </button>
-</div>
+      <button 
+        className="flex-1 rounded-lg bg-red-500 py-3 text-lg font-semibold text-white transition duration-300 hover:bg-red-700"
+      >
+        Add to Wishlist
+      </button>
+    </div>
 
            
 
@@ -368,6 +385,11 @@ function ProductDetails() {
         </div>
       </div>
     </div>
+
+    <MoreProducts />
+    <MoreProduct2 />
+    <MoreProduct3/>
+    </>
   );
 }
 

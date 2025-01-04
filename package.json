@@ -18,6 +18,7 @@
     "@material-tailwind/react": "^2.1.10",
     "@mui/icons-material": "^6.3.0",
     "@mui/material": "^6.3.0",
+    "@radix-ui/react-dialog": "^1.1.4",
     "@reduxjs/toolkit": "^2.5.0",
     "axios": "^1.7.9",
     "lucide-preact": "^0.469.0",
@@ -35,6 +36,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
+    "@shadcn/ui": "^0.0.4",
+    "@types/node": "^22.10.5",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react-swc": "^3.5.0",

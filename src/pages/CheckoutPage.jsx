@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useLocation, useNavigate } from "react-router-dom";
+import Spinner from "../components/Spinner";
 
 const loadRazorpayScript = () => {
   return new Promise((resolve) => {
@@ -21,6 +22,7 @@ const CheckoutPage = () => {
   const cartItems = useSelector((state) => state.cart.items);
   const userId = useSelector((state) => state.auth.id);
   const token = useSelector((state) => state.auth.token);
+  const [loading, setLoading] = useState(false);
  
   const isLoggedIn = Boolean(userId && token);
   const navigate = useNavigate();
@@ -48,11 +50,18 @@ const CheckoutPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+   
     if (!isLoggedIn) {
       toast.error("You must be logged in to place an order.");
       navigate("/login"); // Redirect to login page
       return;
     }
+
+    if(formData.firstName === "" || formData.lastName === "" || formData.email === "" || formData.phoneNo === "" || formData.address === "" || formData.city === "" || formData.state === "" || formData.zipCode === "") {              
+      toast.error("Please fill all the fields");
+      return;
+    }
+ 
   
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^[0-9]{10}$/;
@@ -110,6 +119,7 @@ const CheckoutPage = () => {
         total: totalCartPrice + 50 + totalCartPrice * 0.18,
       },
     };
+    setLoading(true);
 
     try {
       // Step 1: Create Razorpay order on the backend
@@ -124,9 +134,11 @@ const CheckoutPage = () => {
   
       // Step 2: Load Razorpay SDK script
       const isScriptLoaded = await loadRazorpayScript();
+      setLoading(false);
       if (!isScriptLoaded) {
         toast.error("Failed to load Razorpay SDK.");
         return;
+       
       }
 
       const options = {
@@ -161,13 +173,15 @@ const CheckoutPage = () => {
               console.log("Order Data:", finalizedOrderData);
               toast.success("Order placed successfully!");
               navigate("/order-confirm");
+              setLoading(false);
             } else {
               toast.error("Payment verification failed");
             }
           } catch (error) {
             console.error("Error during payment verification:", error);
             toast.error("Payment verification failed. Please try again.");
-            // navigate("/order-fail");
+            setLoading(false);
+           navigate("/order-fail");
           }
         },
         prefill: {
@@ -188,12 +202,20 @@ const CheckoutPage = () => {
         console.error("Payment failed:", response);
         toast.error("Payment failed. Please try again.");
         navigate("/order-fail");
+        setLoading(false);
       });
     } catch (error) {
       console.error("Error during checkout:", error);
       toast.error("Failed to initiate payment. Please try again.");
+      setLoading(false);
     }
 };
+
+const location = useLocation();
+  
+useEffect(() => {
+  window.scrollTo(0, 0); // Scroll to top of the page
+}, [location]);
 
   return (
     <div className="font-sans bg-headerBackGround min-h-screen p-4">
@@ -220,7 +242,7 @@ const CheckoutPage = () => {
                   <div key={index} className="flex gap-4 items-start">
                     <div className="w-24 h-24 flex-shrink-0 bg-headerBackGround rounded-md p-1">
                       <img
-                        src={product.images}
+                        src={product.images[0]}
                         alt={product.name}
                         className="object-contain w-full h-full"
                       />
@@ -335,7 +357,7 @@ const CheckoutPage = () => {
               type="submit"
               className="w-full px-4 py-3 bg-homePage text-white text-lg rounded-md hover:bg-gray-900"
             >
-             Place Your Order
+            {loading ? <Spinner/> : "Place Order"}
             </button>
           </form>
         </div>

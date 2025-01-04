@@ -1,7 +1,17 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { FaTimesCircle,FaHistory, FaShoppingCart } from "react-icons/fa";
+import { useEffect } from "react";
 
 const OrderFailedPage = () => {
+
+  
+  const location = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to top of the page
+  }, [location]);
+  
+
   return (
     <section className="bg-headerBackGround py-8 antialiased dark:bg-gray-900 md:py-16">
       <div className="mx-auto bg-headerBackGround max-w-3xl px-4 2xl:px-0">

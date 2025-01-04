@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { HiCheckCircle } from 'react-icons/hi'; // Icon for bullet points
+import { useLocation } from 'react-router-dom';
 
 const TermsAndConditions = () => {
   const termsRef = useRef(null);
@@ -8,6 +9,13 @@ const TermsAndConditions = () => {
       termsRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, []);
+
+  const location = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to top of the page
+  }, [location]);
+  
   
   return (
     <div ref={termsRef} className="bg-headerBackGround text-black font-forumNormal  dark:bg-black dark:text-white">

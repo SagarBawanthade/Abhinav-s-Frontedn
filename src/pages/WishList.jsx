@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { FaTrashAlt } from 'react-icons/fa';
 
 import { FaHeart } from "react-icons/fa";
+import { useLocation } from 'react-router-dom';
 
 const WishList = () => {
   const [wishlistItems, setWishlistItems] = useState([
@@ -22,6 +23,13 @@ const WishList = () => {
       image: '/images/shoplogo.jpg',
     },
   ]);
+
+  const location = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to top of the page
+  }, [location]);
+  
 
   // Function to handle deleting a wishlist item
   const handleDelete = (itemId) => {

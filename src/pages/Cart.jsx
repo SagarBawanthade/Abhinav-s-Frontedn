@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { FaTrashAlt, FaGift } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Spinner from "../components/Spinner.jsx"; 
 import { useDispatch } from "react-redux";
 import { removeItemFromCart } from "../feature/cartSlice.jsx";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 
 const Cart = () => {
   
@@ -58,11 +58,19 @@ const subtotal = cartItems.reduce(
       toast.success("Item removed successfully");
       window.location.reload();
       
+      
     }).catch((error) => {
       toast.error("Error removing item: ", error);
       
     });
   }
+
+  const location = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to top of the page
+  }, [location]);
+  
   
   return (
     <section ref={Cart} className="bg-headerBackGround py-8 antialiased dark:bg-gray-900 md:py-16">
@@ -106,7 +114,7 @@ const subtotal = cartItems.reduce(
       >
         <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
           <a href="#" className="shrink-0 md:order-1">
-            <img className="h-28 w-28" src={item.images} alt={item.name} />
+            <img className="h-28 w-28" src={item.images[0]} alt={item.name} />
           </a>
 
           <label htmlFor={`counter-input-${item._id}`} className="sr-only">

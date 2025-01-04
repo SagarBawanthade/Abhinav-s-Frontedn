@@ -99,13 +99,13 @@ const ShopFilters = ({ onFiltersChange }) => {
                 <input
                   type="range"
                   min="500"
-                  max="12500"
-                  step="200"
+                  max="5000"
+                  step="500"
                   value={priceRange}
                   onChange={(e) => setPriceRange(Number(e.target.value))}
                   className="w-full h-0.5 appearance-none cursor-pointer"
                   style={{
-                    background: `linear-gradient(to right, #000 ${((priceRange - 500) / (12500 - 500)) * 100}%, #D1D5DB 0%)`,
+                    background: `linear-gradient(to right, #000 ${((priceRange - 500) / (5000 - 500)) * 100}%, #D1D5DB 0%)`,
                   }}
                 />
                 <style jsx>{`

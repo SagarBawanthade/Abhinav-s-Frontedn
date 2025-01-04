@@ -1,6 +1,6 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { toast } from "react-hot-toast";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../feature/authSlice";
 
@@ -38,6 +38,13 @@ const Login = () => {
       toast.error("An error occurred: " + error.message);
     }
   };
+
+  const location = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to top of the page
+  }, [location]);
+  
 
   return (
     <section className="font-forumNormal bg-headerBackGround dark:bg-gray-900">

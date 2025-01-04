@@ -3,7 +3,8 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import { ThemeProvider } from "@material-tailwind/react";
-import { Toaster } from 'react-hot-toast';
+
+import { ToastContainer, Bounce } from 'react-toastify';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './utils/store.js';
@@ -20,7 +21,20 @@ createRoot(document.getElementById('root')).render(
     </AppLayout>
     </PersistGate>
     </Provider>
-    <Toaster />
+    
+    <ToastContainer
+position="top-center"
+autoClose={2000}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick={false}
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+theme="light"
+transition={Bounce}
+/>
   </StrictMode>
   </ThemeProvider>
  

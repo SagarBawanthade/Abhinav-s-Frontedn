@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { HiShieldCheck, HiUser, HiLockClosed, HiLink } from 'react-icons/hi'; // Icons for various sections
+import { useLocation } from 'react-router-dom';
 
 const PolicyPage = () => {
   const policyRef = useRef(null);
@@ -10,6 +11,12 @@ const PolicyPage = () => {
       policyRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, []);
+  const location = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to top of the page
+  }, [location]);
+  
 
   return (
     <div ref={policyRef} className="bg-headerBackGround min-h-screen py-8">

@@ -19,6 +19,7 @@ import WishList from './pages/WishList.jsx';
 import CheckoutPage from './pages/CheckoutPage.jsx';
 import OrderConfirmationPage from './pages/OrderConfirmationPage.jsx';
 import OrderFailedPage from './pages/OrderFailedPage.jsx';
+import OrderHistory from './pages/OrderHistory.jsx';
 
 
 
@@ -50,6 +51,7 @@ function App() {
        <Route path="/shop/:category" element={<Shop />} />
        <Route path="/order-confirm" element={<OrderConfirmationPage />} />
        <Route path="/order-fail" element={<OrderFailedPage />} />
+       <Route path="/order-history" element={<OrderHistory />} />
       
      
 

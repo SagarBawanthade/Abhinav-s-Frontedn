@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const ServicesPage = () => {
   const [showHeading, setShowHeading] = useState(false);
@@ -6,6 +7,13 @@ const ServicesPage = () => {
   useEffect(() => {
     setShowHeading(true); // Trigger the heading transition on page load
   }, []);
+
+  const location = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to top of the page
+  }, [location]);
+  
 
   return (
     <div className="forum-regular  bg-[#E6FF87] py-10">

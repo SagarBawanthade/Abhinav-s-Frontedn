@@ -1,5 +1,5 @@
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { ShoppingCart } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
@@ -9,7 +9,7 @@ import { useSelector , useDispatch} from 'react-redux';
 import { logout } from '../feature/authSlice';
 import { toast } from "react-hot-toast";
 import { removeItemFromCart } from '../feature/cartSlice';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { User } from 'lucide-react';
 
 const Header = () => {
   const [cartOpen, setCartOpen] = useState(false);
@@ -82,76 +82,89 @@ const Header = () => {
     });
   }
   return (
-    <header href="/" className="text-allFontColor bg-headerBackGround flex items-center justify-between px-8 py-4 md:py-6  shadow-lg font-avenir">
+    <header href="/" className="text-allFontColor bg-headerBackGround flex items-center justify-between px-4 py-4 md:py-6  shadow-lg font-avenir">
       {/* Left: Logo */}
       <div className="logo">
         <Link to="/" className="text-left text-xl
-        md:text-xl lg:text-2xl font-forumNormal">
+        md:text-xl font-semibold lg:text-2xl font-forumNormal">
           Abhinav's Best of World
         </Link>
       </div>
 
       {/* Right: Navigation Icons */}
-<div className="ml-3 nav-items flex gap-4 relative">
+<div className="ml-3 mb-px nav-items flex gap-4 relative">
 
-{/* Wishlist Icon */}
+{/* Wishlist Icon 
 <Link to="/wish-list">
-  <FavoriteBorderIcon
-    sx={{
-      color: "red",
-      fontSize: { xs: 24, sm: 30 },
-      fontWeight: "normal",
-    }}
-    className="cursor-pointer hover:scale-110 transition-transform"
-  />
+<div className="flex flex-col items-center">
+  <Heart 
+    size={22} 
+    className="cursor-pointer hover:scale-110 transition-transform" />
+  <span  className='text-sm font-forumNormal font-semibold'>WishList</span>
+</div>
+</Link>*/}
+
+
+
+{/* Wishlist Icon - Hidden on Small Screens */}
+<Link to="/wish-list" className="hidden md:flex">
+  <div className="flex flex-col items-center">
+    <Heart 
+      size={22} 
+      className="cursor-pointer hover:scale-110 transition-transform" />
+    <span className='text-sm font-forumNormal font-semibold'>WishList</span>
+  </div>
 </Link>
+
 
 {/* Cart Icon with Item Count */}
 <div className="relative">
-  {cartItems.length >= 0 && (
-    <p className="absolute -top-2 -right-2 flex items-center justify-center rounded-full bg-red-500 text-xs font-forumNormal font-semibold text-white w-5 h-5 text-center">
+  {cartItems.length > 0 && (
+    <p className="absolute -top-3 -right-3 flex items-center justify-center rounded-full bg-red-500 text-xs font-forumNormal font-semibold text-white w-5 h-5 text-center">
       {cartItems.length}
     </p>
   )}
 
-  <ShoppingCartOutlinedIcon
-    onClick={toggleCart}
-    sx={{
-      fontSize: { xs: 24, sm: 30 },
-      fontWeight: "normal",
-    }}
-    className="cursor-pointer "
+<div className="flex  ml-2  flex-col items-center">
+  <ShoppingCart
+  size={22} 
+    onClick={toggleCart} 
+    className="cursor-pointer text-xl hover:scale-110 transition-transform" 
   />
+  <span  className='text-sm font-forumNormal font-semibold'>Cart</span>
 </div>
+</div>
+
 
 {/* Menu or User Profile Icon */}
 {!id && !token ? (
   // Hamburger menu for unauthenticated users
-  <MenuIcon
-    onClick={toggleMenu}
-    sx={{
-      fontSize: { xs: 24, sm: 30 },
-      fontWeight: "normal",
-    }}
-    className="cursor-pointer hover:scale-110 transition-transform"
+  <div className="flex flex-col  ml-2  items-center">
+  <MenuIcon 
+  size={22}
+    onClick={toggleMenu} 
+    className="cursor-pointer hover:scale-110 transition-transform" 
   />
+  <span  className='text-sm font-forumNormal font-semibold'>Menu</span>
+</div>
+
 ) : (
-  // User profile icon for authenticated users
-  <AccountCircleIcon
-    onClick={toggleMenu}
-    sx={{
-      fontSize: { xs: 24, sm: 30 },
-      fontWeight: "normal",
-    }}
-    className="cursor-pointer hover:scale-110 transition-transform"
+  <div className="flex ml-2 flex-col items-center">
+  <User 
+  size={22}
+    onClick={toggleMenu} 
+    className="cursor-pointer hover:scale-110 transition-transform" 
   />
+  <span className='text-sm font-forumNormal font-semibold'>Account</span>
+</div>
+
 )}
 
 {/* Dropdown Menu */}
 {menuOpen && (
   <div
     ref={menuRef}
-    className="absolute right-0 z-20 mt-8 w-40 font-semibold border border-gray-300 rounded-lg font-forumNormal bg-headerBackGround"
+    className="absolute right-0 z-20 mt-10 w-40 font-semibold border border-gray-300 rounded-lg font-forumNormal bg-headerBackGround"
   >
     <ul className="py-2 text-gray-700">
       {!id && !token ? (
@@ -189,9 +202,31 @@ const Header = () => {
               >
                 <span>Profile</span>
               </a>
+              
+            </li>
+          </Link>
+          {/* Wishlist - Shown Only in Dropdown for Small Screens */}
+          <Link to="/wish-list" className="md:hidden">
+            <li>
+              <a href="#" className="flex items-center justify-between px-4 py-3 text-sm hover:bg-gray-300 transition duration-300">
+                <span>Wishlist</span>
+              </a>
+            </li>
+          </Link>
+          
+          <Link to="/order-history">
+            <li>
+              <a
+                href="#"
+                className="flex items-center justify-between px-4 py-3 text-sm hover:bg-gray-300 hover:text-gray-900 transition duration-300"
+                
+              >
+                <span>My Orders</span>
+              </a>
               <hr className="border-thin border-gray-300" />
             </li>
           </Link>
+          
           <Link to="/">
             <li>
               <a
@@ -255,7 +290,7 @@ const Header = () => {
             <div className="size-24 shrink-0 overflow-hidden rounded-md border border-gray-200">
               <img
                 alt={item.name}
-                src={item.images}
+                src={item.images[0]}
                 className="size-full object-cover"
               />
             </div>
