@@ -4,7 +4,8 @@ import { FaTrashAlt } from 'react-icons/fa';
 import { FaHeart } from "react-icons/fa";
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
-import { removeFromWishlist } from '../feature/WishListSlice';
+import { removeFromWishlist } from "../feature/wishlistSlice";
+
 import { toast } from 'react-toastify';
 
 const WishList = () => {

@@ -1,7 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { addToWishlist, removeFromWishlist } from '../feature/WishListSlice';
+
 import { useEffect, useState } from 'react';
+import { removeFromWishlist, addToWishlist  } from "../feature/wishlistSlice";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { Link } from 'react-router-dom';

@@ -7,7 +7,8 @@ import { Link } from 'react-router-dom';
 import { Tag, Heart, Clock } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { addToWishlist, removeFromWishlist } from '../feature/WishListSlice';
+import { removeFromWishlist, addToWishlist  } from "../feature/wishlistSlice";
+
 
 function MoreProduct2() {
   const [products, setProducts] = useState([]);

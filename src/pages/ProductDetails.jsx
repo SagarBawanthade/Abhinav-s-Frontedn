@@ -10,7 +10,7 @@ import { useLocation } from "react-router-dom";
 import MoreProduct3 from "../components/MoreProduct3";
 import MoreProduct2 from "../components/MoreProduct2";
 import { fetchCartItems } from "../feature/cartSlice";
-import { addToWishlist, removeFromWishlist } from "../feature/WishListSlice";
+import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
 import { ShoppingCart, Heart } from 'lucide-react'; 
 
 

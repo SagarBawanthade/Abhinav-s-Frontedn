@@ -3,7 +3,8 @@ import ShopFilters from '../components/ShopFilter';
 import { useEffect, useRef, useState } from 'react';
 import { X, SlidersHorizontal,Heart, ShoppingCart } from 'lucide-react'; // For hamburger and close icons
 import { useDispatch, useSelector } from 'react-redux';
-import { addToWishlist, removeFromWishlist } from '../feature/WishListSlice';
+import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
+
 import { toast } from 'react-toastify';
 
 
