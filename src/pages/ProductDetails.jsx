@@ -365,7 +365,8 @@ function ProductDetails() {
 
   {(!product.category || product.category.toLowerCase() === 'hoodies' || 
   (product.category.toLowerCase() !== 'tshirt' && 
-   product.category.toLowerCase() !== 'oversize-tshirt')) ? (
+   product.category.toLowerCase() !== 'oversize-tshirt' &&
+  product.category.toLowerCase() !== 'couple-tshirt')) ? (
   // Add to Cart button for hoodies and other categories
   <button
     onClick={handleAddToCart}

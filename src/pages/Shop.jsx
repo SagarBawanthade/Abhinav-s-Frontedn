@@ -250,6 +250,7 @@ const Shop = () => {
  {/* Small screen display */}
 {product.category && (
   product.category.toLowerCase() === 'tshirt' || 
+  product.category.toLowerCase() === 'couple-tshirt' || 
   product.category.toLowerCase() === 'oversize-tshirt' ? (
     // Coming Soon for t-shirts and oversize
     <span className="sm:hidden inline-flex items-center px-3.5 py-1 text-xs font-medium rounded-lg bg-gradient-to-r from-gray-600 to-gray-800 text-red-200 relative group overflow-hidden">
