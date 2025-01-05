@@ -11,7 +11,7 @@ import MoreProduct3 from "../components/MoreProduct3";
 import MoreProduct2 from "../components/MoreProduct2";
 import { fetchCartItems } from "../feature/cartSlice";
 import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
-import { ShoppingCart, Heart } from 'lucide-react'; 
+import { ShoppingCart, Heart, Clock } from 'lucide-react'; 
 
 
 function ProductDetails() {
@@ -20,18 +20,19 @@ function ProductDetails() {
   );
   const [openSection, setOpenSection] = useState(null);
   const [product, setProduct] = useState(null); // State to store product details
+  console.log("Product:- ",product);
   const [isLoading, setIsLoading] = useState(true); // Loading state
   
   const { productId } = useParams();
   const productDetailsRef = useRef(null);
 
-console.log("product:- ",product);
 
 
   const userId = useSelector((state) => state.auth.id); 
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
   const wishlist = useSelector(state => state.wishlist.items);
+  
   
   const isInWishlist = wishlist.some(item => item._id === productId);
 
@@ -240,7 +241,7 @@ console.log("product:- ",product);
             </h2>
             <div className="mb-4 flex items-center gap-4">
               <span className="text-2xl font-semibold ">₹{product.price}</span>
-              <span className="text-gray-500 line-through">₹{product.price + 500}</span>
+              <span className="text-gray-700 line-through">₹{product.price + 100}</span>
             </div>
             <span className={`inline-block text-sm font-medium px-3 py-1 rounded mb-4 ${product.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
               {product.stock > 0 ? "In Stock" : "Out of Stock"}
@@ -354,9 +355,55 @@ console.log("product:- ",product);
     onChange={() => setGiftWrapping((prev) => !prev)}
   />
 </div>
-
+<p className="mt-3 mb-3 text-center text-sm sm:text-base lg:text-lg font-medium bg-gradient-to-r from-red-600 to-green-900 text-transparent bg-clip-text animate-pulse">
+  Stay tuned! Something extraordinary is about to arrive. We're perfecting every detail just for you.
+</p>
 <div className="flex w-full gap-4">
-<button 
+
+  {/* Check if category is tshirt or oversized-tshirt */}
+
+
+  {(!product.category || product.category.toLowerCase() === 'hoodies' || 
+  (product.category.toLowerCase() !== 'tshirt' && 
+   product.category.toLowerCase() !== 'oversize-tshirt')) ? (
+  // Add to Cart button for hoodies and other categories
+  <button
+    onClick={handleAddToCart}
+    className="flex-1 rounded-lg bg-gray-800 py-3 text-lg font-semibold text-white transition duration-300 hover:bg-gray-600"
+  >
+    <div className="flex items-center justify-center space-x-2">
+      <ShoppingCart className="w-5 h-5" />
+      <span>Add to Cart</span>
+    </div>
+  </button>
+) : (
+  // Coming Soon button for t-shirts and oversized t-shirts
+  <button
+    disabled
+    className="flex-1 rounded-lg bg-gradient-to-r from-gray-500 to-gray-900 py-3 text-lg font-semibold text-yellow-300 transition-all duration-300 relative overflow-hidden group"
+  >
+    <div className="absolute inset-0 bg-gradient-to-r from-gray-600 to-gray-800 animate-pulse" />
+    
+    <div className="relative flex items-center justify-center space-x-2">
+      <div className="flex items-center justify-center space-x-3">
+        <Clock className="w-5 h-5 animate-spin-slow group-hover:animate-spin" />
+        <span className="text-base sm:text-lg">Coming Soon</span>
+        <div className="flex space-x-1">
+          <div className="w-1.5 h-1.5 bg-yellow-300 rounded-full animate-bounce"
+               style={{ animationDelay: '0ms' }} />
+          <div className="w-1.5 h-1.5 bg-yellow-300 rounded-full animate-bounce"
+               style={{ animationDelay: '150ms' }} />
+          <div className="w-1.5 h-1.5 bg-yellow-300 rounded-full animate-bounce"
+               style={{ animationDelay: '300ms' }} />
+        </div>
+      </div>
+    </div>
+    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+  </button>
+)}
+
+{/*Addtocart Deafult Button Code below*/}
+{/* <button 
   onClick={handleAddToCart} 
   className="flex-1 rounded-lg bg-gray-800 py-3 text-lg font-semibold text-white transition duration-300 hover:bg-gray-600"
 >
@@ -364,7 +411,8 @@ console.log("product:- ",product);
     <ShoppingCart className="w-5 h-5" />
     <span>Add to Cart</span>
   </div>
-</button>
+</button> */}
+
 
 <button
   onClick={handleWishlist}

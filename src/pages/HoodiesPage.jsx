@@ -9,7 +9,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import "swiper/css";
 import "swiper/css/pagination";
-import { Heart, ShoppingCart, TrendingUp, Stars } from 'lucide-react';
+import { Heart, ShoppingCart, TrendingUp, Stars,Timer } from 'lucide-react';
 import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
 
 const HoodiesPage = () => {
@@ -20,6 +20,7 @@ const HoodiesPage = () => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [products, setProducts] = useState([]);
   const [products2, setProducts2] = useState([]);
+  const [products3, setProducts3] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
@@ -59,6 +60,7 @@ const toggleLike = (item) => {
     fetch("https://sagardev.site/api/product/getproducts")
       .then((response) => response.json())
       .then((data) => {
+        setProducts3(data.slice(6,9));
       setProducts2(data.slice(28,32));
         // Assuming the API response contains an array of products
         setProducts(data.slice(2, 5)); // Displaying only the first 3 products
@@ -185,10 +187,12 @@ const toggleLike = (item) => {
               { "Hoodies"}
             </h2>
           </div>
-          <span className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center">
+          <Link to="/shop/hoodies" className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:text-gray-800">
+          <span className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:underline">
             <Stars className="w-4 h-4 mr-2 text-black" />
-            Showing {products2.length} items
+            View more
           </span>
+          </Link>
         </div>
 
         <Swiper
@@ -244,14 +248,14 @@ const toggleLike = (item) => {
 
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-baseline space-x-2">
-                      <span className="text-xl font-semibold text-gray-900">
+                      <span className="text-xl font-avenir font-semibold text-gray-900">
                         ₹{item.price}
                       </span>
-                      <span className="text-sm text-gray-500 line-through">
-                        ₹{(item.price * 1.2).toFixed(0)}
+                      <span className="text-sm font-avenir text-gray-500 line-through">
+                        ₹{(item.price + 100).toFixed(0)}
                       </span>
                     </div>
-                    <span className="text-xs font-medium text-green-600">
+                    <span className="text-xs font-bold text-green-600">
                       20% OFF
                     </span>
                   </div>
@@ -302,10 +306,12 @@ const toggleLike = (item) => {
               {products[2]?.category || "Category"}
             </h2>
           </div>
-          <span className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center">
+          <Link to="/shop/Oversize-Tshirt" className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:text-gray-800">
+          <span className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:underline">
             <Stars className="w-4 h-4 mr-2 text-black" />
-            Showing {products.length} items
+            View more
           </span>
+          </Link>
         </div>
 
         <Swiper
@@ -360,26 +366,62 @@ const toggleLike = (item) => {
                   </h3>
 
                   <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-baseline space-x-2">
-                      <span className="text-xl font-semibold text-gray-900">
+                    <div className="flex font-avenir items-baseline space-x-2">
+                      <span className="text-xl font-avenir font-semibold text-gray-900">
                         ₹{item.price}
                       </span>
                       <span className="text-sm text-gray-500 line-through">
-                        ₹{(item.price * 1.2).toFixed(0)}
+                        ₹{(item.price + 100).toFixed(0)}
                       </span>
                     </div>
-                    <span className="text-xs font-medium text-green-600">
+                    <span className="text-xs font-bold text-green-600">
                       20% OFF
                     </span>
                   </div>
 
-                  <button
+                  {/* <button
                     onClick={() => handlecart(item)}
                     className="w-full bg-gray-900 text-white rounded-lg py-3 flex items-center justify-center space-x-2 hover:bg-gray-800 transform transition-all duration-300 "
                   >
                       <ShoppingCart className="w-4 h-4 mr-2" />
                     <span className="text-xl font-medium">Add to Cart</span>
-                  </button>
+                  </button> */}
+
+{/* Comming Soon Button COde Starrt*/}
+<button 
+      className="group relative w-full py-4 px-6 bg-gradient-to-r from-gray-600 via-gray-800 to-gray-600 rounded-lg overflow-hidden disabled:cursor-not-allowed"
+      disabled
+    >
+      {/* Background animation */}
+      <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900 to-gray-900 animate-gradient-x" />
+      
+      {/* Glass effect overlay */}
+      <div className="absolute inset-0 bg-white/10 backdrop-blur-sm" />
+      
+      {/* Content container */}
+      <div className="relative flex items-center justify-center space-x-3">
+        <Timer className="w-5 h-5 text-red-400 animate-bounce" />
+        
+        <span className="text-lg sm:text-xl font-bold text-yellow-300 tracking-wider transform transition-all duration-300 group-hover:scale-105">
+          COMING SOON
+        </span>
+        
+        {/* Animated dots */}
+        <div className="flex space-x-1">
+          <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+          <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+          <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+        </div>
+      </div>
+      
+      {/* Glow effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+      
+      {/* Border gradient */}
+      <div className="absolute inset-0 border-2 border-white/20 rounded-lg" />
+    </button>
+    {/* Comming Soon Button COde End */}
+
                 </div>
               </div>
             </SwiperSlide>
@@ -388,6 +430,159 @@ const toggleLike = (item) => {
 
         <div className="flex justify-center gap-2 md:hidden mt-6">
           {products.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setActiveIndex(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 transform ${
+                activeIndex === index 
+                  ? 'bg-gray-800 scale-125' 
+                  : 'bg-gray-300 hover:bg-gray-400'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+
+
+{/* Hoodie Items Section */}
+<div className="bg-[#E9EBCA] px-6 py-8">
+      <div className="max-w-8xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-2">
+            <TrendingUp className="w-6 h-6 text-gray-700" />
+            <h2 className="text-2xl md:text-3xl font-semibold font-forumNormal text-gray-800">
+              {products3[2]?.category || "Category"}
+            </h2>
+          </div>
+          <Link to="/shop/Tshirt" className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:text-gray-800">
+          <span className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:underline">
+            <Stars className="w-4 h-4 mr-2 text-black" />
+           View more
+          </span>
+          </Link>
+        </div>
+
+        <Swiper
+          className="sm:block lg:hidden"
+          slidesPerView="auto"
+          spaceBetween={16}
+          grabCursor={true}
+          onSlideChange={handleSlideChange}
+          scrollbar={{ draggable: true }}
+          pagination={{ clickable: true }}
+          breakpoints={{
+            640: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 }
+          }}
+        >
+          {products3.map((item) => (
+            <SwiperSlide key={item._id}>
+              <div className="group relative bg-[#E9EBCA] rounded-xl shadow-sm hover:shadow-xl transition-all duration-300">
+                <div className="relative overflow-hidden">
+                  <Link to={`/product-details/${item._id}`}>
+                    <div className="aspect-square overflow-hidden rounded-t-xl">
+                      <img
+                        src={item.images[0]}
+                        alt={item.name}
+                        className="w-full h-full object-cover  transition-transform duration-500"
+                      />
+                    </div>
+                  </Link>
+
+                  <button
+                    onClick={() => toggleLike(item)}
+                    className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-gray-100 transition-all duration-300 transform hover:scale-110"
+                  >
+                   
+                      <Heart
+    className={`w-5 h-5 ${
+      isProductInWishlist(item._id) ? 'text-red-500 fill-red-500' : 'text-gray-600'
+    } transition-colors`}
+  />
+                  </button>
+
+                  <div className="absolute top-2 left-2">
+                    <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-gray-900/80 text-white backdrop-blur-sm">
+                      Premium
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-4">
+                  <h3 className="font-forumNormal text-lg text-gray-800 mb-2 truncate group-hover:text-gray-900">
+                    {item.name}
+                  </h3>
+
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-baseline space-x-2">
+                      <span className="text-xl font-avenir font-semibold text-gray-900">
+                        ₹{item.price}
+                      </span>
+                      <span className="text-sm font-avenir  text-gray-500 line-through">
+                        ₹{(item.price + 100).toFixed(0)}
+                      </span>
+                    </div>
+                    <span className="text-xs font-bold text-green-600">
+                      20% OFF
+                    </span>
+                  </div>
+
+                  {/* <button
+                    onClick={() => handlecart(item)}
+                    className="w-full bg-gray-900 text-white rounded-lg py-3 flex items-center justify-center space-x-2 hover:bg-gray-800 transform transition-all duration-300 "
+                  >
+                      <ShoppingCart className="w-4 h-4 mr-2" />
+                    <span className="text-xl font-medium">Add to Cart</span>
+                  </button> */}
+
+
+
+                  {/* Comming Soon Button COde Starrt*/}
+<button 
+      className="group relative w-full py-4 px-6 bg-gradient-to-r from-gray-600 via-gray-800 to-gray-600 rounded-lg overflow-hidden disabled:cursor-not-allowed"
+      disabled
+    >
+      {/* Background animation */}
+      <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900 to-gray-900 animate-gradient-x" />
+      
+      {/* Glass effect overlay */}
+      <div className="absolute inset-0 bg-white/10 backdrop-blur-sm" />
+      
+      {/* Content container */}
+      <div className="relative flex items-center justify-center space-x-3">
+        <Timer className="w-5 h-5 text-red-600 animate-bounce" />
+        
+        <span className="text-lg sm:text-xl font-bold text-yellow-300 tracking-wider transform transition-all duration-300 group-hover:scale-105">
+          COMING SOON
+        </span>
+        
+        {/* Animated dots */}
+        <div className="flex space-x-1">
+          <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+          <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+          <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+        </div>
+      </div>
+      
+      {/* Glow effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+      
+      {/* Border gradient */}
+      <div className="absolute inset-0 border-2 border-white/20 rounded-lg" />
+    </button>
+    {/* Comming Soon Button COde End */}
+
+
+                </div>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+
+        <div className="flex justify-center gap-2 md:hidden mt-6">
+          {products3.map((_, index) => (
             <button
               key={index}
               onClick={() => setActiveIndex(index)}

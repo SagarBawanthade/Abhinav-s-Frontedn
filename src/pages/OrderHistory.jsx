@@ -42,6 +42,7 @@ const OrderHistory = () => {
         return <Check className="h-6 w-6 mr-2 text-green-800 dark:text-green-300" />;
       case 'in-transit':
         return <Truck className="h-6 w-6 mr-2 text-blue-800 dark:text-blue-300" />;
+      
       default:
         return null;
     }

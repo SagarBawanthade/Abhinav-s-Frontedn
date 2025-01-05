@@ -1,7 +1,7 @@
 import { Link, useLocation, useParams } from 'react-router-dom';
 import ShopFilters from '../components/ShopFilter';
 import { useEffect, useRef, useState } from 'react';
-import { X, SlidersHorizontal,Heart, ShoppingCart } from 'lucide-react'; // For hamburger and close icons
+import { X, SlidersHorizontal,Heart, ShoppingCart, Clock } from 'lucide-react'; // For hamburger and close icons
 import { useDispatch, useSelector } from 'react-redux';
 import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
 
@@ -61,32 +61,68 @@ const Shop = () => {
     window.scrollTo(0, 0); // Scroll to top of the page
   }, [location]);
 
+  // useEffect(() => {
+  //   const applyFilters = () => {
+  //     const { priceRange, selectedColors, selectedSizes } = filters;
+  //      // Change category to 'hoodies' if it's 'all-products'
+  
+
+
+  //     const filtered = products.filter((product) => {
+  //       const matchesCategory = !category || product.category.toLowerCase() === category.toLowerCase();
+  //       const matchesPrice = product.price <= priceRange;
+  //       const matchesColor = 
+  //         selectedColors.length === 0 || 
+  //         selectedColors.some((color) => product.color?.includes(color));
+  //       const matchesSize = 
+  //         selectedSizes.length === 0 || 
+  //         selectedSizes.some((size) => product.size?.includes(size));
+
+  //       return matchesCategory && matchesPrice && matchesColor && matchesSize;
+  //     });
+
+  //     setFilteredProducts(filtered);
+  //   };
+
+  //   applyFilters();
+  // }, [filters, products, category]);
+  
+
   useEffect(() => {
     const applyFilters = () => {
       const { priceRange, selectedColors, selectedSizes } = filters;
-       // Change category to 'hoodies' if it's 'all-products'
   
-
-
+      // First filter products based on all criteria
       const filtered = products.filter((product) => {
         const matchesCategory = !category || product.category.toLowerCase() === category.toLowerCase();
         const matchesPrice = product.price <= priceRange;
-        const matchesColor = 
-          selectedColors.length === 0 || 
+        const matchesColor =
+          selectedColors.length === 0 ||
           selectedColors.some((color) => product.color?.includes(color));
-        const matchesSize = 
-          selectedSizes.length === 0 || 
+        const matchesSize =
+          selectedSizes.length === 0 ||
           selectedSizes.some((size) => product.size?.includes(size));
-
+  
         return matchesCategory && matchesPrice && matchesColor && matchesSize;
       });
-
-      setFilteredProducts(filtered);
+  
+      // Sort the filtered products to show hoodies first
+      const sortedProducts = [...filtered].sort((a, b) => {
+        // Put hoodies at the beginning
+        if (a.category.toLowerCase() === 'hoodies' && b.category.toLowerCase() !== 'hoodies') {
+          return -1;
+        }
+        if (b.category.toLowerCase() === 'hoodies' && a.category.toLowerCase() !== 'hoodies') {
+          return 1;
+        }
+        return 0;
+      });
+  
+      setFilteredProducts(sortedProducts);
     };
-
+  
     applyFilters();
   }, [filters, products, category]);
-  
 
  
 
@@ -198,24 +234,86 @@ const Shop = () => {
                     <span className="text-lg md:text-xl font-bold font-forumNormal text-gray-900">
                       ₹{product.price}
                     </span>
-                    {product.price < 1599 && (
+                    
                       <span className="text-sm md:text-base font-forumNormal text-gray-500 line-through">
-                        ₹1599
+                      ₹{product.price + 100}
                       </span>
-                    )}
+                    
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="inline-flex items-center px-3.5 py-1 text-xs font-medium rounded-lg bg-red-100 text-red-800">
-                      Deal of the Day
-                    </span>
+                    {/* Deal of the Day for larger screens */}
+  <span className="hidden sm:inline-flex items-center px-3.5 py-1 text-xs font-medium rounded-lg bg-red-100 text-red-800">
+    Deal of the Day
+  </span>
                     
-                    <Link to={`/product-details/${product._id}`} className="hidden lg:block">
+ {/* Small screen display */}
+{product.category && (
+  product.category.toLowerCase() === 'tshirt' || 
+  product.category.toLowerCase() === 'oversize-tshirt' ? (
+    // Coming Soon for t-shirts and oversize
+    <span className="sm:hidden inline-flex items-center px-3.5 py-1 text-xs font-medium rounded-lg bg-gradient-to-r from-gray-600 to-gray-800 text-red-200 relative group overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-r from-gray-600 to-gray-800 animate-pulse"></div>
+      <div className="relative flex items-center space-x-1">
+        <Clock className="w-3 h-3 animate-spin-slow group-hover:animate-spin" />
+        <span>Coming Soon</span>
+        <div className="flex space-x-0.5">
+          <div className="w-1 h-1 bg-red-200 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+          <div className="w-1 h-1 bg-red-200 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+          <div className="w-1 h-1 bg-red-200 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+        </div>
+      </div>
+    </span>
+  ) : product.category.toLowerCase() === 'hoodies' ? (
+    // Deal of the Day for hoodies
+    <span className="sm:hidden inline-flex items-center px-3.5 py-1 text-xs font-medium rounded-lg bg-gradient-to-r from-red-400 to-red-700 text-gray-100">
+      Deal of the Day
+    </span>
+  ) : null
+)}
+
+                    {/* <Link to={`/product-details/${product._id}`} className="hidden lg:block">
                       <button className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg bg-gray-900 text-white hover:bg-gray-800 transition-colors">
                         <ShoppingCart className="w-4 h-4 mr-2" />
                         Add to Cart
                       </button>
-                    </Link>
+                    </Link> */}
+
+
+<Link 
+  to={`/product-details/${product._id}`} 
+  className="hidden lg:block"
+>
+{(!product.category || product.category.toLowerCase() === 'hoodies' || 
+  (product.category.toLowerCase() !== 'tshirt' && 
+   product.category.toLowerCase() !== 'oversize-tshirt')) ? (
+ 
+    <button className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg bg-gray-900 text-white hover:bg-gray-800 transition-colors">
+      <ShoppingCart className="w-4 h-4 mr-2" />
+      Add to Cart
+    </button>
+  ) : (
+    <button 
+      disabled
+      className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg bg-gradient-to-r from-gray-500 to-gray-900 text-white relative overflow-hidden group"
+    >
+      <div className="absolute inset-0 bg-gradient-to-r from-gray-600 to-gray-800 animate-pulse" />
+      <div className="relative flex items-center space-x-2">
+        <Clock className="w-4 h-4 animate-spin-slow group-hover:animate-spin" />
+        <span>Coming Soon</span>
+        <div className="flex space-x-1">
+          <div className="w-1 h-1 bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+          <div className="w-1 h-1 bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+          <div className="w-1 h-1 bg-white rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+        </div>
+      </div>
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+    </button>
+  )}
+</Link>
+
+
+
                   </div>
                 </div>
               </div>
