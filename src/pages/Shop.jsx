@@ -32,7 +32,7 @@ const Shop = () => {
       try {
         setLoading(true); // Set loading to true before fetching
         const response = await fetch(
-          'https://abhinasv-s-backend.onrender.com/api/product/getproducts'
+          'https://sagardev.site/api/product/getproducts'
         );
         const data = await response.json();
         setProducts(data);

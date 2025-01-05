@@ -25,6 +25,8 @@ function ProductDetails() {
   const { productId } = useParams();
   const productDetailsRef = useRef(null);
 
+console.log("product:- ",product);
+
 
   const userId = useSelector((state) => state.auth.id); 
   const token = useSelector((state) => state.auth.token);
@@ -82,7 +84,7 @@ function ProductDetails() {
       try {
         setIsLoading(true); // Start loading
         const response = await fetch(
-          `https://abhinasv-s-backend.onrender.com/api/product/getproduct/${productId}` // API endpoint for fetching product details
+          `https://sagardev.site/api/product/getproduct/${productId}` // API endpoint for fetching product details
         );
         const data = await response.json();
         
@@ -132,7 +134,7 @@ function ProductDetails() {
       setCartLoading(true);
   
       // Directly call the add-to-cart API
-      const response = await fetch("http://192.168.1.33:5000/api/cart/add-to-cart", {
+      const response = await fetch("https://sagardev.site/api/cart/add-to-cart", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -260,11 +262,11 @@ function ProductDetails() {
                 <option value="" disabled>
                   Select color
                 </option>
-                {product.color.map((color) => ( 
-                  <option key={color} value={color}>
-                    {color}
+              
+                  <option>
+                    {product.color}
                   </option>
-                ))}
+           
                
               </select>
             </div>

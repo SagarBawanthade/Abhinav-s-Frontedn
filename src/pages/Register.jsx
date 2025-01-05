@@ -21,7 +21,7 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://192.168.1.33:5000/api/auth/register", {
+      const response = await fetch("https://sagardev.site/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -56,7 +56,7 @@ const toggleLike = (item) => {
 
   
   useEffect(() => {
-    fetch("http://192.168.1.33:5000/api/product/getproducts")
+    fetch("https://sagardev.site/api/product/getproducts")
       .then((response) => response.json())
       .then((data) => {
       setProducts2(data.slice(28,32));
@@ -92,7 +92,7 @@ const toggleLike = (item) => {
     try {
       setCartLoading(true);
 
-      const response = await fetch("http://192.168.1.33:5000/api/cart/add-to-cart", {
+      const response = await fetch("https://sagardev.site/api/cart/add-to-cart", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
