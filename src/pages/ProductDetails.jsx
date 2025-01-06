@@ -85,7 +85,7 @@ function ProductDetails() {
       try {
         setIsLoading(true); // Start loading
         const response = await fetch(
-          `https://sagardev.site/api/product/getproduct/${productId}` // API endpoint for fetching product details
+          `https://backend.abhinavsofficial.com/api/product/getproduct/${productId}` // API endpoint for fetching product details
         );
         const data = await response.json();
         
@@ -135,7 +135,7 @@ function ProductDetails() {
       setCartLoading(true);
   
       // Directly call the add-to-cart API
-      const response = await fetch("https://sagardev.site/api/cart/add-to-cart", {
+      const response = await fetch("https://backend.abhinavsofficial.com/api/cart/add-to-cart", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

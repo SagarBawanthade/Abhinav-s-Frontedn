@@ -28,7 +28,7 @@ const UserProfile = () => {
     const fetchUserData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`https://sagardev.site/api/auth/getuser/${userId}`);
+        const response = await fetch(`https://backend.abhinavsofficial.com/api/auth/getuser/${userId}`);
         const data = await response.json();
         if (response.ok) {
           setUpdatedUserData(data);
@@ -56,7 +56,7 @@ const UserProfile = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch(`https://sagardev.site/api/auth/updateuser/${userId}`, {
+      const response = await fetch(`https://backend.abhinavsofficial.com/api/auth/updateuser/${userId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -6,7 +6,7 @@ import axios from 'axios';
 export const fetchCartItems = createAsyncThunk('cart/fetchCartItems',async ({userId, token },{ rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `https://sagardev.site/api/cart/cart/${userId}`,
+        `https://backend.abhinavsofficial.com/api/cart/cart/${userId}`,
         { 
           headers: 
           { Authorization: `Bearer ${token}` } 
@@ -27,7 +27,7 @@ export const removeItemFromCart = createAsyncThunk(
   async ({ userId, token, productId }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `https://sagardev.site/api/cart/cart/remove-item`,
+        `https://backend.abhinavsofficial.com/api/cart/cart/remove-item`,
         {
           userId: userId,
           productId: productId,

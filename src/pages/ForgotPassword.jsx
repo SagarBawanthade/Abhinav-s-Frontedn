@@ -21,7 +21,7 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("https://sagardev.site/api/auth/reset-password/", {
+      const response = await fetch("https://backend.abhinavsofficial.com/api/auth/reset-password/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

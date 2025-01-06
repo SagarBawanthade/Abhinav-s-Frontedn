@@ -12,7 +12,7 @@ function MoreProducts1() {
   const [products, setProducts] = useState([]);
   
   useEffect(() => {
-    fetch('https://sagardev.site/api/product/getproducts')
+    fetch('https://backend.abhinavsofficial.com/api/product/getproducts')
       .then((response) => response.json())
       .then((data) => setProducts(data))
       .catch((error) => console.error('Error fetching products:', error));

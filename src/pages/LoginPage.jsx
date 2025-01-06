@@ -21,7 +21,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("https://sagardev.site/api/auth/login", {
+      const response = await fetch("https://backend.abhinavsofficial.com/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

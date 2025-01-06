@@ -144,7 +144,7 @@ const CheckoutPage = () => {
     try {
       // Step 1: Create Razorpay order on the backend
       const razorpayOrder = await axios.post(
-        "https://sagardev.site/api/order/create-razorpay-order",
+        "http://192.168.1.33:5000/api/order/create-razorpay-order",
         { amount: (totalCartPrice +0  + totalCartPrice * 0.05) * 100 } // Convert to paise
       );
   
@@ -170,9 +170,10 @@ const CheckoutPage = () => {
         image: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/IMG_0823.JPG",
         order_id: orderId,
         handler: async (response) => {
+          console.log("Razorpay Payment Response:", response);
           try {
             const verifyPayment = await axios.post(
-              "https://sagardev.site/api/order/verify-razorpay-payment",
+              "http://192.168.1.33:5000/api/order/verify-razorpay-payment",
               response
             );
             console.log("paymentResponse:", response);
@@ -185,7 +186,7 @@ const CheckoutPage = () => {
               };
       
               const orderResponse = await axios.post(
-                "https://sagardev.site/api/order/create-order",
+                "http://192.168.1.33:5000/api/order/create-order",
                 finalizedOrderData
               );
 

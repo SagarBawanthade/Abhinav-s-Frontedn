@@ -53,7 +53,7 @@ const ShopFilters = ({ onFiltersChange }) => {
   
 
   return (
-    <div className="font-forumNormal pl-4 bg-headerBackGround flex flex-col">
+    <div className="font-forumNormal pl-4 bg-headerBackGround overflow-x-auto flex flex-col">
       <h3 className="font-bold text-3xl mb-6 forum-regular">Browse By</h3>
       <div className="border-b border-gray-700 mb-6"></div>
       <ul className="space-y-5">

@@ -32,7 +32,7 @@ function MoreProduct3() {
 
   
   useEffect(() => {
-    fetch('https://sagardev.site/api/product/getproducts')
+    fetch('https://backend.abhinavsofficial.com/api/product/getproducts')
       .then((response) => response.json())
       .then((data) => {
         // Sort products in descending order based on _id or createdAt (or any other field you prefer)

@@ -57,7 +57,7 @@ const toggleLike = (item) => {
 
   
   useEffect(() => {
-    fetch("https://sagardev.site/api/product/getproducts")
+    fetch("https://backend.abhinavsofficial.com/api/product/getproducts")
       .then((response) => response.json())
       .then((data) => {
         setProducts3(data.slice(6,9));
@@ -94,7 +94,7 @@ const toggleLike = (item) => {
     try {
       setCartLoading(true);
 
-      const response = await fetch("https://sagardev.site/api/cart/add-to-cart", {
+      const response = await fetch("https://backend.abhinavsofficial.com/api/cart/add-to-cart", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
