@@ -24,8 +24,19 @@ const Header = () => {
   const cartItems = useSelector((state) => state.cart.items);
   
   const userId = useSelector((state) => state.auth.id);
- 
+
+
+
+  useEffect(() => {
+    if (userId && token) {
+      const intervalId = setInterval(() => {
+        dispatch(fetchCartItems({ userId, token }));
+      }, 1000);
   
+      // Cleanup the interval on component unmount or dependencies change
+      return () => clearInterval(intervalId);
+    }
+  }, [dispatch, userId, token]);
  
  
 
@@ -35,6 +46,7 @@ const Header = () => {
     dispatch(logout(id, token ));
    dispatch(fetchCartItems({ userId, token }));
     persistor.purge(); 
+  
     toast.success('Logged out successfully!');
     navigate('/login');
     setMenuOpen(false);
@@ -89,6 +101,8 @@ const Header = () => {
     
     
     dispatch(removeItemFromCart({ userId, token, productId })).then(() => {
+      localStorage.removeItem("guestCart");
+
    
    dispatch(fetchCartItems({ userId, token }));
     setMenuOpen(true);

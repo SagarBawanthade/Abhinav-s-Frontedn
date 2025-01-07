@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import {  useParams } from "react-router-dom";
+import {  useNavigate, useParams } from "react-router-dom";
 import { FaTruck, FaTimesCircle, FaExchangeAlt } from "react-icons/fa";
 import Spinner from "../components/Spinner";
 import { useDispatch, useSelector } from "react-redux";
@@ -56,7 +56,7 @@ function ProductDetails() {
   const [selectedSize, setSelectedSize] = useState(""); // Highlighted for size updates
   const [selectedColor, setSelectedColor] = useState(""); // Highlighted for color updates
   const [giftWrapping, setGiftWrapping] = useState(false);
-
+const navigate = useNavigate();
 
 
   const returnPolicyRef = useRef(null);
@@ -104,7 +104,8 @@ function ProductDetails() {
 
   const handleAddToCart = async () => {
     if (!userId) {
-      toast.error("Please login to add products to cart!");
+      toast.error("Product Added, Please Login to View products in Cart");
+      navigate("/cart");
      
       return;
     }
@@ -156,6 +157,7 @@ function ProductDetails() {
       if (data.cart) {
         toast.success("Product added to Cart Successfully!");
         dispatch(fetchCartItems({ userId, token }));
+        navigate("/cart");
       } else {
         throw new Error(data.message || "Failed to add product to cart");
       }

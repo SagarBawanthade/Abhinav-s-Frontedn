@@ -56,4 +56,47 @@
     font-style: normal;
   }
   
+  /* Modal overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Modal content */
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 100%;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Buttons */
+.btn {
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.btn-primary {
+  background-color: black; /* Blue */
+  color: white;
   
+}
+
+.btn-primary:hover {
+  background-color: #000000; /* Dark blue */
+}
+
+.btn-secondary {
+  background-color: #d1d5db; /* Light gray */
+  color: #1f2937; /* Dark gray */
+}

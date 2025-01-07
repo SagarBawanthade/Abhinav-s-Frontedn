@@ -6,6 +6,7 @@ import Spinner from "../components/Spinner.jsx";
 import { useDispatch } from "react-redux";
 import { fetchCartItems, removeItemFromCart } from "../feature/cartSlice.jsx";
 import { toast } from "react-toastify";
+import LoginPrompt from "../components/LoginPrompt.jsx";
 
 const Cart = () => {
   
@@ -13,6 +14,14 @@ const Cart = () => {
   const token = useSelector((state) => state.auth.token);
 
   const isLoggedIn = Boolean(userId && token);
+
+    // State to control the modal visibility
+    const [isModalOpen, setIsModalOpen] = useState(!isLoggedIn);
+
+    // Function to close the modal
+    const closeModal = () => {
+      setIsModalOpen(false);
+    };
  
   
   const dispatch = useDispatch();
@@ -84,6 +93,10 @@ const subtotal = cartItems.reduce(
 
         {/* Show spinner while loading */}
         {loading && <Spinner />}
+
+
+      {!isLoggedIn && (<LoginPrompt isOpen={isModalOpen} closeModal={closeModal} />)}
+      
 
         {/* Show error message if loading fails */}
         {error && console.log(error)}
