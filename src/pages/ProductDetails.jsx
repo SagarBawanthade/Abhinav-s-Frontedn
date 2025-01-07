@@ -12,6 +12,7 @@ import MoreProduct2 from "../components/MoreProduct2";
 import { fetchCartItems } from "../feature/cartSlice";
 import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
 import { ShoppingCart, Heart, Clock } from 'lucide-react'; 
+import ProductHeader from "../components/ProductHeader";
 
 
 function ProductDetails() {
@@ -235,9 +236,9 @@ function ProductDetails() {
           </div>
 
           {/* Product Details */}
-          <div className="w-full md:w-1/2 px-4">
-            <h2 className="text-3xl font-bold mb-2">
-             {product.name}
+          <div className="w-full md:w-1/2 px-4"> 
+            <h2 className="text-3xl font-bold mb-2 flex ">
+             {product.name}<ProductHeader product={product} />
             </h2>
             <div className="mb-4 flex items-center gap-4">
               <span className="text-2xl font-semibold ">₹{product.price}</span>
