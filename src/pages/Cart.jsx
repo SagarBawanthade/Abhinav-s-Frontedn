@@ -1,35 +1,37 @@
 import { useEffect, useRef, useState } from "react";
 import { FaTrashAlt, FaGift } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Spinner from "../components/Spinner.jsx"; 
 import { useDispatch } from "react-redux";
-import { fetchCartItems, removeItemFromCart } from "../feature/cartSlice.jsx";
+import { fetchCartItems, loadLocalStorage, removeFromLocalCart, removeItemFromCart } from "../feature/cartSlice.jsx";
 import { toast } from "react-toastify";
-import LoginPrompt from "../components/LoginPrompt.jsx";
+import useCartManagement from "../components/CartManagamnet.jsx";
+// import LoginPrompt from "../components/LoginPrompt.jsx";
 
 const Cart = () => {
   
   const userId = useSelector((state) => state.auth.id);
   const token = useSelector((state) => state.auth.token);
-
   const isLoggedIn = Boolean(userId && token);
 
-    // State to control the modal visibility
-    const [isModalOpen, setIsModalOpen] = useState(!isLoggedIn);
+    // // State to control the modal visibility
+    // const [isModalOpen, setIsModalOpen] = useState(!isLoggedIn);
 
-    // Function to close the modal
-    const closeModal = () => {
-      setIsModalOpen(false);
-    };
+    // // Function to close the modal
+    // const closeModal = () => {
+    //   setIsModalOpen(false);
+    // };
  
   
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const Cart = useRef(null);
   const cartItems = useSelector((state) => state.cart.items);
+  console.log("Very Last cartItems:-",cartItems);
 
   useEffect(() => {
     if (userId && token) {
@@ -37,7 +39,45 @@ const Cart = () => {
     }
   }, [dispatch, userId, token]);
 
- 
+
+  const handleCheckoutClick = () => {
+    if (cartItems.length === 0) {
+      toast.error("No items in the cart");
+      return;
+    }
+  
+    if (!isLoggedIn) {
+      // Save the intended destination
+      localStorage.setItem('redirectAfterLogin', '/checkout');
+      // Redirect to login page
+      navigate('/login');
+      toast.info("Please login to proceed with checkout");
+    } else {
+      // User is logged in, go directly to checkout
+      navigate('/checkout');
+    }
+  };
+
+   
+
+
+
+  //  // Load cart data based on auth status
+  //  useEffect(() => {
+  //   if (isLoggedIn) {
+  //     dispatch(fetchCartItems({ userId, token }));
+  //   }
+  // }, [isLoggedIn, dispatch, userId, token]);
+
+  // // Sync local cart with backend after login
+  // useEffect(() => {
+  //   if (isLoggedIn && cartItems.length > 0) {
+  //     dispatch(syncLocalCartWithBackend({ userId, token, localCart: cartItems }));
+  //   }
+  // }, [isLoggedIn]);
+
+// In both Cart.jsx and CheckoutPage.jsx
+useCartManagement();
  
 
 // Calculate Subtotal
@@ -67,23 +107,55 @@ const subtotal = cartItems.reduce(
   }, [userId, token]);
 
 
-  const handleRemoveItem = (productId) => {
-    dispatch(removeItemFromCart({ userId, token, productId })).then(() => {
-      toast.success("Item removed successfully");
-     dispatch(fetchCartItems({ userId, token }));
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      dispatch(loadLocalStorage());
+    }
+  }, []);
+
+
+
+
+// In your Cart component (Cart.jsx)
+const handleRemoveItem = async (product) => {
+  console.log("Attempting to remove product:", product);
+  
+  if (isLoggedIn) {
+    try {
+      // For logged-in users, make the API call first
+      const result = await dispatch(removeItemFromCart({ 
+        userId, 
+        token, 
+        product: product // Changed from product to productId for consistency
+      })).unwrap(); // Add .unwrap() to properly handle the promise
       
-      
-    }).catch((error) => {
-      toast.error("Error removing item: ", error);
-      
-    });
+      // Only proceed with local removal if the API call was successful
+      if (result) {
+       
+        toast.success("Item removed successfully from Cart");
+        // Consider if you really need this fetch since we already updated the state
+        // dispatch(fetchCartItems({ userId, token }));
+      }
+    } catch (error) {
+      console.error('Error removing item:', error);
+      toast.error("Error removing item: " + (error.message || 'Unknown error'));
+    }
+  } else {
+    // For non-logged-in users, just remove from local storage
+    dispatch(removeFromLocalCart({ product }));
+    toast.success("Item removed successfully");
   }
+};
+
 
   const location = useLocation();
   
   useEffect(() => {
     window.scrollTo(0, 0); // Scroll to top of the page
   }, [location]);
+
+
   
   
   return (
@@ -95,8 +167,8 @@ const subtotal = cartItems.reduce(
         {loading && <Spinner />}
 
 
-      {!isLoggedIn && (<LoginPrompt isOpen={isModalOpen} closeModal={closeModal} />)}
-      
+      {/* {!isLoggedIn && (<LoginPrompt isOpen={isModalOpen} closeModal={closeModal} />)}
+       */}
 
         {/* Show error message if loading fails */}
         {error && console.log(error)}
@@ -107,33 +179,36 @@ const subtotal = cartItems.reduce(
             <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
             <div className="space-y-6 font-forumNormal">
             <div className="space-y-6 font-forumNormal">
-            {!isLoggedIn ? (
-        // Show message if the user is not logged in
-        <p className="text-center justify-center font-forumNormal mt-36 text-lg text-gray-500 dark:text-gray-300">
-          Please Log In to add items to the cart
-          <Link to="/login">
-            <p className="text-sm hover:underline font-bold font-forumNormal">Go to Login &rarr;</p>
-          </Link>
-        </p>
-      ) : cartItems.length === 0 ? (
-        // Show message if no items in the cart
-        <p className="text-center justify-center font-forumNormal mt-36 text-lg text-gray-500 dark:text-gray-300">
-          No Products Found
-          <Link to="/shop">
-            <p className="text-sm hover:underline font-bold font-forumNormal">Continue Shopping &rarr;</p>
-          </Link>
-        </p>
+            {cartItems.length === 0 ? (
+                    <p className="text-center justify-center font-forumNormal mt-36 text-lg text-gray-500 dark:text-gray-300">
+                      No Products Found
+                      <Link to="/shop">
+                        <p className="text-sm hover:underline font-bold font-forumNormal">
+                          Continue Shopping &rarr;
+                        </p>
+                      </Link>
+                    </p>
       ) : (
    
     cartItems.map((item) => (
       <div
-        key={item._id}
+      key={item._id}
         className="relative rounded-lg border border-gray-300 bg-headerBackGround p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6"
       >
         <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
           <a href="#" className="shrink-0 md:order-1">
-            <img className="h-28 w-28" src={item.images[0]} alt={item.name} />
-          </a>
+           
+        
+
+          <img
+    className="h-28 w-28"
+    src={
+      Array.isArray(item.images)
+        ? item.images[0] // Use the first image if `images` is an array
+        : item.images || item.image // Use `images` or `image` if it's a string
+    }
+    alt={item.name}
+  />  </a>
 
           <label htmlFor={`counter-input-${item._id}`} className="sr-only">
             Quantity:
@@ -156,11 +231,11 @@ const subtotal = cartItems.reduce(
             </div>
           </div>
           <div className="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
-            <Link to={`/product-details/${item.product._id}`}>
+       
               <p className="text-2xl font-forumNormal text-gray-900 hover:underline dark:text-white">
                 {item.name}
               </p>
-            </Link>
+          
             <div className="text-sm text-gray-500 dark:text-gray-400">
               <p className="text-black text-lg font-forumNormal">
                 Color: <span className="font-forumNormal text-black">{item.color}</span>
@@ -182,7 +257,11 @@ const subtotal = cartItems.reduce(
           {/* Delete button positioned bottom-right */}
           <button
             type="button"
-            onClick={() => handleRemoveItem(item.product._id)}
+           
+
+            onClick={() => handleRemoveItem(isLoggedIn ? item.product._id : item.product)}
+
+       
             className="absolute bottom-2 right-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-500"
           >
             <FaTrashAlt className="text-xl" />
@@ -221,8 +300,21 @@ const subtotal = cartItems.reduce(
                   </dl>
                 </div>
 
-                <Link to={cartItems.length === 0 ? "#" : "/checkout"}>
-  <button
+                {/* <Link to={cartItems.length === 0 ? "#" : "/checkout"}> */}
+
+                <button
+  onClick={handleCheckoutClick}
+  disabled={cartItems.length === 0}
+  className={`flex w-full text-lg items-center mt-3 rounded-lg justify-center font-forumNormal px-5 py-2.5 text-white focus:outline-none focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-800 ${
+    cartItems.length === 0
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-homePage hover:opacity-80 dark:bg-primary-600 dark:hover:bg-primary-700"
+  }`}
+>
+  Proceed to Checkout
+</button>
+
+  {/* <button
     onClick={() => {
       if (cartItems.length === 0 ) {
         toast.error("No items in the cart");
@@ -236,8 +328,8 @@ const subtotal = cartItems.reduce(
     }`}
   >
     Proceed to Checkout
-  </button>
-</Link>
+  </button> */}
+{/* </Link> */}
 
 
                 <div className="flex items-center justify-center gap-2">
@@ -274,3 +366,6 @@ const subtotal = cartItems.reduce(
 };
 
 export default Cart;
+
+
+

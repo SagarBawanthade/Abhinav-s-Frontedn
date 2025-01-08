@@ -8,7 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector , useDispatch} from 'react-redux';
 import { logout } from '../feature/authSlice';
 import { toast } from 'react-toastify';
-import { fetchCartItems, removeItemFromCart } from '../feature/cartSlice';
+import { fetchCartItems, loadLocalCart, removeFromLocalCart, removeItemFromCart } from '../feature/cartSlice';
 import { User , LogOut, LogIn,Package, UserPen , ShoppingBag} from 'lucide-react';
 import { persistor } from '../utils/store';
 
@@ -25,6 +25,7 @@ const Header = () => {
   
   const userId = useSelector((state) => state.auth.id);
 
+  const isLoggedIn = Boolean(userId && token);
 
 
   useEffect(() => {
@@ -97,20 +98,37 @@ const Header = () => {
   );
 
 
-  const handleRemoveItem = (productId) => {
-    
-    
-    dispatch(removeItemFromCart({ userId, token, productId })).then(() => {
-      localStorage.removeItem("guestCart");
+  
+  const handleRemoveItem = async (product) => {
+    if (isLoggedIn) {
+      try {
+        await dispatch(removeItemFromCart({ userId, token, product }));
+        dispatch(fetchCartItems({ userId, token }));
+        toast.success("Item removed successfully");
+      } catch (error) {
+        toast.error("Error removing item: " + error.message);
+      }
+    } else {
+      dispatch(removeFromLocalCart({ product }));
+    }
+  };
+  
 
-   
-   dispatch(fetchCartItems({ userId, token }));
-    setMenuOpen(true);
-  }).catch((error) => {
-      toast.error("Error removing item: ", error);
+  // const handleRemoveItem = (productId) => {
+  //   dispatch(removeItemFromCart({ userId, token, productId })).then(() => {
+    
+  //  dispatch(fetchCartItems({ userId, token }));
+  //   setMenuOpen(true);
+  //   const updatedCart = cartItems.filter(item => item.productId !== productId);
+  //    localStorage.setItem('cart', JSON.stringify(updatedCart));
+  //    dispatch(loadLocalCart());
+  //    toast.success("Item removed successfully");
         
-    });
-  }
+  // }).catch((error) => {
+  //     toast.error("Error removing item: ", error);
+        
+  //   });
+  // }
   return (
     <header href="/" className="text-allFontColor bg-headerBackGround flex items-center justify-between px-4 py-4 md:py-6  shadow-lg font-avenir">
       {/* Left: Logo */}
@@ -332,9 +350,24 @@ const Header = () => {
         cartItems.map((item) => (
           <li key={item._id} className="flex py-6">
             <div className="size-24 shrink-0 overflow-hidden rounded-md border border-gray-200">
+            
+  {/* <img
+    className="h-28 w-28"
+    src={
+      Array.isArray(item.images)
+        ? item.images[0] // Use the first image if `images` is an array
+        : item.images || item.image // Use `images` or `image` if it's a string
+    }
+    alt={item.name}
+  /> */}
+
               <img
                 alt={item.name}
-                src={item.images[0]}
+                src={
+                  Array.isArray(item.images)
+                    ? item.images[0] // Use the first image if `images` is an array
+                    : item.images || item.image // Use `images` or `image` if it's a string
+                }
                 className="size-full object-cover"
               />
             </div>
@@ -355,7 +388,8 @@ const Header = () => {
                 <div className="flex">
                   <button
                     type="button"
-                    onClick={() => handleRemoveItem(item.product?._id)}
+                    onClick={() => handleRemoveItem(isLoggedIn ? item.product?._id : item.product)}
+                    
                     className="font-medium cursor-pointer text-red-500 hover:text-red-800"
                   >
                     Remove

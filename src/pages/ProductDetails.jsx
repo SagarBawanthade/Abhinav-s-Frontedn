@@ -12,6 +12,7 @@ import MoreProduct2 from "../components/MoreProduct2";
 import { fetchCartItems } from "../feature/cartSlice";
 import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
 import { ShoppingCart, Heart, Clock } from 'lucide-react'; 
+import { addToLocalCart } from "../feature/cartSlice";
 import ProductHeader from "../components/ProductHeader";
 
 
@@ -50,7 +51,7 @@ function ProductDetails() {
   };
 
   const [cartLoading, setCartLoading] = useState(false);
-  console.log("cartLoading :", cartLoading);
+  
  
   const [quantity, setQuantity] = useState(1); // Highlighted for quantity updates
   const [selectedSize, setSelectedSize] = useState(""); // Highlighted for size updates
@@ -103,69 +104,57 @@ const navigate = useNavigate();
   }, [productId]);
 
   const handleAddToCart = async () => {
-    if (!userId) {
-      toast.error("Product Added, Please Login to View products in Cart");
-      navigate("/cart");
-     
+    if (!selectedSize || !selectedColor) {
+      toast.error("Please select size and color before adding to cart!");
       return;
     }
- 
-
-     if (!selectedSize || !selectedColor) {
-          toast.error("Please select size and color before adding to cart!");
-          return;
-        }
-
-
-    
   
     const cartItem = {
-      productId: productId,  
-      quantity: quantity,  
-      color: selectedColor,  
-      size: selectedSize,            
-     giftWrapping: false, 
-           
-
+      product: productId, // Ensure this matches "product" in back-end
+      quantity,
+      color: selectedColor,
+      size: selectedSize,
+      giftWrapping: giftWrapping,
+      name: product.name,
+      images: product.images,
+      price: product.price,
+      // Default
     };
-
-    console.log("cartItem",cartItem);
-    
-
   
-    try {
-      setCartLoading(true);
+    console.log("Cart Item:- ",cartItem); 
+    if (userId && token) {
+      try {
+        setCartLoading(true);
+        const response = await fetch(
+          "https://backend.abhinavsofficial.com/api/cart/add-to-cart",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(cartItem), // Directly send cartItem
+          }
+        );
   
-      // Directly call the add-to-cart API
-      const response = await fetch("https://backend.abhinavsofficial.com/api/cart/add-to-cart", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          userId,               // Send userId along with cart item details
-          productId: productId, // The selected product
-          quantity,             // Item quantity
-          color: selectedColor, // Item color
-          size: selectedSize,   // Item size
-          giftWrapping: giftWrapping,  // Example, adjust as needed
-        }),
-      });
-  
-      const data = await response.json();
-      if (data.cart) {
-        toast.success("Product added to Cart Successfully!");
-        dispatch(fetchCartItems({ userId, token }));
-        navigate("/cart");
-      } else {
-        throw new Error(data.message || "Failed to add product to cart");
+        const data = await response.json();
+        if (response.ok && data.cart) {
+          toast.success("Product added to Cart Successfully!");
+          dispatch(fetchCartItems({ userId, token }));
+          navigate("/cart");
+        } else {
+          toast.error(data.error || "Failed to add product to cart.");
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to add product to cart.");
+      } finally {
+        setCartLoading(false);
       }
-    } catch (error) {
-      console.error("Error adding to cart:", error);
-      toast.error("Failed to add product to cart.");
-    } finally {
-      setCartLoading(false);
+    } else {
+      dispatch(addToLocalCart(cartItem));
+      toast.success("Product added to cart!");
+      navigate("/cart");
     }
   };
   

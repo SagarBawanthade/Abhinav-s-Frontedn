@@ -32,6 +32,17 @@ const HoodiesPage = () => {
   const userId = useSelector((state) => state.auth.id);
   const token = useSelector((state) => state.auth.token);
   const wishlist = useSelector(state => state.wishlist.items);
+
+
+  const isLoggedIn = useSelector((state) => Boolean(state.auth.id && state.auth.token));
+
+const handleButtonClick = (item) => {
+  if (!isLoggedIn) {
+    navigate(`/product-details/${item._id}`);
+  } else {
+    handlecart(item);
+  }
+};
  
 
  
@@ -87,6 +98,9 @@ const toggleLike = (item) => {
       color: selectedColor,
       size: selectedSize,
       giftWrapping: giftWrapping,
+
+
+      
     };
 
     console.log(cartData)
@@ -260,8 +274,11 @@ const toggleLike = (item) => {
                     </span>
                   </div>
 
+
+              
                   <button
-                    onClick={() => handlecart(item)}
+                  //  onClick={() => handleButtonClick(item) && () => handlecart(item)}
+                    onClick={() => handleButtonClick(item)}
                     className="w-full bg-gray-900 text-white rounded-lg py-3 flex items-center justify-center space-x-2 hover:bg-gray-800 transform transition-all duration-300 "
                   >
                       <ShoppingCart className="w-4 h-4 mr-2" />

@@ -1,10 +1,11 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../feature/authSlice";
 
 import { setUserId } from "../feature/wishlistSlice";
+import { loadLocalStorage } from "../feature/cartSlice";
 
 
 const Login = () => {
@@ -16,6 +17,9 @@ const Login = () => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
+
+  
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,7 +38,14 @@ const Login = () => {
         dispatch(loginSuccess({ id, token, role }));
         dispatch(setUserId(id));
         toast.success('Successfully logged in');
-        navigate("/"); // Navigate to home after login
+        const redirectPath = localStorage.getItem('redirectAfterLogin');
+        localStorage.removeItem('redirectAfterLogin'); // Clean up
+        
+        if (redirectPath) {
+          navigate(redirectPath); // Redirect to checkout
+        } else {
+          navigate('/'); // Default redirect if no saved path
+        }
       } else {
         toast.error(data.message || "Login failed, please try again.");
       }

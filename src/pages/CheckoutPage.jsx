@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { CreditCard, Package, Truck, Mail, Phone, User, Home, MapPin } from "lucide-react";
+
+import useCartManagement from "../components/CartManagamnet";
 
 const loadRazorpayScript = () => {
   return new Promise((resolve) => {
@@ -43,9 +45,10 @@ const CheckoutPage = () => {
   const userId = useSelector((state) => state.auth.id);
   const token = useSelector((state) => state.auth.token);
   const [loading, setLoading] = useState(false);
- 
+ const dispatch = useDispatch();
   const isLoggedIn = Boolean(userId && token);
   const navigate = useNavigate();
+ 
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -237,6 +240,21 @@ const location = useLocation();
 useEffect(() => {
   window.scrollTo(0, 0); // Scroll to top of the page
 }, [location]);
+useCartManagement();
+
+
+// useEffect(() => {
+//   if (isLoggedIn) {
+//     dispatch(fetchCartItems({userId, token}));
+//   }
+// }, [isLoggedIn]); 
+
+//   // Sync local cart with backend after login
+//   useEffect(() => {
+//     if (isLoggedIn && cartItems.length > 0) {
+//       dispatch(syncLocalCartWithBackend({ userId, token, localCart: cartItems }));
+//     }
+//   }, [isLoggedIn]);
 
   return (
     <div className="font-forumNormal bg-headerBackGround min-h-screen p-4">
@@ -257,31 +275,52 @@ useEffect(() => {
                 
                 <div className="space-y-6 divide-y divide-gray-100">
                   {cartItems.map((product, index) => {
-                    const productTotal = product.quantity * product.price;
-                    const additionalCost = product.giftWrapping ? product.quantity * 30 : 0;
+                     // Extract product details handling both logged-in and non-logged-in states
+                    const productDetails = {
+                      name: product.name || (product.product && product.product.name),
+                      images: product.images || (product.product && product.product.images),
+                      price: product.price,
+                      quantity: product.quantity,
+                      size: product.size,
+                      color: product.color,
+                      giftWrapping: product.giftWrapping
+                    };
+
+                    const productTotal = productDetails.quantity * productDetails.price;
+                    const additionalCost = productDetails.giftWrapping ? productDetails.quantity * 30 : 0;
                     const finalPrice = productTotal + additionalCost;
 
                     return (
                       <div key={index} className="pt-6 first:pt-0">
                         <div className="flex gap-4">
                           <div className="w-20 h-20 rounded-lg border border-gray-300 overflow-hidden">
-                            <img
+
+                          <img
+    className="w-full h-full object-cover"
+    src={
+      Array.isArray(productDetails.images)
+        ? productDetails.images[0] // Use the first image if `images` is an array
+        : productDetails.images || productDetails.image // Use `images` or `image` if it's a string
+    }
+    alt={productDetails.name}
+  />
+                            {/* <img
                               src={product.images[0]}
                               alt={product.name}
                               className="w-full h-full object-cover"
-                            />
+                            /> */}
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center justify-between">
-                              <h3 className="font-medium text-gray-800">{product.name}</h3>
-                              {product.giftWrapping && (
+                              <h3 className="font-medium text-gray-800">{productDetails.name}</h3>
+                              {productDetails.giftWrapping && (
                                 <span className="text-xl">🎁</span>
                               )}
                             </div>
                             <div className="mt-2 space-y-1 text-sm text-gray-600">
-                              <p>Size: {product.size}</p>
-                              <p>Quantity: {product.quantity}</p>
-                              <p>Color: {product.color}</p>
+                              <p>Size: {productDetails.size}</p>
+                              <p>Quantity: {productDetails.quantity}</p>
+                              <p>Color: {productDetails.color}</p>
                               <p className="font-medium text-gray-800">₹{finalPrice.toLocaleString()}</p>
                             </div>
                           </div>
