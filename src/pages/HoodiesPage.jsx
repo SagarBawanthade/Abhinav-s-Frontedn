@@ -93,12 +93,17 @@ const toggleLike = (item) => {
     }
 
     const cartData = {
-      productId: cartItem._id,
+      product: cartItem._id,
       quantity,
       color: selectedColor,
       size: selectedSize,
       giftWrapping: giftWrapping,
 
+
+     
+      name: cartItem.name,
+      images: cartItem.images,
+      price: cartItem.price,
 
       
     };

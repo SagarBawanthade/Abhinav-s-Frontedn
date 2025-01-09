@@ -426,9 +426,9 @@ const navigate = useNavigate();
       <div className="mt-4">
         <button
           onClick={() => toggleSection("productDetails")}
-          className="flex items-center justify-between w-40 text-lg mb-2 py-3 text-gray-800 bg-headerBackGround font-semibold focus:outline-none"
+          className="flex items-center justify-between w-50 text-lg mb-2 py-3 text-gray-800 bg-headerBackGround font-semibold focus:outline-none"
         >
-          <span>Product Details</span>
+          <span>Product Details & Sizes</span>
           {openSection === "productDetails" ? (
             <FaChevronUp className="ml-2 transform transition-transform duration-300" />
           ) : (
@@ -444,10 +444,38 @@ const navigate = useNavigate();
           }}
         >
           <div className="px-4 py-3 text-gray-700 font-forumNormal">
+
+          {product.category !== "Oversize-Tshirt" && product.category !== "Hoodies" && (
+  <div className="mb-6">
+    <h4 className="font-semibold mb-3">Size Chart</h4>
+    <img
+      src="/images/tshirt-size.jpg"
+      alt="Size Chart"
+      className="w-full max-w-2xl mx-auto h-auto object-contain rounded-lg"
+    />
+  </div>
+)}
+
+
+          {product.category !== "Hoodies" && product.category !== "Tshirt" && (
+  <div className="mb-6">
+    <h4 className="font-semibold mb-3">Size Chart</h4>
+    <img
+      src="/images/oversize-size.jpg" // Replace with your actual image path
+      alt="Size Chart"
+      className="w-full max-w-2xl mx-auto h-auto object-contain rounded-lg"
+    />
+  </div>
+)}
+
+
+
+
+
             <p><strong>Fabric:- </strong> {product.details.fabric}</p>
             <p><strong>Care Instructions:- </strong> {product.details.careInstructions}</p>
             <p><strong>FabricCare:- </strong>{product.details.fabricCare}</p>
-            <p><strong>Hooded:- </strong> {product.details.hooded}</p>
+            {/* <p><strong>Hooded:- </strong> {product.details.hooded}</p> */}
             <p><strong>KnitType:- </strong> {product.details.knitType}</p>
             <p><strong>Material:- </strong> {product.details.material}</p>
             <p><strong>Neck:- </strong> {product.details.neck}</p>
@@ -455,9 +483,9 @@ const navigate = useNavigate();
             <p><strong>Occasion:- </strong>{product.details.occasion}</p>
             <p><strong>Origin:- </strong> {product.details.origin}</p>
             <p><strong>Pattern:- </strong> {product.details.pattern}</p>
-            <p><strong>Pockets:- </strong> {product.details.pockets}</p>
+            {/* <p><strong>Pockets:- </strong> {product.details.pockets}</p>
             <p><strong>Reversible:- </strong> {product.details.reversible}</p>
-            <p><strong>SecondaryColor:- </strong> {product.details.secondaryColor}</p>
+            <p><strong>SecondaryColor:- </strong> {product.details.secondaryColor}</p> */}
             <p><strong>ShippingInfo:- </strong> {product.details.shippingInfo}</p>
             <p><strong>Sleeve:- </strong> {product.details.sleeve}</p>
             <p><strong>StyleCode:- </strong> {product.details.styleCode}</p>

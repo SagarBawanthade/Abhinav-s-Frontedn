@@ -193,10 +193,17 @@ const CheckoutPage = () => {
                 finalizedOrderData
               );
 
+
+
+              console.log("Order Response:", orderResponse , "Finalized Order Data:", finalizedOrderData);  
+              const sendEmail = await axios.post("https://backend.abhinavsofficial.com/api/order/send-email", orderResponse);
+              console.log("Send Email Successfully FrontEnd:-", sendEmail);
+
               console.log("orderResponse:", orderResponse);
               console.log("Order Data:", finalizedOrderData);
-              toast.success("Order placed successfully!");
               navigate("/order-confirm");
+              toast.success("Order placed successfully!");
+              
               setLoading(false);
             } else {
               toast.error("Payment verification failed");

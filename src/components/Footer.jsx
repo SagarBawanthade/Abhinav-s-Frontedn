@@ -8,7 +8,7 @@ const Footer = () => {
       <div className="max-w-10xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-left mt-12 mb-24">
-          <h2 className="forum-regular text-5xl font-playfair-display-hero3">Abhinav's Worlds Best</h2>
+          <h2 className="forum-regular text-5xl font-playfair-display-hero3">Abhinav's Best of World</h2>
         </div>
 
         
