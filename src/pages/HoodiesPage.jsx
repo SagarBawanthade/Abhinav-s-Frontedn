@@ -11,6 +11,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { Heart, ShoppingCart, TrendingUp, Stars,Timer } from 'lucide-react';
 import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
+import { addToLocalCart, fetchCartItems } from "../feature/cartSlice";
 
 const HoodiesPage = () => {
   const dispatch = useDispatch();
@@ -37,11 +38,9 @@ const HoodiesPage = () => {
   const isLoggedIn = useSelector((state) => Boolean(state.auth.id && state.auth.token));
 
 const handleButtonClick = (item) => {
-  if (!isLoggedIn) {
-    navigate("/shop/hoodies");
-  } else {
+  
     handlecart(item);
-  }
+  
 };
  
 
@@ -82,11 +81,11 @@ const toggleLike = (item) => {
   }, []);
 
   const addToCart = async () => {
-    if (!userId) {
-      toast.error("Please login to add products to cart!");
+    // if (!userId) {
+    //   toast.error("Please login to add products to cart!");
       
-      return;
-    }
+    //   return;
+    // }
     if (!selectedSize || !selectedColor) {
       toast.error("Please select size and color before adding to cart!");
       return;
@@ -98,9 +97,6 @@ const toggleLike = (item) => {
       color: selectedColor,
       size: selectedSize,
       giftWrapping: giftWrapping,
-
-
-     
       name: cartItem.name,
       images: cartItem.images,
       price: cartItem.price,
@@ -110,36 +106,71 @@ const toggleLike = (item) => {
 
     console.log(cartData)
 
-    try {
-      setCartLoading(true);
+    // try {
+    //   setCartLoading(true);
 
-      const response = await fetch("https://backend.abhinavsofficial.com/api/cart/add-to-cart", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ userId, ...cartData }),
-      });
+    //   const response = await fetch("https://backend.abhinavsofficial.com/api/cart/add-to-cart", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //     body: JSON.stringify({ userId, ...cartData }),
+    //   });
 
-      const data = await response.json();
-      if (data.cart) {
-        navigate("/cart");
+    //   const data = await response.json();
+    //   if (data.cart) {
+    //     navigate("/cart");
       
        
        
-        toast.success("Product added to Cart Successfully!");
+    //     toast.success("Product added to Cart Successfully!");
        
-      } else {
-        throw new Error(data.message || "Failed to add product to cart");
-      }
-    } catch (error) {
-      console.error("Error adding to cart:", error);
-      toast.error("Failed to add product to cart.");
-    } finally {
-      setCartLoading(false);
-    }
+    //   } else {
+    //     throw new Error(data.message || "Failed to add product to cart");
+    //   }
+    // } catch (error) {
+    //   console.error("Error adding to cart:", error);
+    //   toast.error("Failed to add product to cart.");
+    // } finally {
+    //   setCartLoading(false);
+    // }
   
+
+     if (userId && token) {
+          try {
+            setCartLoading(true);
+            const response = await fetch(
+              "https://backend.abhinavsofficial.com/api/cart/add-to-cart",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(cartData), // Directly send cartItem
+              }
+            );
+      
+            const data = await response.json();
+            if (response.ok && data.cart) {
+              toast.success("Product added to Cart Successfully!");
+              dispatch(fetchCartItems({ userId, token }));
+              navigate("/cart");
+            } else {
+              toast.error(data.error || "Failed to add product to cart.");
+            }
+          } catch (error) {
+            console.error(error);
+            toast.error("Failed to add product to cart.");
+          } finally {
+            setCartLoading(false);
+          }
+        } else {
+          dispatch(addToLocalCart(cartData));
+          toast.success("Product added to cart!");
+          navigate("/cart");
+        }
 
 
 
@@ -232,15 +263,16 @@ const toggleLike = (item) => {
               <div className="group relative bg-[#E9EBCA] rounded-xl shadow-sm hover:shadow-xl transition-all duration-300">
                 <div className="relative overflow-hidden">
                   {/* <Link to={`/product-details/${item._id}`}> */}
-                  <Link to="/shop/hoodies">
+                 
                     <div className="aspect-square overflow-hidden rounded-t-xl">
                       <img
                         src={item.images[0]}
                         alt={item.name}
                         className="w-full h-full object-cover  transition-transform duration-500"
+                        onClick={() => handleButtonClick(item)}
                       />
                     </div>
-                  </Link>
+             
 
                   <button
                   
@@ -281,15 +313,15 @@ const toggleLike = (item) => {
                   </div>
 
 
-              
+                  <Link to="/shop/hoodies">
                   <button
                   //  onClick={() => handleButtonClick(item) && () => handlecart(item)}
-                    onClick={() => handleButtonClick(item)}
+                    // onClick={() => handleButtonClick(item)}
                     className="w-full bg-gray-900 text-white rounded-lg py-3 flex items-center justify-center space-x-2 hover:bg-gray-800 transform transition-all duration-300 "
                   >
-                      <ShoppingCart className="w-5 h-5 mr-2" />
+                      {/* <ShoppingCart className="w-5 h-5 mr-2" /> */}
                     <span className="text-lg font-forumNormal font-medium">Explore more</span>
-                  </button>
+                  </button></Link>
                 </div>
               </div>
             </SwiperSlide>

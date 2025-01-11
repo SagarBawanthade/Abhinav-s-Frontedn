@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { CreditCard, Package, Truck, Mail, Phone, User, Home, MapPin } from "lucide-react";
 
-import useCartManagement from "../components/CartManagamnet";
+// import useCartManagement from "../components/CartManagamnet";
 
 const loadRazorpayScript = () => {
   return new Promise((resolve) => {
@@ -247,7 +247,7 @@ const location = useLocation();
 useEffect(() => {
   window.scrollTo(0, 0); // Scroll to top of the page
 }, [location]);
-useCartManagement();
+// useCartManagement();
 
 
 // useEffect(() => {

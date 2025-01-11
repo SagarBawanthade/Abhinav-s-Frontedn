@@ -109,7 +109,7 @@ const HeaderSidebar = ({ isOpen, onClose, isLoggedIn, handleLogout }) => {
       {/* Button Container */}
       <div className={`
         relative overflow-hidden
-        bg-gradient-to-r from-slate-600 to-blue-600
+  bg-gradient-to-r from-slate-600 to-blue-600
       hover:from-slate-700 to-blue-700
         rounded-xl
         transition-all duration-500 ease-out

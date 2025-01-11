@@ -13,6 +13,7 @@ const useCartManagement = () => {
   // Single effect to handle cart initialization
   useEffect(() => {
     const initializeCart = async () => {
+      
       if (isLoggedIn) {
         // First, fetch the existing cart from backend
         await dispatch(fetchCartItems({ userId, token }));

@@ -109,6 +109,7 @@ const subtotal = cartItems.reduce(
 
 
   useEffect(() => {
+    
     if (!isLoggedIn) {
       dispatch(loadLocalStorage());
     }
@@ -119,6 +120,7 @@ const subtotal = cartItems.reduce(
 
 // In your Cart component (Cart.jsx)
 const handleRemoveItem = async (product) => {
+  
   console.log("Attempting to remove product:", product);
   
   if (isLoggedIn) {
@@ -152,6 +154,7 @@ const handleRemoveItem = async (product) => {
   const location = useLocation();
   
   useEffect(() => {
+    
     window.scrollTo(0, 0); // Scroll to top of the page
   }, [location]);
 
