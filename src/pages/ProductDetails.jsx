@@ -457,7 +457,7 @@ const navigate = useNavigate();
 )}
 
 
-          {product.category !== "Hoodies" && product.category !== "Tshirt" && (
+          {product.category !== "Hoodies" && product.category !== "Tshirt" && product.category !== "Couple-Tshirt" && (
   <div className="mb-6">
     <h4 className="font-semibold mb-3">Size Chart</h4>
     <img
