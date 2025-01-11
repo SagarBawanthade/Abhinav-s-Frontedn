@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
 
 import { toast } from 'react-toastify';
+import ProductsHeader from '../components/ProductsHeader';
 
 
 const Shop = () => {
@@ -181,15 +182,19 @@ const Shop = () => {
         {drawerOpen && (
           <div
             onClick={() => setDrawerOpen(false)}
+            
             className="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-40 md:hidden"
           ></div>
         )}
 
         {/* Products Section */}
         <div className="bg-headerBackGround w-full px-4 md:px-6 py-8">
-      <h1 className="font-forumNormal text-4xl md:text-5xl mb-8 text-left">
+
+        <ProductsHeader category={category} filteredProducts={filteredProducts} />
+
+      {/* <h1 className="font-forumNormal text-4xl md:text-5xl mb-8 text-left">
         {category ? category.charAt(0).toUpperCase() + category.slice(1) : "All Products"}
-      </h1>
+      </h1> */}
 
       {loading ? (
         <div className="flex justify-center items-center h-60">
@@ -199,7 +204,7 @@ const Shop = () => {
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6 mb-28">
           {filteredProducts.length > 0 ? (
             filteredProducts.map((product) => (
-              <div key={product._id} className="group relative bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+              <div key={product._id} className="group relative bg-headerBackGround rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
                 <div className="relative">
                   <Link to={`/product-details/${product._id}`}>
                     <div className="aspect-[5/5] overflow-hidden rounded-t-xl">

@@ -8,11 +8,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector , useDispatch} from 'react-redux';
 import { logout } from '../feature/authSlice';
 import { toast } from 'react-toastify';
-import { fetchCartItems, loadLocalCart, removeFromLocalCart, removeItemFromCart } from '../feature/cartSlice';
-import { User , LogOut, LogIn,Package, UserPen , ShoppingBag} from 'lucide-react';
+import { fetchCartItems, removeFromLocalCart, removeItemFromCart } from '../feature/cartSlice';
+import { User } from 'lucide-react';
 import { persistor } from '../utils/store';
+import HeaderSidebar from './HeaderSidebar';
 
 const Header = () => {
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); 
   const menuRef = useRef(null); 
@@ -65,9 +68,9 @@ const Header = () => {
   
   };
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen); // Toggle the menu visibility
-  };
+  // const toggleMenu = () => {
+  //   setMenuOpen(!menuOpen); // Toggle the menu visibility
+  // };
  
 
 
@@ -130,182 +133,132 @@ const Header = () => {
   //   });
   // }
   return (
-    <header href="/" className="text-allFontColor bg-headerBackGround flex items-center justify-between px-4 py-4 md:py-6  shadow-lg font-avenir">
-      {/* Left: Logo */}
-      <div className="logo">
-        <Link to="/" className="text-left text-xl
-        md:text-xl font-semibold lg:text-2xl font-forumNormal">
-          Abhinav's Best of World
-        </Link>
+    // <header href="/" className="text-allFontColor bg-headerBackGround flex items-center justify-between px-4 py-4 md:py-6  shadow-lg font-avenir">
+    <header className="bg-headerBackGround text-allFontColor shadow-lg">
+     <div className="max-w-[91rem] mx-auto px-5 py-5">
+        <div className="flex items-center justify-between">
+          {/* Left Section */}
+          <div className="flex items-center">
+            {!isLoggedIn ? (
+              <div className='flex flex-col items-center'>
+              <MenuIcon 
+                size={24}
+                // onClick={toggleMenu}
+                onClick={() => setSidebarOpen(true)}
+                className="cursor-pointer hover:scale-110 transition-transform"
+              />
+              <span className="hidden sm:block font-forumNormal font-bold text-sm text-gray-600">Menu</span>
+              </div>
+            ) : (
+              <div className='flex flex-col items-center'>
+              <User
+                size={24}
+                // onClick={toggleMenu}
+                onClick={() => setSidebarOpen(true)}
+                className="cursor-pointer hover:scale-110 transition-transform"
+              />
+              <span className="hidden sm:block font-forumNormal font-bold text-xs text-gray-600">Account</span>
+             
+              </div>
+            )}
+           
+          </div>
+
+          {/* Center Logo */}
+          <div className="flex-1 text-center">
+            <Link to="/" className="text-xl md:text-2xl font-semibold font-forumNormal">
+              Abhinav's Best of World
+            </Link>
+          </div>
+
+          {/* Right Section */}
+          <div className="flex items-center space-x-5">
+            <Link to="/wish-list">
+              <div className="flex flex-col items-center">
+                <Heart 
+                  size={24} 
+                  className="cursor-pointer hover:scale-110 transition-transform"
+                />
+                <span className="hidden sm:block font-forumNormal font-bold text-xs text-gray-600">Wishlist</span>
+              </div>
+            </Link>
+
+            <div className="relative">
+              <div className="flex flex-col items-center">
+                <ShoppingCart
+                  size={24}
+                  onClick={toggleCart}
+                  className="cursor-pointer hover:scale-110 transition-transform"
+                />
+                 <span className="hidden sm:block font-forumNormal font-bold text-xs text-gray-600">Cart</span>
+                {cartItems.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {cartItems.length}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Sidebar Component */}
+      <HeaderSidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        isLoggedIn={isLoggedIn}
+        handleLogout={handleLogout}
+      />
       </div>
 
-      {/* Right: Navigation Icons */}
-<div className="ml-3 mb-px nav-items flex gap-4 relative">
-
-{/* Wishlist Icon 
-<Link to="/wish-list">
-<div className="flex flex-col items-center">
-  <Heart 
-    size={22} 
-    className="cursor-pointer hover:scale-110 transition-transform" />
-  <span  className='text-sm font-forumNormal font-semibold'>WishList</span>
-</div>
-</Link>*/}
-
-
-
-{/* Wishlist Icon - Hidden on Small Screens */}
-<Link to="/wish-list" className="hidden md:flex">
-  <div className="flex flex-col items-center">
-    <Heart 
-      size={22} 
-      className="cursor-pointer hover:scale-110 transition-transform" />
-    <span className='text-sm font-forumNormal font-semibold'>WishList</span>
-  </div>
-</Link>
-
-
-{/* Cart Icon with Item Count */}
-<div className="relative">
-  {cartItems.length > 0 && (
-    <p className="absolute -top-3 -right-3 flex items-center justify-center rounded-full bg-red-500 text-xs font-forumNormal font-semibold text-white w-5 h-5 text-center">
-      {cartItems.length}
-    </p>
-  )}
-
-<div className="flex  ml-2  flex-col items-center">
-  <ShoppingCart
-  size={22} 
-    onClick={toggleCart} 
-    className="cursor-pointer text-xl hover:scale-110 transition-transform" 
-  />
-  <span  className='text-sm font-forumNormal font-semibold'>Cart</span>
-</div>
-</div>
-
-
-{/* Menu or User Profile Icon */}
-{!id && !token ? (
-  // Hamburger menu for unauthenticated users
-  <div className="flex flex-col  ml-2  items-center">
-  <MenuIcon 
-  size={22}
-    onClick={toggleMenu} 
-    className="cursor-pointer hover:scale-110 transition-transform" 
-  />
-  <span  className='text-sm font-forumNormal font-semibold'>Menu</span>
-</div>
-
-) : (
-  <div className="flex ml-2 flex-col items-center">
-  <User 
-  size={22}
-    onClick={toggleMenu} 
-    className="cursor-pointer hover:scale-110 transition-transform" 
-  />
-  <span className='text-sm font-forumNormal font-semibold'>Account</span>
-</div>
-
-)}
-
-{/* Dropdown Menu */}
-{menuOpen && (
-  <div
-    ref={menuRef}
-    className="absolute right-0 z-20 mt-10 w-40 font-semibold border border-gray-300 rounded-lg font-forumNormal bg-headerBackGround"
-  >
-    <ul className="py-2 text-gray-700">
-      {!id && !token ? (
-        // Unauthenticated User Menu
-        <>
-          <Link to="/login" onClick={() => setMenuOpen(false)}>
-            <li>
-              <a
-                href="#"
-                className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray hover:text-black hover:bg-gray-300 transition duration-300"
-              >
-                  <LogIn size={15} />
-                <span>Log In</span>
-              </a>
-            </li>
-          </Link>
-          <Link to="/register" onClick={() => setMenuOpen(false)}>
-            <li>
-              <a
-                href="#"
-                className="flex items-center gap-2 px-3 py-3 text-sm hover:text-black hover:bg-gray-300 transition duration-300"
-              >
-                  <UserPen size={15}/>
-                <span>Register</span>
-              </a>
-            </li>
-          </Link>
-           {/* Wishlist - Shown Only in Dropdown for Small Screens */}
-           <Link to="/wish-list" className="md:hidden" onClick={() => setMenuOpen(false)}>
-            <li>
-              <a href="#" className="flex items-center gap-2  px-3 py-3 text-sm hover:bg-gray-300 transition duration-300">
-              <ShoppingBag  size={15}/>
-                <span>Wishlist</span>
-              </a>
-            </li>
-          </Link>
-        </>
-      ) : (
-        // Authenticated User Menu
-        <>
-          <Link to="/user-profile" onClick={() => setMenuOpen(false)}>
-         
-            <li>
-              <a
-                href="#"
-                className="flex items-center gap-2 px-4 py-3 text-sm hover:bg-gray-300 hover:text-black transition duration-300"
-              >
-                 <User size={16} />
-                <span>Profile</span>
-              </a>
-              
-            </li>
-          </Link>
-          {/* Wishlist - Shown Only in Dropdown for Small Screens */}
-          <Link to="/wish-list" onClick={() => setMenuOpen(false)} className="md:hidden">
-            <li>
-              <a href="#" className="flex items-center gap-2 px-4 py-3 text-sm hover:bg-gray-300 transition duration-300">
-              <ShoppingBag  size={15}/>
-                <span>Wishlist</span>
-              </a>
-            </li>
-          </Link>
-          
-          <Link to="/order-history" onClick={() => setMenuOpen(false)}>
-            <li>
-              <a
-                href="#"
-                className="flex items-center gap-2  px-4 py-3 text-sm hover:bg-gray-300 hover:text-gray-900 transition duration-300"
-                
-              >  <Package size={15} />
-                <span>My Orders</span>
-              </a>
-              <hr className="border-thin border-gray-300" />
-            </li>
-          </Link>
-          
-          <Link to="/" onClick={() => setMenuOpen(false)}>
-            <li>
-              <a
-                href="#"
-                className="flex items-center gap-2 px-4 py-3 text-sm hover:bg-gray-300 hover:text-gray-900 transition duration-300"
-                onClick={handleLogout}
-              ><LogOut  size={15}/>
-                <span>Log out</span>
-              </a>
-            </li>
-          </Link>
-        </>
-      )}
-    </ul>
-  </div>
-)}
-</div>
+        {/* Dropdown Menu
+        {menuOpen && (
+          <div
+            ref={menuRef}
+            className="absolute left-4 top-16 z-20 w-48 bg-headerBackGround border border-gray-300 rounded-lg shadow-lg"
+          >
+            <ul className="py-2">
+              {!isLoggedIn ? (
+                <>
+                  <Link to="/login" onClick={() => setMenuOpen(false)}>
+                    <li className="flex items-center px-4 py-2 hover:bg-gray-300 transition-colors">
+                      <LogIn size={16} className="mr-2" />
+                      <span>Log In</span>
+                    </li>
+                  </Link>
+                  <Link to="/register" onClick={() => setMenuOpen(false)}>
+                    <li className="flex items-center px-4 py-2 hover:bg-gray-300 transition-colors">
+                      <UserPen size={16} className="mr-2" />
+                      <span>Register</span>
+                    </li>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/user-profile" onClick={() => setMenuOpen(false)}>
+                    <li className="flex items-center px-4 py-2 hover:bg-gray-300 transition-colors">
+                      <User size={16} className="mr-2" />
+                      <span>Profile</span>
+                    </li>
+                  </Link>
+                  <Link to="/order-history" onClick={() => setMenuOpen(false)}>
+                    <li className="flex items-center px-4 py-2 hover:bg-gray-300 transition-colors">
+                      <Package size={16} className="mr-2" />
+                      <span>My Orders</span>
+                    </li>
+                  </Link>
+                  <li 
+                    className="flex items-center px-4 py-2 hover:bg-gray-300 transition-colors cursor-pointer"
+                    onClick={handleLogout}
+                  >
+                    <LogOut size={16} className="mr-2" />
+                    <span>Log out</span>
+                  </li>
+                </>
+              )}
+            </ul>
+          </div>
+        )}
+      </div> */}
 
 
     

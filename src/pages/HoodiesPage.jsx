@@ -38,7 +38,7 @@ const HoodiesPage = () => {
 
 const handleButtonClick = (item) => {
   if (!isLoggedIn) {
-    navigate(`/product-details/${item._id}`);
+    navigate("/shop/hoodies");
   } else {
     handlecart(item);
   }
@@ -206,12 +206,12 @@ const toggleLike = (item) => {
               { "Hoodies"}
             </h2>
           </div>
-          <Link to="/shop/hoodies" className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:text-gray-800">
+          {/* <Link to="/shop/hoodies" className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:text-gray-800">
           <span className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:underline">
             <Stars className="w-4 h-4 mr-2 text-black" />
             View more
           </span>
-          </Link>
+          </Link> */}
         </div>
 
         <Swiper
@@ -231,7 +231,8 @@ const toggleLike = (item) => {
             <SwiperSlide key={item._id}>
               <div className="group relative bg-[#E9EBCA] rounded-xl shadow-sm hover:shadow-xl transition-all duration-300">
                 <div className="relative overflow-hidden">
-                  <Link to={`/product-details/${item._id}`}>
+                  {/* <Link to={`/product-details/${item._id}`}> */}
+                  <Link to="/shop/hoodies">
                     <div className="aspect-square overflow-hidden rounded-t-xl">
                       <img
                         src={item.images[0]}
@@ -286,8 +287,8 @@ const toggleLike = (item) => {
                     onClick={() => handleButtonClick(item)}
                     className="w-full bg-gray-900 text-white rounded-lg py-3 flex items-center justify-center space-x-2 hover:bg-gray-800 transform transition-all duration-300 "
                   >
-                      <ShoppingCart className="w-4 h-4 mr-2" />
-                    <span className="text-xl font-medium">Add to Cart</span>
+                      <ShoppingCart className="w-5 h-5 mr-2" />
+                    <span className="text-lg font-forumNormal font-medium">Explore more</span>
                   </button>
                 </div>
               </div>
@@ -328,12 +329,12 @@ const toggleLike = (item) => {
               {products[2]?.category || "Category"}
             </h2>
           </div>
-          <Link to="/shop/Oversize-Tshirt" className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:text-gray-800">
+          {/* <Link to="/shop/Oversize-Tshirt" className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:text-gray-800">
           <span className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:underline">
             <Stars className="w-4 h-4 mr-2 text-black" />
             View more
           </span>
-          </Link>
+          </Link> */}
         </div>
 
         <Swiper
@@ -353,7 +354,8 @@ const toggleLike = (item) => {
             <SwiperSlide key={item._id}>
               <div className="group relative bg-[#E9EBCA] rounded-xl shadow-sm hover:shadow-xl transition-all duration-300">
                 <div className="relative overflow-hidden">
-                  <Link to={`/product-details/${item._id}`}>
+                  {/* <Link to={`/product-details/${item._id}`}> */}
+                  <Link to="/shop/Oversize-Tshirt">
                     <div className="aspect-square overflow-hidden rounded-t-xl">
                       <img
                         src={item.images[0]}
@@ -478,12 +480,12 @@ const toggleLike = (item) => {
               {products3[2]?.category || "Category"}
             </h2>
           </div>
-          <Link to="/shop/Tshirt" className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:text-gray-800">
+          {/* <Link to="/shop/Tshirt" className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:text-gray-800">
           <span className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:underline">
             <Stars className="w-4 h-4 mr-2 text-black" />
            View more
           </span>
-          </Link>
+          </Link> */}
         </div>
 
         <Swiper
@@ -503,7 +505,8 @@ const toggleLike = (item) => {
             <SwiperSlide key={item._id}>
               <div className="group relative bg-[#E9EBCA] rounded-xl shadow-sm hover:shadow-xl transition-all duration-300">
                 <div className="relative overflow-hidden">
-                  <Link to={`/product-details/${item._id}`}>
+                  {/* <Link to={`/product-details/${item._id}`}> */}
+                  <Link to="/shop/Tshirt">
                     <div className="aspect-square overflow-hidden rounded-t-xl">
                       <img
                         src={item.images[0]}

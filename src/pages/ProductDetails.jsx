@@ -479,7 +479,7 @@ const navigate = useNavigate();
             <p><strong>KnitType:- </strong> {product.details.knitType}</p>
             <p><strong>Material:- </strong> {product.details.material}</p>
             <p><strong>Neck:- </strong> {product.details.neck}</p>
-            <p><strong>NetQuantity:- </strong> {product.details.netQuantity}</p>
+            {/* <p><strong>NetQuantity:- </strong> {product.details.netQuantity}</p> */}
             <p><strong>Occasion:- </strong>{product.details.occasion}</p>
             <p><strong>Origin:- </strong> {product.details.origin}</p>
             <p><strong>Pattern:- </strong> {product.details.pattern}</p>
@@ -488,7 +488,7 @@ const navigate = useNavigate();
             <p><strong>SecondaryColor:- </strong> {product.details.secondaryColor}</p> */}
             <p><strong>ShippingInfo:- </strong> {product.details.shippingInfo}</p>
             <p><strong>Sleeve:- </strong> {product.details.sleeve}</p>
-            <p><strong>StyleCode:- </strong> {product.details.styleCode}</p>
+            {/* <p><strong>StyleCode:- </strong> {product.details.styleCode}</p> */}
             <p><strong>SuitableFor:- </strong> {product.details.suitableFor}</p>
           </div>
         </div>
