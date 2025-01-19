@@ -89,6 +89,42 @@ const Shop = () => {
   // }, [filters, products, category]);
   
 
+  // useEffect(() => {
+  //   const applyFilters = () => {
+  //     const { priceRange, selectedColors, selectedSizes } = filters;
+  
+  //     // First filter products based on all criteria
+  //     const filtered = products.filter((product) => {
+  //       const matchesCategory = !category || product.category.toLowerCase() === category.toLowerCase();
+  //       const matchesPrice = product.price <= priceRange;
+  //       const matchesColor =
+  //         selectedColors.length === 0 ||
+  //         selectedColors.some((color) => product.color?.includes(color));
+  //       const matchesSize =
+  //         selectedSizes.length === 0 ||
+  //         selectedSizes.some((size) => product.size?.includes(size));
+  
+  //       return matchesCategory && matchesPrice && matchesColor && matchesSize;
+  //     });
+  
+  //     // Sort the filtered products to show hoodies first
+  //     const sortedProducts = [...filtered].sort((a, b) => {
+  //       // Put hoodies at the beginning
+  //       if (a.category.toLowerCase() === 'hoodies' && b.category.toLowerCase() !== 'hoodies') {
+  //         return -1;
+  //       }
+  //       if (b.category.toLowerCase() === 'hoodies' && a.category.toLowerCase() !== 'hoodies') {
+  //         return 1;
+  //       }
+  //       return 0;
+  //     });
+  
+  //     setFilteredProducts(sortedProducts);
+  //   };
+  
+  //   applyFilters();
+  // }, [filters, products, category]);
+
   useEffect(() => {
     const applyFilters = () => {
       const { priceRange, selectedColors, selectedSizes } = filters;
@@ -107,24 +143,21 @@ const Shop = () => {
         return matchesCategory && matchesPrice && matchesColor && matchesSize;
       });
   
-      // Sort the filtered products to show hoodies first
-      const sortedProducts = [...filtered].sort((a, b) => {
-        // Put hoodies at the beginning
-        if (a.category.toLowerCase() === 'hoodies' && b.category.toLowerCase() !== 'hoodies') {
-          return -1;
-        }
-        if (b.category.toLowerCase() === 'hoodies' && a.category.toLowerCase() !== 'hoodies') {
-          return 1;
-        }
-        return 0;
-      });
+      // Sort the filtered products to show hoodies first, then reverse the rest
+      const hoodieProducts = filtered.filter(p => p.category.toLowerCase() === 'hoodies');
+      const nonHoodieProducts = filtered.filter(p => p.category.toLowerCase() !== 'hoodies');
+      
+      // Reverse the non-hoodie products
+      const reversedNonHoodies = nonHoodieProducts.reverse();
+      
+      // Combine hoodies (at the start) with reversed non-hoodies
+      const sortedProducts = [...hoodieProducts, ...reversedNonHoodies];
   
       setFilteredProducts(sortedProducts);
     };
   
     applyFilters();
   }, [filters, products, category]);
-
  
 
  
