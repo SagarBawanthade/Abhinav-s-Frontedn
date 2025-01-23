@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
@@ -7,15 +8,16 @@ import { BsArrowRightCircle } from "react-icons/bs";
 
 const UserProfile = () => {
   const [loading, setLoading] = useState(true);
+  const [adminTransition, setAdminTransition] = useState(false);
   const userId = useSelector((state) => state.auth.id);
   const userRole = useSelector((state) => state.auth.role);
 
   const location = useLocation();
+  const navigate = useNavigate();
   
   useEffect(() => {
-    window.scrollTo(0, 0); // Scroll to top of the page
+    window.scrollTo(0, 0);
   }, [location]);
-  
 
   const [updatedUserData, setUpdatedUserData] = useState({
     firstName: "",
@@ -80,6 +82,21 @@ const UserProfile = () => {
     }
   };
 
+  const handleAdminNavigation = () => {
+    setAdminTransition(true);
+    
+    // Create a pulsing and scaling effect
+    const adminPanel = document.getElementById('admin-panel-btn');
+    if (adminPanel) {
+      adminPanel.classList.add('animate-pulse', 'transform', 'scale-110');
+    }
+
+    // Simulated loading and navigation
+    setTimeout(() => {
+      navigate("/admin");
+    }, 1500);
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-100">
@@ -88,14 +105,14 @@ const UserProfile = () => {
     );
   }
 
-
   return (
-    <section className="font-forumNormal  bg-headerBackGround">
+    <section className="font-forumNormal bg-headerBackGround">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         <div className="w-full max-w-lg bg-headerBackGround rounded-xl shadow-md border border-gray-200">
           <div className="p-6 space-y-6">
             <h1 className="text-4xl font-semibold font-forumNormal text-center text-gray-700">Your Profile</h1>
             <form onSubmit={handleFormSubmit} className="space-y-4">
+              {/* Existing form fields remain the same */}
               <div className="space-y-2">
                 <label htmlFor="firstName" className="block text-xl font-medium text-gray-600">
                   First Name
@@ -163,7 +180,7 @@ const UserProfile = () => {
                   />
                 </div>
               </div>
-
+              
               <button
                 type="submit"
                 className="w-full bg-gray-800 text-white py-2 rounded-md hover:bg-gray-600 transition duration-200"
@@ -172,15 +189,44 @@ const UserProfile = () => {
               </button>
 
               {userRole === "admin" && (
-                <Link to="/admin-panel">
-                  <button
-                    type="button"
-                    className="w-full bg-green-500 text-white py-2 mt-2 rounded-md hover:bg-green-600 transition duration-200 flex items-center justify-center gap-2"
-                  >
-                    <BsArrowRightCircle />
-                    Admin Panel
-                  </button>
-                </Link>
+                <button
+                  id="admin-panel-btn"
+                  type="button"
+                  onClick={handleAdminNavigation}
+                  disabled={adminTransition}
+                  className={`w-full bg-green-500 text-white py-2 mt-2 rounded-md hover:bg-green-600 transition duration-200 flex items-center justify-center gap-2 ${
+                    adminTransition ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                >
+                  {adminTransition ? (
+                    <div className="flex items-center">
+                      <svg 
+                        className="animate-spin h-5 w-5 mr-3" 
+                        viewBox="0 0 24 24"
+                      >
+                        <circle 
+                          className="opacity-25" 
+                          cx="12" 
+                          cy="12" 
+                          r="10" 
+                          stroke="currentColor" 
+                          strokeWidth="4"
+                        ></circle>
+                        <path 
+                          className="opacity-75" 
+                          fill="currentColor" 
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Entering Admin Panel
+                    </div>
+                  ) : (
+                    <>
+                      <BsArrowRightCircle />
+                      Admin Panel
+                    </>
+                  )}
+                </button>
               )}
             </form>
           </div>

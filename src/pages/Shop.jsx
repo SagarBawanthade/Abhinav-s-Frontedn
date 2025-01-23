@@ -31,6 +31,7 @@ const Shop = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        
         setLoading(true); // Set loading to true before fetching
         const response = await fetch(
           'https://backend.abhinavsofficial.com/api/product/getproducts'
@@ -151,7 +152,7 @@ const Shop = () => {
       const reversedNonHoodies = nonHoodieProducts.reverse();
       
       // Combine hoodies (at the start) with reversed non-hoodies
-      const sortedProducts = [...hoodieProducts, ...reversedNonHoodies];
+      const sortedProducts = [ ...reversedNonHoodies, ...hoodieProducts,];
   
       setFilteredProducts(sortedProducts);
     };
