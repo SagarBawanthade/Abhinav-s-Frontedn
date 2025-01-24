@@ -52,7 +52,8 @@ function App() {
             <ServicesPage /> {/* Render ServicesPage */}
           </>
         } />
-        <Route path="/shop" element={<Shop />} />
+         <Route path="/shop" element={<Shop />} />
+       <Route path="/shop/:category" element={<Shop />} />
         
         <Route path="/cart" element={<Cart />} />
         <Route path="/product-details/:productId" element={<ProductDetails />} />
