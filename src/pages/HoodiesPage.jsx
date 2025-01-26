@@ -9,7 +9,10 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import "swiper/css";
 import "swiper/css/pagination";
-import { Heart, ShoppingCart, TrendingUp, Stars,Timer } from 'lucide-react';
+import { Autoplay, Navigation } from 'swiper/modules';
+
+
+import { Heart, TrendingUp, Stars,Timer } from 'lucide-react';
 import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
 import { addToLocalCart, fetchCartItems } from "../feature/cartSlice";
 
@@ -247,8 +250,16 @@ const toggleLike = (item) => {
 
         <Swiper
           className="sm:block lg:hidden"
-          slidesPerView="auto"
+          modules={[Autoplay, Navigation]}
+          speed={1000}
+      autoplay={{
+        delay: 4500,
+        disableOnInteraction: false,
+      }}
+      loop={true}
           spaceBetween={16}
+          slidesPerView={1.5}
+          
           grabCursor={true}
           onSlideChange={handleSlideChange}
           scrollbar={{ draggable: true }}
@@ -370,8 +381,15 @@ const toggleLike = (item) => {
         </div>
 
         <Swiper
+        modules={[Autoplay, Navigation]}
+        speed={1000}
+    autoplay={{
+      delay: 4500,
+      disableOnInteraction: false,
+    }}
+    loop={true}
           className="sm:block lg:hidden"
-          slidesPerView="auto"
+          slidesPerView={1.5}
           spaceBetween={16}
           grabCursor={true}
           onSlideChange={handleSlideChange}
@@ -463,11 +481,11 @@ const toggleLike = (item) => {
         </span>
         
         {/* Animated dots */}
-        <div className="flex space-x-1">
+        {/* <div className="flex space-x-1">
           <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
           <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
           <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-        </div>
+        </div> */}
       </div>
       
       {/* Glow effect */}
@@ -521,13 +539,19 @@ const toggleLike = (item) => {
         </div>
 
         <Swiper
+         modules={[Autoplay, Navigation]}
           className="sm:block lg:hidden"
-          slidesPerView="auto"
+          slidesPerView={1.5}
           spaceBetween={16}
           grabCursor={true}
           onSlideChange={handleSlideChange}
           scrollbar={{ draggable: true }}
           pagination={{ clickable: true }}
+          speed={1000}
+      autoplay={{
+        delay: 4500,
+        disableOnInteraction: false,
+      }}
           breakpoints={{
             640: { slidesPerView: 2 },
             1024: { slidesPerView: 3 }
@@ -616,11 +640,11 @@ const toggleLike = (item) => {
         </span>
         
         {/* Animated dots */}
-        <div className="flex space-x-1">
+        {/* <div className="flex space-x-1">
           <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
           <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
           <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-        </div>
+        </div> */}
       </div>
       
       {/* Glow effect */}

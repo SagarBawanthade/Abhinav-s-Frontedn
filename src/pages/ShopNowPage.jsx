@@ -1,7 +1,14 @@
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import {  Sparkles, ShoppingBag } from 'lucide-react';
+import { Sparkles, ShoppingBag } from 'lucide-react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, EffectCreative, Pagination } from 'swiper/modules';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/effect-creative';
+import 'swiper/css/pagination';
 
 const ShopNowPage = () => {
   const location = useLocation();
@@ -10,6 +17,13 @@ const ShopNowPage = () => {
   // Parallax effect for background
   const backgroundY = useTransform(scrollY, [0, 500], [0, 100]);
   
+  const images = [
+    "/images/college.jpg",
+    "/images/collection6.png",
+    "/images/collection5.png",
+    "/images/BOY TSHIRT 2.png"
+  ];
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location]);
@@ -49,7 +63,7 @@ const ShopNowPage = () => {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 py-8 lg:py-16">
-          {/* Left Section - Image */}
+          {/* Left Section - Swiper Image */}
           <motion.div 
             className="w-full lg:w-1/2"
             initial={{ opacity: 0, x: -20 }}
@@ -58,23 +72,44 @@ const ShopNowPage = () => {
             transition={{ duration: 0.8 }}
           >
             <div className="relative group">
-              {/* Image Container with Enhanced Hover Effect */}
-              <div className="relative overflow-hidden rounded-3xl shadow-xl">
-                <motion.img
-                  src="/images/shoplogo.jpg"
-                  alt="Hoodie"
-                  className="w-full h-auto object-cover"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.6, ease: "easeOut" }}
-                />
-                {/* Dynamic Overlay */}
-                <motion.div 
-                  className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30"
-                  initial={{ opacity: 0 }}
-                  whileHover={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                />
-              </div>
+              <Swiper
+                modules={[Autoplay, EffectCreative, Pagination]}
+                spaceBetween={10}
+                slidesPerView={1}
+                speed={1000}
+                autoplay={{
+                  delay: 5000,
+                  disableOnInteraction: false,
+                }}
+                pagination={{
+                  el: '.swiper-pagination',
+                  clickable: true,
+                  renderBullet: (index, className) => {
+                    return `<span class="${className} bg-gray-800 text-center opacity-50 hover:opacity-100"></span>`;
+                  }
+                }}
+                effect="creative"
+                creativeEffect={{
+                  prev: { translate: ['-100%', 0, 0] },
+                  next: { translate: ['100%', 0, 0] }
+                }}
+                loop={true}
+                className="rounded-3xl shadow-xl overflow-hidden relative"
+              >
+                {images.map((image, index) => (
+                  <SwiperSlide key={index}>
+                    <motion.img
+                      src={image}
+                      alt={`Slide ${index + 1}`}
+                      className="w-full h-auto object-cover"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.6, ease: "easeOut" }}
+                    />
+                  </SwiperSlide>
+                ))}
+                
+                {/* <div className="swiper-pagination absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20"></div> */}
+              </Swiper>
 
               {/* Animated Decorative Elements */}
               <motion.div 
@@ -153,13 +188,6 @@ const ShopNowPage = () => {
               >
                 <ShoppingBag className="w-5 h-5" />
                 <span className="relative z-10">Shop Collection</span>
-                <motion.div
-                  className="absolute right-4"
-                  animate={{ x: [0, 4, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                >
-                 
-                </motion.div>
                 <motion.div 
                   className="absolute inset-0 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800"
                   animate={{ 
