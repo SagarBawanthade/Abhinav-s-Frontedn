@@ -225,137 +225,13 @@ const toggleLike = (item) => {
         showHeading ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
       }`}
     >
-      Hoodies
+      Collections
     </h1>
   </div>
 
   <hr className="border-t mt-5 mb-10 border-black w-full" />
 
-  <div className="bg-[#E9EBCA] px-6 py-8">
-  <div className="max-w-8xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-2">
-            <TrendingUp className="w-6 h-6 text-gray-700" />
-            <h2 className="text-2xl md:text-3xl font-semibold font-forumNormal text-gray-800">
-              { "Hoodies"}
-            </h2>
-          </div>
-          {/* <Link to="/shop/hoodies" className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:text-gray-800">
-          <span className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:underline">
-            <Stars className="w-4 h-4 mr-2 text-black" />
-            View more
-          </span>
-          </Link> */}
-        </div>
-
-        <Swiper
-          className="sm:block lg:hidden"
-          modules={[Autoplay, Navigation]}
-          speed={1000}
-      autoplay={{
-        delay: 4500,
-        disableOnInteraction: false,
-      }}
-      loop={true}
-          spaceBetween={16}
-          slidesPerView={1.5}
-          
-          grabCursor={true}
-          onSlideChange={handleSlideChange}
-          scrollbar={{ draggable: true }}
-          pagination={{ clickable: true }}
-          breakpoints={{
-            640: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 }
-          }}
-        >
-          {products2.map((item) => (
-            <SwiperSlide key={item._id}>
-              <div className="group relative bg-[#E9EBCA] rounded-xl shadow-sm hover:shadow-xl transition-all duration-300">
-                <div className="relative overflow-hidden">
-                  {/* <Link to={`/product-details/${item._id}`}> */}
-                 
-                    <div className="aspect-square overflow-hidden rounded-t-xl">
-                      <img
-                        src={item.images[0]}
-                        alt={item.name}
-                        className="w-full h-full object-cover  transition-transform duration-500"
-                        onClick={() => handleButtonClick(item)}
-                      />
-                    </div>
-             
-
-                  <button
-                  
-                    onClick={() => toggleLike(item)}
-                    className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-gray-100 transition-all duration-300 transform hover:scale-110"
-                  >
-                     <Heart
-    className={`w-5 h-5 ${
-      isProductInWishlist(item._id) ? 'text-red-500 fill-red-500' : 'text-gray-600'
-    } transition-colors`}
-  />
-                  </button>
-
-                  <div className="absolute top-2 left-2">
-                    <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-gray-900/80 text-white backdrop-blur-sm">
-                      Premium
-                    </span>
-                  </div>
-                </div>
-
-                <div className="p-4">
-                  <h3 className="font-forumNormal text-lg text-gray-800 mb-2 truncate group-hover:text-gray-900">
-                    {item.name}
-                  </h3>
-
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-baseline space-x-2">
-                      <span className="text-xl font-avenir font-semibold text-gray-900">
-                        ₹{item.price}
-                      </span>
-                      <span className="text-sm font-avenir text-gray-500 line-through">
-                        ₹{(item.price + 100).toFixed(0)}
-                      </span>
-                    </div>
-                    <span className="text-xs font-bold text-green-600">
-                      20% OFF
-                    </span>
-                  </div>
-
-
-                  <Link to="/shop/hoodies">
-                  <button
-                  //  onClick={() => handleButtonClick(item) && () => handlecart(item)}
-                    // onClick={() => handleButtonClick(item)}
-                    className="w-full bg-gray-900 text-white rounded-lg py-3 flex items-center justify-center space-x-2 hover:bg-gray-800 transform transition-all duration-300 "
-                  >
-                      {/* <ShoppingCart className="w-5 h-5 mr-2" /> */}
-                    <span className="text-lg font-forumNormal font-medium">Explore more</span>
-                  </button></Link>
-                </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-
-        <div className="flex justify-center gap-2 md:hidden mt-6">
-          {products2.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setActiveIndex(index)}
-              className={`w-2 h-2 rounded-full transition-all duration-300 transform ${
-                activeIndex === index 
-                  ? 'bg-gray-800 scale-125' 
-                  : 'bg-gray-300 hover:bg-gray-400'
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
-        </div>
-      </div>
-      </div>
-
+  
 
 
   
@@ -678,6 +554,134 @@ const toggleLike = (item) => {
         </div>
       </div>
     </div>
+
+   
+
+  <div className="bg-[#E9EBCA] px-6 py-8">
+  <div className="max-w-8xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-2">
+            <TrendingUp className="w-6 h-6 text-gray-700" />
+            <h2 className="text-2xl md:text-3xl font-semibold font-forumNormal text-gray-800">
+              { "Hoodies"}
+            </h2>
+          </div>
+          {/* <Link to="/shop/hoodies" className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:text-gray-800">
+          <span className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:underline">
+            <Stars className="w-4 h-4 mr-2 text-black" />
+            View more
+          </span>
+          </Link> */}
+        </div>
+
+        <Swiper
+          className="sm:block lg:hidden"
+          modules={[Autoplay, Navigation]}
+          speed={1000}
+      autoplay={{
+        delay: 4500,
+        disableOnInteraction: false,
+      }}
+      loop={true}
+          spaceBetween={16}
+          slidesPerView={1.5}
+          
+          grabCursor={true}
+          onSlideChange={handleSlideChange}
+          scrollbar={{ draggable: true }}
+          pagination={{ clickable: true }}
+          breakpoints={{
+            640: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 }
+          }}
+        >
+          {products2.map((item) => (
+            <SwiperSlide key={item._id}>
+              <div className="group relative bg-[#E9EBCA] rounded-xl shadow-sm hover:shadow-xl transition-all duration-300">
+                <div className="relative overflow-hidden">
+                  {/* <Link to={`/product-details/${item._id}`}> */}
+                 
+                    <div className="aspect-square overflow-hidden rounded-t-xl">
+                      <img
+                        src={item.images[0]}
+                        alt={item.name}
+                        className="w-full h-full object-cover  transition-transform duration-500"
+                        onClick={() => handleButtonClick(item)}
+                      />
+                    </div>
+             
+
+                  <button
+                  
+                    onClick={() => toggleLike(item)}
+                    className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-gray-100 transition-all duration-300 transform hover:scale-110"
+                  >
+                     <Heart
+    className={`w-5 h-5 ${
+      isProductInWishlist(item._id) ? 'text-red-500 fill-red-500' : 'text-gray-600'
+    } transition-colors`}
+  />
+                  </button>
+
+                  <div className="absolute top-2 left-2">
+                    <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-gray-900/80 text-white backdrop-blur-sm">
+                      Premium
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-4">
+                  <h3 className="font-forumNormal text-lg text-gray-800 mb-2 truncate group-hover:text-gray-900">
+                    {item.name}
+                  </h3>
+
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-baseline space-x-2">
+                      <span className="text-xl font-avenir font-semibold text-gray-900">
+                        ₹{item.price}
+                      </span>
+                      <span className="text-sm font-avenir text-gray-500 line-through">
+                        ₹{(item.price + 100).toFixed(0)}
+                      </span>
+                    </div>
+                    <span className="text-xs font-bold text-green-600">
+                      20% OFF
+                    </span>
+                  </div>
+
+
+                  <Link to="/shop/hoodies">
+                  <button
+                  //  onClick={() => handleButtonClick(item) && () => handlecart(item)}
+                    // onClick={() => handleButtonClick(item)}
+                    className="w-full bg-gray-900 text-white rounded-lg py-3 flex items-center justify-center space-x-2 hover:bg-gray-800 transform transition-all duration-300 "
+                  >
+                      {/* <ShoppingCart className="w-5 h-5 mr-2" /> */}
+                    <span className="text-lg font-forumNormal font-medium">Explore more</span>
+                  </button></Link>
+                </div>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+
+        <div className="flex justify-center gap-2 md:hidden mt-6">
+          {products2.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setActiveIndex(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 transform ${
+                activeIndex === index 
+                  ? 'bg-gray-800 scale-125' 
+                  : 'bg-gray-300 hover:bg-gray-400'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+      </div>
+
 
 
 
