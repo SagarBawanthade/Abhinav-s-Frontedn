@@ -5,6 +5,7 @@ import storage from 'redux-persist/lib/storage';
 import { authReducer } from '../feature/authSlice';
 import { cartReducer } from '../feature/cartSlice';
 import { wishlistReducer } from '../feature/wishlistSlice';
+import { productReducer } from '../feature/productSlice';
 
 
 // Separate persist configs for auth and wishlist
@@ -29,6 +30,7 @@ const persistedWishlistReducer = persistReducer(wishlistPersistConfig, wishlistR
 
 const store = configureStore({
   reducer: {
+    products: productReducer,
     auth: persistedAuthReducer,
     cart: cartReducer,
     wishlist: persistedWishlistReducer

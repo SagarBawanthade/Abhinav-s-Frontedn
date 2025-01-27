@@ -170,21 +170,14 @@ const navigate = useNavigate();
   
 
   // Adjusting scroll behavior with offset to account for potential fixed header or margin
-  useEffect(() => {
-    if (productDetailsRef.current) {
-      window.scrollTo({
-        top: productDetailsRef.current.offsetTop - 50,  // Adjust the offset (50px for header)
-        behavior: "smooth", // Smooth scroll
-      });
-    }
-  }, []);
+  
 
  
   const handleThumbnailClick = (src) => {
     setMainImage(src);
   };
-
-
+  
+ 
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -204,6 +197,7 @@ const navigate = useNavigate();
   return (
     <>
     <div ref={productDetailsRef} className="bg-headerBackGround">
+   
       <div className="container bg-headerBackGround mx-auto px-4 py-8">
         <div className="font-forumNormal bg-headerBackGround flex flex-wrap -mx-4">
           {/* Product Images */}
@@ -243,26 +237,31 @@ const navigate = useNavigate();
             </p>
 
             {/* Color Dropdown */}
+            
+            {/* Modified Color Dropdown */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-2">Color:</h3>
-              <select
-                className="block w-40 p-3 border bg-headerBackGround  text-lg focus:outline-none "
-                defaultValue=""
-                value={selectedColor} // Bind value to state
-                onChange={(e) => setSelectedColor(e.target.value)} // Update state on change
-              >
-              
-                <option value="" disabled>
-                  Select color
-                </option>
-              
-                  <option>
-                    {product.color}
+                <h3 className="text-lg font-semibold mb-2">Color:</h3>
+                <select
+                  className="block w-40 p-3 border bg-headerBackGround text-lg focus:outline-none"
+                  value={selectedColor}
+                  onChange={(e) => setSelectedColor(e.target.value)}
+                >
+                  <option value="" disabled>
+                    Select color
                   </option>
-           
-               
-              </select>
-            </div>
+                  {Array.isArray(product.color) ? (
+                    product.color.map((color, index) => (
+                      <option key={index} value={color}>
+                        {color}
+                      </option>
+                    ))
+                  ) : (
+                    <option value={product.color}>
+                      {product.color}
+                    </option>
+                  )}
+                </select>
+              </div>
 
             {/* Size Section with Radio Buttons */}
 <div className="mt-6 mb-6">

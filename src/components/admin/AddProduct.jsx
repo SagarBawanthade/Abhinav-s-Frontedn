@@ -10,7 +10,7 @@ const AddProduct = () => {
     price: 0,
     stock: 0,
     size: [],
-    color: "",
+    color: [], // Keep as array
     images: [],
   });
 
@@ -20,27 +20,16 @@ const AddProduct = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
-    setFormData((prevState) => {
+  
+    setFormData(prev => {
       if (type === "checkbox") {
-        if (name === "color") {
-          const updatedString = checked
-            ? prevState[name]
-              ? `${prevState[name]},${value}`
-              : value
-            : prevState[name].split(',').filter((item) => item !== value).join(',');
-    
-          return { ...prevState, [name]: updatedString };
-        } else {
-          const updatedArray = checked
-            ? [...(prevState[name] || []), value]
-            : prevState[name].filter((item) => item !== value);
-    
-          return { ...prevState, [name]: updatedArray };
-        }
-      } else {
-        return { ...prevState, [name]: value };
+        const currentArray = Array.isArray(prev[name]) ? prev[name] : [];
+        const updatedArray = checked
+          ? [...currentArray, value]
+          : currentArray.filter(item => item !== value);
+        return { ...prev, [name]: updatedArray };
       }
+      return { ...prev, [name]: value };
     });
   };
 
@@ -70,10 +59,9 @@ const AddProduct = () => {
           images: [...prevState.images, ...data.imageUrls],
         }));
         toast.success("Images uploaded successfully!");
-        
       }
     } catch (err) {
-      alert("Failed to upload images.");
+      toast.error("Failed to upload images.");
     } finally {
       setUploadingImage(false);
     }
@@ -92,6 +80,13 @@ const AddProduct = () => {
     setError("");
 
     try {
+      // Keep color as array for API submission
+      const submissionData = {
+        ...formData,
+        price: Number(formData.price),
+        stock: Number(formData.stock)
+      };
+
       const response = await fetch(
         "https://backend.abhinavsofficial.com/api/product/addproduct",
         {
@@ -99,7 +94,7 @@ const AddProduct = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(formData)
+          body: JSON.stringify(submissionData)
         }
       );
 
@@ -113,12 +108,16 @@ const AddProduct = () => {
           price: 0,
           stock: 0,
           size: [],
-          color: "",
+          color: [],
           images: [],
         });
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.errors?.[0]?.msg || errorData.message || "Failed to add product");
       }
     } catch (err) {
-      toast.error("Error adding product.");
+      toast.error(err.message || "Error adding product.");
+      setError(err.message || "Error adding product.");
     } finally {
       setLoading(false);
     }
@@ -130,6 +129,7 @@ const AddProduct = () => {
         <h2 className="text-3xl font-semibold text-center mb-6">Add Product</h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Product Name */}
           <div>
             <label htmlFor="name" className="block text-sm font-semibold">
               Product Name
@@ -145,6 +145,7 @@ const AddProduct = () => {
             />
           </div>
 
+          {/* Description */}
           <div>
             <label htmlFor="description" className="block text-sm font-semibold">
               Description
@@ -159,6 +160,7 @@ const AddProduct = () => {
             />
           </div>
 
+          {/* Category */}
           <div>
             <label htmlFor="category" className="block text-sm font-semibold">
               Category
@@ -178,6 +180,7 @@ const AddProduct = () => {
             </select>
           </div>
 
+          {/* Gender */}
           <div>
             <label className="block text-sm font-semibold">Gender</label>
             <div className="space-x-4">
@@ -197,6 +200,7 @@ const AddProduct = () => {
             </div>
           </div>
 
+          {/* Price */}
           <div>
             <label htmlFor="price" className="block text-sm font-semibold">
               Price (₹)
@@ -212,6 +216,7 @@ const AddProduct = () => {
             />
           </div>
 
+          {/* Stock */}
           <div>
             <label htmlFor="stock" className="block text-sm font-semibold">
               Stock Quantity
@@ -227,6 +232,7 @@ const AddProduct = () => {
             />
           </div>
 
+          {/* Sizes */}
           <div>
             <label className="block text-sm font-semibold">Sizes</label>
             <div className="space-x-4">
@@ -246,16 +252,17 @@ const AddProduct = () => {
             </div>
           </div>
 
+          {/* Colors */}
           <div>
-            <label className="block text-sm font-semibold">Colors</label>
-            <div className="space-x-4">
-              {["Red", "Blue", "Green", "Black", "Lavender", "White"].map((color) => (
+            <label className="block text-sm font-semibold mb-2">Colors</label>
+            <div className="flex flex-wrap gap-4">
+              {["Purple", "Orange", "Yellow", "Pink", "Red", "Blue", "Green", "Black", "Lavender", "White"].map((color) => (
                 <label key={color} className="inline-flex items-center">
                   <input
                     type="checkbox"
                     name="color"
                     value={color}
-                    checked={formData.color.includes(color)}
+                    checked={Array.isArray(formData.color) && formData.color.includes(color)}
                     onChange={handleChange}
                     className="form-checkbox"
                   />
@@ -263,8 +270,12 @@ const AddProduct = () => {
                 </label>
               ))}
             </div>
+            <p className="text-sm text-gray-500 mt-2">
+              Selected colors: {Array.isArray(formData.color) ? formData.color.join(', ') : 'None'}
+            </p>
           </div>
 
+          {/* Images */}
           <div>
             <label htmlFor="images" className="block text-sm font-semibold">
               Upload Images
@@ -277,8 +288,8 @@ const AddProduct = () => {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg mt-2"
               multiple
             />
-            {uploadingImage && "Uploading..."}
-            <div className="mt-2 flex space-x-2">
+            {uploadingImage && <p className="text-blue-500 mt-2">Uploading images...</p>}
+            <div className="mt-2 flex flex-wrap gap-2">
               {formData.images.map((image, index) => (
                 <div key={index} className="relative">
                   <img
@@ -298,13 +309,16 @@ const AddProduct = () => {
             </div>
           </div>
 
+          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300"
             disabled={loading}
           >
             {loading ? "Adding Product..." : "Add Product"}
           </button>
+
+        
         </form>
       </div>
     </div>

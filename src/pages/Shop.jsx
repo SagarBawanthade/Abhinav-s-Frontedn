@@ -1,23 +1,27 @@
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import ShopFilters from '../components/ShopFilter';
 import { useEffect, useRef, useState } from 'react';
 import { X, SlidersHorizontal,Heart, ShoppingCart, Clock } from 'lucide-react'; // For hamburger and close icons
 import { useDispatch, useSelector } from 'react-redux';
 import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
-
 import { toast } from 'react-toastify';
 import ProductsHeader from '../components/ProductsHeader';
-
+import { fetchProducts } from '../feature/productSlice';
 
 const Shop = () => {
   const [drawerOpen, setDrawerOpen] = useState(false); 
-  const [products, setProducts] = useState([]); 
-  const [loading, setLoading] = useState(true); 
   const Shop = useRef(null);
   const dispatch = useDispatch();
-  const location = useLocation();
   
+  const { items: products, loading } = useSelector((state) => state.products);
   const wishlist = useSelector(state => state.wishlist.items);
+
+  useEffect(() => {
+    if (products.length === 0) {
+      dispatch(fetchProducts());
+    }
+  }, [dispatch, products]);
+
 
   const [filters, setFilters] = useState({
     priceRange: 12500,
@@ -28,103 +32,6 @@ const Shop = () => {
   const { category } = useParams();
 
  
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        
-        setLoading(true); // Set loading to true before fetching
-        const response = await fetch(
-          'https://backend.abhinavsofficial.com/api/product/getproducts'
-        );
-        const data = await response.json();
-        setProducts(data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-        setProducts([]); // Fallback in case of error
-      } finally {
-        setLoading(false); // Set loading to false after fetching
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  useEffect(() => {
-    if (Shop.current) {
-      window.scrollTo({
-        top: Shop.current.offsetTop - 50,
-        behavior: 'smooth',
-      });
-    }
-  }, []);
-
-  
-  useEffect(() => {
-    window.scrollTo(0, 0); // Scroll to top of the page
-  }, [location]);
-
-  // useEffect(() => {
-  //   const applyFilters = () => {
-  //     const { priceRange, selectedColors, selectedSizes } = filters;
-  //      // Change category to 'hoodies' if it's 'all-products'
-  
-
-
-  //     const filtered = products.filter((product) => {
-  //       const matchesCategory = !category || product.category.toLowerCase() === category.toLowerCase();
-  //       const matchesPrice = product.price <= priceRange;
-  //       const matchesColor = 
-  //         selectedColors.length === 0 || 
-  //         selectedColors.some((color) => product.color?.includes(color));
-  //       const matchesSize = 
-  //         selectedSizes.length === 0 || 
-  //         selectedSizes.some((size) => product.size?.includes(size));
-
-  //       return matchesCategory && matchesPrice && matchesColor && matchesSize;
-  //     });
-
-  //     setFilteredProducts(filtered);
-  //   };
-
-  //   applyFilters();
-  // }, [filters, products, category]);
-  
-
-  // useEffect(() => {
-  //   const applyFilters = () => {
-  //     const { priceRange, selectedColors, selectedSizes } = filters;
-  
-  //     // First filter products based on all criteria
-  //     const filtered = products.filter((product) => {
-  //       const matchesCategory = !category || product.category.toLowerCase() === category.toLowerCase();
-  //       const matchesPrice = product.price <= priceRange;
-  //       const matchesColor =
-  //         selectedColors.length === 0 ||
-  //         selectedColors.some((color) => product.color?.includes(color));
-  //       const matchesSize =
-  //         selectedSizes.length === 0 ||
-  //         selectedSizes.some((size) => product.size?.includes(size));
-  
-  //       return matchesCategory && matchesPrice && matchesColor && matchesSize;
-  //     });
-  
-  //     // Sort the filtered products to show hoodies first
-  //     const sortedProducts = [...filtered].sort((a, b) => {
-  //       // Put hoodies at the beginning
-  //       if (a.category.toLowerCase() === 'hoodies' && b.category.toLowerCase() !== 'hoodies') {
-  //         return -1;
-  //       }
-  //       if (b.category.toLowerCase() === 'hoodies' && a.category.toLowerCase() !== 'hoodies') {
-  //         return 1;
-  //       }
-  //       return 0;
-  //     });
-  
-  //     setFilteredProducts(sortedProducts);
-  //   };
-  
-  //   applyFilters();
-  // }, [filters, products, category]);
 
   useEffect(() => {
     const applyFilters = () => {
@@ -175,6 +82,14 @@ const Shop = () => {
       toast.success("Product Added to Wishlist!");
     }
   };
+
+  const location = useLocation();
+  
+    useEffect(() => {
+      
+      window.scrollTo(0, 0); // Scroll to top of the page
+    }, [location]);
+    
 
 
 
@@ -238,9 +153,15 @@ const Shop = () => {
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6 mb-28">
           {filteredProducts.length > 0 ? (
             filteredProducts.map((product) => (
-              <div key={product._id} className="group relative bg-headerBackGround rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+              <div key={product._id} 
+            
+            
+              className="group relative bg-headerBackGround rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
                 <div className="relative">
-                  <Link to={`/product-details/${product._id}`}>
+                  <Link to={`/product-details/${product._id}`} onClick={() => {
+          localStorage.setItem('shopScrollPosition', window.scrollY.toString());
+        }} >
+                  
                     <div className="aspect-[5/5] overflow-hidden rounded-t-xl">
                       <img
                         src={product.images[0]}

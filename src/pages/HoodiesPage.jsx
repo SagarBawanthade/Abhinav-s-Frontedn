@@ -219,7 +219,7 @@ const toggleLike = (item) => {
   return (
     <div className="forum-regular bg-[#E9EBCA] min-h-screen py-10">
   {/* Heading Section */}
-  <div className="text-center mt-20 mb-20">
+  <div className="text-center mt-10 mb-10">
     <h1
       className={`text-7xl text-left ml-4 text-gray-800 transition-all duration-1000 ease-out transform ${
         showHeading ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"

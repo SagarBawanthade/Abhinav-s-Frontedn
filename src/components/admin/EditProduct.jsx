@@ -15,7 +15,7 @@ const EditProduct = () => {
     price: 0,
     stock: 0,
     size: [],
-    color: [],
+    color: [], // Keep as array for UI handling
     images: [],
   });
 
@@ -29,7 +29,20 @@ const EditProduct = () => {
         const response = await axios.get(
           `https://backend.abhinavsofficial.com/api/product/getproduct/${productId}`
         );
-        setFormData(response.data);
+        
+        const productData = response.data;
+        // Convert color string to array for UI if it's a string
+        const colorArray = typeof productData.color === 'string'
+          ? productData.color.split(',').map(c => c.trim())
+          : Array.isArray(productData.color)
+            ? productData.color
+            : [];
+
+        setFormData({
+          ...productData,
+          color: colorArray,
+          size: Array.isArray(productData.size) ? productData.size : []
+        });
       } catch (err) {
         toast.error("Failed to fetch product details");
       }
@@ -41,12 +54,12 @@ const EditProduct = () => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
   
-    setFormData((prev) => {
+    setFormData(prev => {
       if (type === "checkbox") {
+        const currentArray = Array.isArray(prev[name]) ? prev[name] : [];
         const updatedArray = checked
-          ? [...(prev[name] || []), value]
-          : (prev[name] || []).filter((item) => item !== value);
-  
+          ? [...currentArray, value]
+          : currentArray.filter(item => item !== value);
         return { ...prev, [name]: updatedArray };
       }
       return { ...prev, [name]: value };
@@ -97,9 +110,15 @@ const EditProduct = () => {
     setError("");
 
     try {
+      // Convert color array to string for API submission
+      const submissionData = {
+        ...formData,
+        
+      };
+
       const response = await axios.put(
         `https://backend.abhinavsofficial.com/api/product/updateproduct/${productId}`,
-        formData
+        submissionData
       );
 
       if (response.status === 200) {
@@ -107,7 +126,11 @@ const EditProduct = () => {
         navigate("/admin/products");
       }
     } catch (err) {
-      toast.error("Error updating product.");
+      const errorMessage = err.response?.data?.error || 
+                          err.response?.data?.errors?.map(e => e.msg).join(', ') ||
+                          "Error updating product.";
+      toast.error(errorMessage);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -213,7 +236,7 @@ const EditProduct = () => {
                   type="checkbox"
                   name="size"
                   value={size}
-                  checked={formData.size.includes(size)}
+                  checked={Array.isArray(formData.size) && formData.size.includes(size)}
                   onChange={handleChange}
                   className="form-checkbox"
                 />
@@ -227,13 +250,13 @@ const EditProduct = () => {
         <div>
           <label className="block text-sm font-semibold mb-2">Colors</label>
           <div className="flex flex-wrap gap-4">
-            {["Red", "Blue", "Green", "Black"].map((color) => (
+            {["Purple", "Orange", "Yellow", "Pink", "Red", "Blue", "Green", "Black", "Lavender", "White"].map((color) => (
               <label key={color} className="inline-flex items-center">
                 <input
                   type="checkbox"
                   name="color"
                   value={color}
-                  checked={formData.color.includes(color)}
+                  checked={Array.isArray(formData.color) && formData.color.includes(color)}
                   onChange={handleChange}
                   className="form-checkbox"
                 />
@@ -241,6 +264,9 @@ const EditProduct = () => {
               </label>
             ))}
           </div>
+          <p className="text-sm text-gray-500 mt-2">
+            Selected colors: {Array.isArray(formData.color) ? formData.color.join(', ') : 'None'}
+          </p>
         </div>
 
         {/* Images */}
@@ -288,7 +314,7 @@ const EditProduct = () => {
           </button>
         </div>
 
-        {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
+      
       </form>
     </div>
   );
