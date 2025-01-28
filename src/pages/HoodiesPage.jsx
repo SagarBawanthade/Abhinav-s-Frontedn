@@ -73,10 +73,10 @@ const toggleLike = (item) => {
     fetch("https://backend.abhinavsofficial.com/api/product/getproducts")
       .then((response) => response.json())
       .then((data) => {
-        setProducts3(data.slice(6,9));
+        setProducts3(data.slice(175,179));
       setProducts2(data.slice(28,32));
         // Assuming the API response contains an array of products
-        setProducts(data.slice(2, 5)); // Displaying only the first 3 products
+        setProducts(data.slice(81, 86)); // OverSized Tshirt
       })
       .catch((error) => console.error("Error fetching products:", error));
     

@@ -28,6 +28,8 @@ function ProductDetails() {
   const { productId } = useParams();
   const productDetailsRef = useRef(null);
 
+  
+
 
 
   const userId = useSelector((state) => state.auth.id); 
@@ -52,6 +54,7 @@ function ProductDetails() {
 
   const [cartLoading, setCartLoading] = useState(false);
   
+
  
   const [quantity, setQuantity] = useState(1); // Highlighted for quantity updates
   const [selectedSize, setSelectedSize] = useState(""); // Highlighted for size updates
@@ -177,6 +180,9 @@ const navigate = useNavigate();
     setMainImage(src);
   };
   
+
+ 
+
  
   if (isLoading) {
     return (
@@ -239,29 +245,40 @@ const navigate = useNavigate();
             {/* Color Dropdown */}
             
             {/* Modified Color Dropdown */}
-            <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-2">Color:</h3>
-                <select
-                  className="block w-40 p-3 border bg-headerBackGround text-lg focus:outline-none"
-                  value={selectedColor}
-                  onChange={(e) => setSelectedColor(e.target.value)}
-                >
-                  <option value="" disabled>
-                    Select color
-                  </option>
-                  {Array.isArray(product.color) ? (
-                    product.color.map((color, index) => (
-                      <option key={index} value={color}>
-                        {color}
-                      </option>
-                    ))
-                  ) : (
-                    <option value={product.color}>
-                      {product.color}
-                    </option>
-                  )}
-                </select>
-              </div>
+            {(product.color && product.color !== '-' && 
+  (Array.isArray(product.color) ? product.color.length > 0 : true)) && (
+  <div className="mb-6">
+    <h3 className="text-lg font-semibold mb-2">Color:</h3>
+    <select
+      className="block w-40 p-3 border bg-headerBackGround text-lg focus:outline-none"
+      value={selectedColor}
+      onChange={(e) => setSelectedColor(e.target.value)}
+    >
+      <option value="" disabled>
+        Select color
+      </option>
+      {Array.isArray(product.color) ? (
+        product.color.map((color, index) => (
+          <option key={index} value={color}>
+            {color}
+          </option>
+        ))
+      ) : (
+        <option value={product.color}>
+          {product.color}
+        </option>
+      )}
+    </select>
+  </div>
+)}
+
+
+
+
+
+
+
+
 
             {/* Size Section with Radio Buttons */}
 <div className="mt-6 mb-6">
