@@ -74,7 +74,7 @@ const toggleLike = (item) => {
       .then((response) => response.json())
       .then((data) => {
         setProducts3(data.slice(175,179));
-      setProducts2(data.slice(28,32));
+      setProducts2(data.slice(16,20));
         // Assuming the API response contains an array of products
         setProducts(data.slice(81, 86)); // OverSized Tshirt
       })
