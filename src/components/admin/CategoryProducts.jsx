@@ -1,11 +1,51 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const CategoryProducts = ({ category, products, onClose, onDeleteProduct }) => {
+const CategoryProductsPage = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
+  const { category } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const productRefs = useRef({});
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get("https://backend.abhinavsofficial.com/api/product/getproducts");
+        const categoryProducts = response.data.filter(
+          product => product.category === category
+        );
+        setProducts(categoryProducts);
+
+        // Scroll to updated product if needed
+        if (location.state?.scrollToProduct && location.state?.updatedProductId) {
+          setTimeout(() => {
+            const productElement = productRefs.current[location.state.updatedProductId];
+            if (productElement) {
+              productElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              // Add highlight effect
+              productElement.classList.add('transition-all', 'duration-1000');
+              productElement.classList.add('bg-yellow-100');
+              setTimeout(() => {
+                productElement.classList.remove('bg-yellow-100');
+              }, 2000);
+            }
+          }, 100);
+        }
+      } catch (error) {
+        toast.error(error.message || "Error fetching products");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [category, location.state]);
 
   const openDialog = (id) => {
     setProductToDelete(id);
@@ -22,66 +62,67 @@ const CategoryProducts = ({ category, products, onClose, onDeleteProduct }) => {
 
     try {
       await axios.delete(`https://backend.abhinavsofficial.com/api/product/deleteproduct/${productToDelete}`);
-      onDeleteProduct(productToDelete);
+      setProducts(products.filter((product) => product._id !== productToDelete));
       toast.success("Product deleted successfully!");
     } catch (error) {
       toast.error(error.message || "Error deleting product");
     } finally {
       closeDialog();
-      onClose();
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold">{category} Products</h2>
-          <button 
-            onClick={onClose} 
-            className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition"
-          >
-            Close
-          </button>
-        </div>
+  if (loading) return <div className="text-center mt-10">Loading...</div>;
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <div
-              key={product._id}
-              className="bg-white shadow-md rounded-lg overflow-hidden flex flex-col items-center p-4"
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-3xl font-bold">{category} Products</h2>
+        <button 
+          onClick={() => navigate('/admin/products')} 
+          className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition"
+        >
+          Back to Products
+        </button>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {products.map((product) => (
+          <div
+            key={product._id}
+            ref={el => productRefs.current[product._id] = el}
+            className="bg-white shadow-md rounded-lg overflow-hidden flex flex-col items-center p-4 transition-all duration-300"
+          >
+            <img
+              src={product.images[0]}
+              alt={product.name}
+              className="w-full h-48 object-cover mb-4 rounded-md"
+            />
+            <h4 className="text-sm text-center mb-2">{product.name}</h4>
+            <p className="text-xl font-bold text-gray-800">₹{product.price}</p>
+            <p
+              className={`text-sm font-semibold mt-2 px-3 py-1 rounded-full ${
+                product.stock ? "bg-green-500 text-white" : "bg-red-500 text-white"
+              }`}
             >
-              <img
-                src={product.images[0]}
-                alt={product.name}
-                className="w-full h-48 object-cover mb-4 rounded-md"
-              />
-              <h4 className="text-sm text-center mb-2">{product.name}</h4>
-              <p className="text-xl font-bold text-gray-800">₹{product.price}</p>
-              <p
-                className={`text-sm font-semibold mt-2 px-3 py-1 rounded-full ${
-                  product.stock ? "bg-green-500 text-white" : "bg-red-500 text-white"
-                }`}
+              {product.stock ? "In Stock" : "Out of Stock"}
+            </p>
+            <div className="flex justify-between mt-4 w-full">
+              <Link
+                to={`/admin/update-product/${product._id}`}
+                state={{ category }}
+                className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition"
               >
-                {product.stock ? "In Stock" : "Out of Stock"}
-              </p>
-              <div className="flex justify-between mt-4 w-full">
-                <Link
-                  to={`/admin/update-product/${product._id}`}
-                  className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition"
-                >
-                  Edit
-                </Link>
-                <button
-                  onClick={() => openDialog(product._id)}
-                  className="bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-500 transition"
-                >
-                  Delete
-                </button>
-              </div>
+                Edit
+              </Link>
+              <button
+                onClick={() => openDialog(product._id)}
+                className="bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-500 transition"
+              >
+                Delete
+              </button>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
 
       {isDialogOpen && (
@@ -112,4 +153,4 @@ const CategoryProducts = ({ category, products, onClose, onDeleteProduct }) => {
   );
 };
 
-export default CategoryProducts;
+export default CategoryProductsPage;

@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const EditProduct = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const returnCategory = location.state?.category;
+ 
 
   const [formData, setFormData] = useState({
     name: "",
@@ -123,7 +126,12 @@ const EditProduct = () => {
 
       if (response.status === 200) {
         toast.success("Product Updated successfully");
-        navigate("/admin/products");
+        navigate(`/admin/category/${formData.category}`, {
+          state: {
+            updatedProductId: productId,
+            scrollToProduct: true
+          }
+        });
       }
     } catch (err) {
       const errorMessage = err.response?.data?.error || 

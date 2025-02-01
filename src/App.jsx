@@ -29,6 +29,7 @@ import ManageOrders from "./components/admin/ManageOrders.jsx";
 import ManageProducts from "./components/admin/ManageProducts.jsx";
 import AddProduct from "./components/admin/AddProduct.jsx";
 import EditProduct from "./components/admin/EditProduct.jsx";
+import CategoryProductsPage from "./components/admin/CategoryProducts.jsx";
 
 function App() {
   const location = useLocation(); // Get the current location
@@ -78,6 +79,7 @@ function App() {
           <Route path="orders/order-details/:orderId" element={<OrderDetails />} />
           <Route path="add-product" element={<AddProduct />} />
           <Route path="update-product/:productId" element={<EditProduct />} />
+          <Route path="/admin/category/:category" element={<CategoryProductsPage />} />
         </Route>
       </Routes>
 

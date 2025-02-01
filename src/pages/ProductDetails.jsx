@@ -11,7 +11,7 @@ import MoreProduct3 from "../components/MoreProduct3";
 import MoreProduct2 from "../components/MoreProduct2";
 import { fetchCartItems } from "../feature/cartSlice";
 import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
-import { ShoppingCart, Heart, Clock } from 'lucide-react'; 
+import { ShoppingCart, Heart, Clock, ArrowLeft } from 'lucide-react'; 
 import { addToLocalCart } from "../feature/cartSlice";
 import ProductHeader from "../components/ProductHeader";
 
@@ -22,24 +22,17 @@ function ProductDetails() {
   );
   const [openSection, setOpenSection] = useState(null);
   const [product, setProduct] = useState(null); // State to store product details
-  console.log("Product:- ",product);
   const [isLoading, setIsLoading] = useState(true); // Loading state
-  
   const { productId } = useParams();
   const productDetailsRef = useRef(null);
-
-  
-
-
-
+  const location = useLocation();
+  const navigate = useNavigate();
+  const returnPolicyRef = useRef(null);
   const userId = useSelector((state) => state.auth.id); 
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
   const wishlist = useSelector(state => state.wishlist.items);
-  
-  
   const isInWishlist = wishlist.some(item => item._id === productId);
-
   const handleWishlist = () => {
     if (isInWishlist) {
       dispatch(removeFromWishlist(productId));
@@ -53,38 +46,15 @@ function ProductDetails() {
   };
 
   const [cartLoading, setCartLoading] = useState(false);
-  
-
- 
   const [quantity, setQuantity] = useState(1); // Highlighted for quantity updates
   const [selectedSize, setSelectedSize] = useState(""); // Highlighted for size updates
   const [selectedColor, setSelectedColor] = useState(""); // Highlighted for color updates
   const [giftWrapping, setGiftWrapping] = useState(false);
-const navigate = useNavigate();
-
-
-  const returnPolicyRef = useRef(null);
-  const [productDetailsHeight, setProductDetailsHeight] = useState(0);
-  const [returnPolicyHeight, setReturnPolicyHeight] = useState(0);
- 
-  useEffect(() => {
-    if (productDetailsRef.current) {
-      setProductDetailsHeight(productDetailsRef.current.scrollHeight);
-    }
-    if (returnPolicyRef.current) {
-      setReturnPolicyHeight(returnPolicyRef.current.scrollHeight);
-    }
-  }, [openSection]);
- 
- 
 
   const toggleSection = (section) => {
     setOpenSection(openSection === section ? null : section);
   };
 
-
-
-   // Fetch product details using the ID
    useEffect(() => {
     const fetchProductDetails = async () => {
       try {
@@ -161,29 +131,28 @@ const navigate = useNavigate();
     }
   };
   
-
-  
-    const location = useLocation();
-  
-    useEffect(() => {
-      
-      window.scrollTo(0, 0); // Scroll to top of the page
-    }, [location]);
-    
-  
-
-  // Adjusting scroll behavior with offset to account for potential fixed header or margin
-  
-
- 
   const handleThumbnailClick = (src) => {
     setMainImage(src);
   };
+
+  
+  
+  // const handleBackToShop = () => {
+  //   navigate('/shop', { 
+  //     state: { fromProduct: true }
+  //   });
+  // };
+
+
+
+  const handleBackToShop = () => {
+    // Always navigate to '/shop', regardless of the current category
+    const previousCategory = location.state?.fromCategory || "/shop";
+    navigate(previousCategory, { state: { fromProduct: true } });
+    console.log("Navigating to:", previousCategory);
+  };
   
 
- 
-
- 
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -202,9 +171,21 @@ const navigate = useNavigate();
 
   return (
     <>
+     <div className="flex items-center justify-between text-xl p-4 font-forumNormal bg-[#E6FF87] text-black">
+      <button
+        onClick={handleBackToShop}
+        className="flex items-center gap-2 px-4 py-2 text-gray-700  rounded-lg duration-200 group"
+      >
+        <ArrowLeft className="w-5 h-5 transition-transform duration-200 group-hover:-translate-x-1" />
+        <span className="text-md font-forumNormal">Back to Shop</span>
+      </button>
+    </div>
+
+    
     <div ref={productDetailsRef} className="bg-headerBackGround">
    
       <div className="container bg-headerBackGround mx-auto px-4 py-8">
+     
         <div className="font-forumNormal bg-headerBackGround flex flex-wrap -mx-4">
           {/* Product Images */}
           <div className="w-full md:w-1/2 px-4 mb-8">

@@ -73,61 +73,57 @@ const CheckoutPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-   
+  
     if (!isLoggedIn) {
       toast.error("You must be logged in to place an order.");
-      navigate("/login"); // Redirect to login page
+      navigate("/login");
       return;
     }
-
-    if(formData.firstName === "" || formData.lastName === "" || formData.email === "" || formData.phoneNo === "" || formData.address === "" || formData.city === "" || formData.state === "" || formData.zipCode === "") {              
+  
+    // Validate form fields
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.phoneNo ||
+      !formData.address ||
+      !formData.city ||
+      !formData.state ||
+      !formData.zipCode
+    ) {
       toast.error("Please fill all the fields");
       return;
     }
- 
   
+    // Validate email and phone number
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^[0-9]{10}$/;
-
     if (!emailRegex.test(formData.email)) {
       toast.error("Invalid email address");
       return;
     }
-
     if (!phoneRegex.test(formData.phoneNo)) {
       toast.error("Invalid phone number");
       return;
     }
-
-
-   
-    // Prepare data for the backend
+  
+    // Prepare order data
     const orderData = {
-      user: {
-        email: formData.email,
-        id:userId
-      },
-      contactInformation: {
-        email: formData.email,
-        phone: formData.phoneNo,
-      },
+      user: { email: formData.email, id: userId },
+      contactInformation: { email: formData.email, phone: formData.phoneNo },
       shippingInformation: {
         firstName: formData.firstName,
         lastName: formData.lastName,
-        company: "N/A",
         address: formData.address,
-        apartment: "",
         city: formData.city,
         state: formData.state,
         postalCode: formData.zipCode,
-        country: "India", // Default country
+        country: "India",
       },
-      paymentInformation: {
-        method: formData.paymentMethod,
-      },
+      paymentInformation: { method: formData.paymentMethod },
       orderSummary: {
         items: cartItems.map((item) => ({
-          product: item.product._id, // Ensure product ID is sent
+          product: item.product._id,
           productName: item.name,
           productImage: item.images,
           price: item.price,
@@ -137,95 +133,133 @@ const CheckoutPage = () => {
           giftWrapping: item.giftWrapping || false,
         })),
         subtotal: totalCartPrice,
-        shipping: 50, // Assume a fixed shipping cost
-        taxes: totalCartPrice * 0.18, // Example: 18% GST
-        total: totalCartPrice + 50 + totalCartPrice * 0.18,
+        shipping: 0,
+        taxes: 0,
+        total: totalCartPrice,
       },
     };
+  
     setLoading(true);
-
+  
     try {
-      // Step 1: Create Razorpay order on the backend
+      // Create Razorpay order
+      const amountInPaise = (totalCartPrice) * 100;
       const razorpayOrder = await axios.post(
         "https://backend.abhinavsofficial.com/api/order/create-razorpay-order",
-        { amount: (totalCartPrice +0  + totalCartPrice * 0.05) * 100 } // Convert to paise
+        { amount: amountInPaise }
       );
-  
       const { orderId } = razorpayOrder.data;
-      console.log("Razorpay Order ID:", orderId);
       if (!orderId) throw new Error("Failed to create Razorpay order");
   
-      // Step 2: Load Razorpay SDK script
+      // Load Razorpay script
       const isScriptLoaded = await loadRazorpayScript();
-      setLoading(false);
       if (!isScriptLoaded) {
         toast.error("Failed to load Razorpay SDK.");
+        setLoading(false);
         return;
-       
       }
-
+  
+      // Razorpay options
       const options = {
         key: razorpayKeyId,
-        amount: (totalCartPrice + 1 + totalCartPrice * 0.05) * 100, // Convert to paise
+        amount: amountInPaise,
         currency: "INR",
         name: "Abhinav's - Best of World",
         description: "Payment for your order",
         image: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/IMG_0823.JPG",
         order_id: orderId,
         handler: async (response) => {
-          console.log("Razorpay Payment Response:", response);
           try {
+            console.log('Raw Razorpay Response:', response);
+        
+            // Check for different signature locations in the response
+            const signature = 
+              response.razorpay_signature || 
+              response?.upi?.signature || 
+              response?.payment?.entity?.signature ||
+              response?.signature;
+        
+            const verificationPayload = {
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature || signature,
+            };
+        
+            // Log the constructed payload
+            console.log('Constructed Verification Payload:', verificationPayload);
+        
+            // For UPI payments, we might need to wait for the payment status
+            if (!signature && response.upi) {
+              // Add a small delay to allow the payment status to update
+              await new Promise(resolve => setTimeout(resolve, 2000));
+              
+              // Try to fetch the payment status
+              const paymentStatus = await axios.get(
+                `https://backend.abhinavsofficial.com/api/order/payment-status/${response.razorpay_payment_id}`
+              );
+              
+              if (paymentStatus.data.signature) {
+                verificationPayload.razorpay_signature = paymentStatus.data.signature;
+              }
+            }
+        
+            // Final validation
+            if (!verificationPayload.razorpay_payment_id || 
+                !verificationPayload.razorpay_order_id || 
+                !verificationPayload.razorpay_signature) {
+              console.error('Missing fields in final payload:', {
+                hasPaymentId: !!verificationPayload.razorpay_payment_id,
+                hasOrderId: !!verificationPayload.razorpay_order_id,
+                hasSignature: !!verificationPayload.razorpay_signature
+              });
+              throw new Error('Missing required payment verification fields');
+            }
+        
             const verifyPayment = await axios.post(
               "https://backend.abhinavsofficial.com/api/order/verify-razorpay-payment",
-              response
+              verificationPayload
             );
-            console.log("paymentResponse:", response);
-            console.log("Verify Payment:", verifyPayment);
-      
+        
             if (verifyPayment.status === 200) {
               const finalizedOrderData = {
                 ...orderData,
-                paymentInformation: { method: "Razorpay", ...response },
+                paymentInformation: { 
+                  method: "Razorpay",
+                  ...verificationPayload
+                },
               };
-      
+        
               const orderResponse = await axios.post(
                 "https://backend.abhinavsofficial.com/api/order/create-order",
                 finalizedOrderData
               );
-
-
-
-              console.log("Order Response:", orderResponse , "Finalized Order Data:", finalizedOrderData);  
-              const sendEmail = await axios.post("https://backend.abhinavsofficial.com/api/order/send-email", orderResponse);
-              console.log("Send Email Successfully FrontEnd:-", sendEmail);
-
-              console.log("orderResponse:", orderResponse);
-              console.log("Order Data:", finalizedOrderData);
-              navigate("/order-confirm");
               toast.success("Order placed successfully!");
-              
-              setLoading(false);
+              navigate("/order-confirm");
             } else {
               toast.error("Payment verification failed");
+              navigate("/order-fail");
             }
           } catch (error) {
             console.error("Error during payment verification:", error);
-            toast.error("Payment verification failed. Please try again.");
+            toast.error(
+              error.message === 'Missing required payment verification fields' 
+                ? "Payment verification failed: Missing required fields" 
+                : "Payment verification failed. Please try again."
+            );
+            navigate("/order-fail");
+          } finally {
             setLoading(false);
-           navigate("/order-fail");
           }
         },
         prefill: {
           name: `${formData.firstName} ${formData.lastName}`,
           email: formData.email,
-          contact: formData.phoneNo, // Use phoneNo as per your formData structure
+          contact: formData.phoneNo,
         },
-        theme: {
-          color: "#3399cc",
-        },
+        theme: { color: "#3399cc" },
       };
-
-// Step 6: Open Razorpay checkout
+  
+      // Open Razorpay modal
       const razorpay = new window.Razorpay(options);
       razorpay.open();
   
@@ -240,28 +274,14 @@ const CheckoutPage = () => {
       toast.error("Failed to initiate payment. Please try again.");
       setLoading(false);
     }
-};
+  };
 
 const location = useLocation();
   
 useEffect(() => {
   window.scrollTo(0, 0); // Scroll to top of the page
 }, [location]);
-// useCartManagement();
 
-
-// useEffect(() => {
-//   if (isLoggedIn) {
-//     dispatch(fetchCartItems({userId, token}));
-//   }
-// }, [isLoggedIn]); 
-
-//   // Sync local cart with backend after login
-//   useEffect(() => {
-//     if (isLoggedIn && cartItems.length > 0) {
-//       dispatch(syncLocalCartWithBackend({ userId, token, localCart: cartItems }));
-//     }
-//   }, [isLoggedIn]);
 
   return (
     <div className="font-forumNormal bg-headerBackGround min-h-screen p-4">

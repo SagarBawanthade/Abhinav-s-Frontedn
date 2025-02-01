@@ -8,11 +8,12 @@ import { toast } from 'react-toastify';
 import ProductsHeader from '../components/ProductsHeader';
 import { fetchProducts } from '../feature/productSlice';
 
+
 const Shop = () => {
   const [drawerOpen, setDrawerOpen] = useState(false); 
-  const Shop = useRef(null);
+  const shopRef = useRef(null);
   const dispatch = useDispatch();
-  
+  const location = useLocation();
   const { items: products, loading } = useSelector((state) => state.products);
   const wishlist = useSelector(state => state.wishlist.items);
 
@@ -83,13 +84,29 @@ const Shop = () => {
     }
   };
 
-  const location = useLocation();
-  
+   
+
     useEffect(() => {
-      
-      window.scrollTo(0, 0); // Scroll to top of the page
-    }, [location]);
-    
+      // Check for saved scroll position when component mounts or location changes
+      const restoreScrollPosition = () => {
+        const savedPosition = sessionStorage.getItem('shopScrollPosition');
+        
+        if (savedPosition && location.state?.fromProduct && shopRef.current) {
+          requestAnimationFrame(() => {
+            shopRef.current.scrollTop = parseInt(savedPosition);
+            // Clear the scroll position and state after restoring
+            sessionStorage.removeItem('shopScrollPosition');
+          });
+        }
+      };
+  
+      restoreScrollPosition();
+    }, [location.state]);
+  
+
+ 
+
+
 
 
 
@@ -117,7 +134,10 @@ const Shop = () => {
       </div>
 
       {/* Shop Layout */}
-      <div ref={Shop} className="bg-headerBackGround flex flex-col md:flex-row">
+      <div ref={shopRef} 
+        className="bg-headerBackGround flex flex-col md:flex-row"
+        style={{ height: '100vh', overflowY: 'auto' }}
+       >
         {/* Sidebar */}
         <div
           className={`fixed z-50 top-0 left-0 w-72 h-full bg-headerBackGround p-6 transition-transform duration-500 transform ${
@@ -158,9 +178,15 @@ const Shop = () => {
             
               className="group relative bg-headerBackGround rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
                 <div className="relative">
-                  <Link to={`/product-details/${product._id}`} onClick={() => {
-          localStorage.setItem('shopScrollPosition', window.scrollY.toString());
-        }} >
+                  <Link to={`/product-details/${product._id}`} 
+                  onClick={() => {
+              // Save scroll position before navigation
+              if (shopRef.current) {
+                sessionStorage.setItem('shopScrollPosition', shopRef.current.scrollTop.toString());
+              }
+            }}
+            state={{ fromShop: true }}
+         >
                   
                     <div className="aspect-[5/5] overflow-hidden rounded-t-xl">
                       <img
@@ -184,7 +210,8 @@ const Shop = () => {
                 </div>
 
                 <div className="p-2">
-                  <Link to={`/product-details/${product._id}`}>
+                  <Link to={`/product-details/${product._id}`}
+                >
                     <h3 className="font-forumNormal text-left text-sm md:text-lg text-gray-900 mb-1 truncate group-hover:text-black">
                       {product.name}
                     </h3>
@@ -244,6 +271,7 @@ const Shop = () => {
 <Link 
   to={`/product-details/${product._id}`} 
   className="hidden lg:block"
+  
 >
 {(!product.category || product.category.toLowerCase() === 'hoodies' || 
   (product.category.toLowerCase() !== 'tshirt' && 

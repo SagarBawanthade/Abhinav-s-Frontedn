@@ -2,20 +2,22 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import CategoryProducts from "./CategoryProducts"; // We'll create this component next
+
 
 const ManageProducts = () => {
   const [products, setProducts] = useState([]);
+  console.log(products);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get("https://backend.abhinavsofficial.com/api/product/getproducts");
         setProducts(response.data);
+        
       } catch (error) {
         toast.error(error.message || "Error fetching products");
       } finally {
@@ -24,7 +26,7 @@ const ManageProducts = () => {
     };
 
     fetchProducts();
-  }, []);
+  }, );
 
   const openDialog = (id) => {
     setProductToDelete(id);
@@ -74,12 +76,12 @@ const ManageProducts = () => {
         <div key={category} className="mb-10">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-2xl font-semibold text-gray-800">{category}</h3>
-            <button
-              onClick={() => setSelectedCategory(category)}
+            <Link
+               to={`/admin/category/${category}`}
               className="text-blue-600 hover:underline"
             >
               Show All
-            </button>
+            </Link>
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-x-auto">
@@ -147,7 +149,7 @@ const ManageProducts = () => {
         </div>
       )}
 
-      {selectedCategory && (
+      {/* {selectedCategory && (
         <CategoryProducts 
           category={selectedCategory} 
           products={categorizedProducts[selectedCategory]}
@@ -157,7 +159,7 @@ const ManageProducts = () => {
             setProducts(updatedProducts);
           }}
         />
-      )}
+      )} */}
     </div>
   );
 };
