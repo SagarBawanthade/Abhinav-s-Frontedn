@@ -54,7 +54,7 @@ const Header = () => {
     toast.success('Logged out successfully!');
     navigate('/login');
     setMenuOpen(false);
-    window.location.reload();
+    
    
     
   };
