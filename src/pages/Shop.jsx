@@ -1,10 +1,9 @@
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import ShopFilters from '../components/ShopFilter';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { X, SlidersHorizontal, Heart, ShoppingCart, Clock } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
-import { toast } from 'react-toastify';
 import ProductsHeader from '../components/ProductsHeader';
 import { fetchProducts } from '../feature/productSlice';
 
@@ -76,23 +75,32 @@ const Shop = () => {
   const toggleLike = (item) => {
     if (isProductInWishlist(item._id)) {
       dispatch(removeFromWishlist(item._id));
-      toast.success("Product removed from Wishlist!");
+      // toast.success("Product removed from Wishlist!");
     } else {
       dispatch(addToWishlist(item));
-      toast.success("Product Added to Wishlist!");
+      // toast.success("Product Added to Wishlist!");
     }
   };
 
+
+
+
+
+   // MODIFIED: Enhanced scroll position handling
   useEffect(() => {
     const handleScrollPosition = () => {
-      // Case 1: Coming back from product page with saved position
+      // Case 1: Coming back from product page
       if (location.state?.fromProduct && !scrollRestorationAttempted.current) {
-        const savedPosition = sessionStorage.getItem('shopScrollPosition');
+        // Get category-specific scroll position
+        const storageKey = category ? `shopScrollPosition_${category}` : 'shopScrollPosition';
+        const savedPosition = sessionStorage.getItem(storageKey);
+        
         if (savedPosition && shopRef.current) {
           setTimeout(() => {
             shopRef.current.scrollTop = parseInt(savedPosition);
             window.scrollTo(0, 0);
-            sessionStorage.removeItem('shopScrollPosition');
+            // Only remove the specific category's scroll position
+            sessionStorage.removeItem(storageKey);
           }, 100);
         }
         scrollRestorationAttempted.current = true;
@@ -106,26 +114,26 @@ const Shop = () => {
       }
     };
   
-    // Only handle scroll after products are loaded
     if (!loading) {
       handleScrollPosition();
     }
   
     prevCategory.current = category;
   
-    // Cleanup
     return () => {
       scrollRestorationAttempted.current = false;
     };
   }, [location.state, category, loading]);
 
-  // Save scroll position before navigation
-  const saveScrollPosition = () => {
-    if (shopRef.current) {
-      const currentScroll = shopRef.current.scrollTop;
-      sessionStorage.setItem('shopScrollPosition', currentScroll.toString());
-    }
-  };
+    // ADDED: Store category-specific scroll positions
+    const saveScrollPosition = () => {
+      if (shopRef.current) {
+        const currentScroll = shopRef.current.scrollTop;
+        const storageKey = category ? `shopScrollPosition_${category}` : 'shopScrollPosition';
+        sessionStorage.setItem(storageKey, currentScroll.toString());
+      }
+    };
+
 
   return (
     <>
@@ -190,7 +198,7 @@ const Shop = () => {
                     <Link 
   to={`/product-details/${product._id}`} 
   onClick={saveScrollPosition}
-  state={{ fromProduct: false, fromShop: true }}
+  state={{ fromProduct: false, fromShop: true, fromCategory: category ? `/shop/${category}` : '/shop' }}
 >
                         <div className="aspect-[5/5] overflow-hidden rounded-t-xl">
                           <img
@@ -294,7 +302,7 @@ const Shop = () => {
                 ))
               ) : (
                 <p className="col-span-full text-center text-lg text-gray-500 py-12">
-                  Please wait...
+                  {loading ? 'Loading Products...' : 'No products found!'}      
                 </p>
               )}
             </div>

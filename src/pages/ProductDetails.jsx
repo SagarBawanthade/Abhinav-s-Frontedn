@@ -51,6 +51,20 @@ function ProductDetails() {
   const [selectedColor, setSelectedColor] = useState(""); // Highlighted for color updates
   const [giftWrapping, setGiftWrapping] = useState(false);
 
+ 
+  const [productDetailsHeight, setProductDetailsHeight] = useState(0);
+  const [returnPolicyHeight, setReturnPolicyHeight] = useState(0);
+ 
+  useEffect(() => {
+    if (productDetailsRef.current) {
+      setProductDetailsHeight(productDetailsRef.current.scrollHeight);
+    }
+    if (returnPolicyRef.current) {
+      setReturnPolicyHeight(returnPolicyRef.current.scrollHeight);
+    }
+  }, [openSection]);
+
+
   const toggleSection = (section) => {
     setOpenSection(openSection === section ? null : section);
   };
