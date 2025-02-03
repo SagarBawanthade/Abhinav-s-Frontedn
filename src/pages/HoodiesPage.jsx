@@ -352,7 +352,7 @@ const toggleLike = (item) => {
       <div className="relative flex items-center justify-center space-x-3">
         <Timer className="w-5 h-5 text-red-400 animate-bounce" />
         
-        <span className="text-lg sm:text-xl font-bold text-yellow-300 tracking-wider transform transition-all duration-300 group-hover:scale-105">
+        <span className="text-xs sm:text-xl font-bold text-yellow-300 tracking-wider transform transition-all duration-300 group-hover:scale-105">
           COMING SOON
         </span>
         
@@ -511,7 +511,7 @@ const toggleLike = (item) => {
       <div className="relative flex items-center justify-center space-x-3">
         <Timer className="w-5 h-5 text-red-600 animate-bounce" />
         
-        <span className="text-lg sm:text-xl font-bold text-yellow-300 tracking-wider transform transition-all duration-300 group-hover:scale-105">
+        <span className="text-xs sm:text-xl font-bold text-yellow-300 tracking-wider transform transition-all duration-300 group-hover:scale-105">
           COMING SOON
         </span>
         

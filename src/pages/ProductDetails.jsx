@@ -11,10 +11,16 @@ import MoreProduct3 from "../components/MoreProduct3";
 import MoreProduct2 from "../components/MoreProduct2";
 import { fetchCartItems } from "../feature/cartSlice";
 import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
-import { ShoppingCart, Heart, Clock, ArrowLeft } from 'lucide-react'; 
+import { ShoppingCart, Heart, Clock } from 'lucide-react'; 
 import { addToLocalCart } from "../feature/cartSlice";
 import ProductHeader from "../components/ProductHeader";
-
+import 'swiper/css';
+import 'swiper/css/free-mode';
+import 'swiper/css/navigation';
+import 'swiper/css/thumbs';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
+import MoreProducts1 from "../components/MoreProducts1";
 
 function ProductDetails() {
   const [mainImage, setMainImage] = useState(
@@ -33,6 +39,12 @@ function ProductDetails() {
   const dispatch = useDispatch();
   const wishlist = useSelector(state => state.wishlist.items);
   const isInWishlist = wishlist.some(item => item._id === productId);
+  const [thumbsSwiper, setThumbsSwiper] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+ 
+  const scrollPositionRef = useRef(0);
+  
   const handleWishlist = () => {
     if (isInWishlist) {
       dispatch(removeFromWishlist(productId));
@@ -44,6 +56,9 @@ function ProductDetails() {
       console.log("After Adding Wishlist:- ",wishlist);
     }
   };
+
+ 
+
 
   const [cartLoading, setCartLoading] = useState(false);
   const [quantity, setQuantity] = useState(1); // Highlighted for quantity updates
@@ -149,23 +164,57 @@ function ProductDetails() {
     setMainImage(src);
   };
 
+  useEffect(() => {
+    // Set usingBrowserNavigation to true when the component first loads
+    sessionStorage.setItem('usingBrowserNavigation', 'true');
+  }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      // Store that we're using browser navigation
+      sessionStorage.setItem('usingBrowserNavigation', 'true');
+    };
   
+    // Listen for browser back button
+    window.addEventListener('popstate', handleBeforeUnload);
   
-  // const handleBackToShop = () => {
-  //   navigate('/shop', { 
-  //     state: { fromProduct: true }
-  //   });
-  // };
-
-
-
+    return () => {
+      window.removeEventListener('popstate', handleBeforeUnload);
+    };
+  }, []);
+  
+  // MODIFIED: Back button handler
   const handleBackToShop = () => {
-    // Always navigate to '/shop', regardless of the current category
+    // Mark that we're using custom navigation
+    sessionStorage.setItem('usingBrowserNavigation', 'false');
+    
+    // Get previous category or default to shop
     const previousCategory = location.state?.fromCategory || "/shop";
     navigate(previousCategory, { state: { fromProduct: true } });
-    console.log("Navigating to:", previousCategory);
   };
   
+  // ADDED: Clean up function
+  useEffect(() => {
+    return () => {
+      // This runs when component unmounts
+      const usingBrowserNav = sessionStorage.getItem('usingBrowserNavigation') === 'true';
+      if (!usingBrowserNav) {
+        // Clean up scroll positions if not using browser navigation
+        Object.keys(sessionStorage).forEach(key => {
+          if (key.startsWith('shopScrollPosition')) {
+            sessionStorage.removeItem(key);
+          }
+        });
+      }
+    };
+  }, []);
+  
+  
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []); 
+
 
   if (isLoading) {
     return (
@@ -185,42 +234,61 @@ function ProductDetails() {
 
   return (
     <>
-     <div className="flex items-center justify-between text-xl p-4 font-forumNormal bg-[#E6FF87] text-black">
-      <button
-        onClick={handleBackToShop}
-        className="flex items-center gap-2 px-4 py-2 text-gray-700  rounded-lg duration-200 group"
-      >
-        <ArrowLeft className="w-5 h-5 transition-transform duration-200 group-hover:-translate-x-1" />
-        <span className="text-md font-forumNormal">Back to Shop</span>
-      </button>
-    </div>
-
+    
     
     <div ref={productDetailsRef} className="bg-headerBackGround">
    
       <div className="container bg-headerBackGround mx-auto px-4 py-8">
      
-        <div className="font-forumNormal bg-headerBackGround flex flex-wrap -mx-4">
-          {/* Product Images */}
-          <div className="w-full md:w-1/2 px-4 mb-8">
-            <img
-              src={mainImage}
-              alt="Product"
-              className="w-full h-auto rounded-lg shadow-md mb-4"
-            />
-            <div className="flex gap-4 py-4 justify-center overflow-x-auto">
-              {product.images?.map((img, index) => (
-                <img
-                  key={index}
-                  src={img}
-                  alt={`Thumbnail ${index + 1}`}
-                  className="w-16 h-16 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
-                  onClick={() => handleThumbnailClick(img)}
-                />
-              ))}
-            </div>
-          </div>
+      <div className="font-forumNormal bg-headerBackGround flex flex-wrap -mx-4">
+     {/* Product Images with Swiper */}
+<div className="w-full md:w-1/2 px-4 mb-8">
+  {/* Main Swiper */}
+  <Swiper
+    spaceBetween={10}
+    navigation={true}
+    thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
+    modules={[FreeMode, Navigation, Thumbs]}
+    onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)} // Track active image
+    className="rounded-lg overflow-hidden mb-4"
+  >
+    {product.images?.map((image, index) => (
+      <SwiperSlide key={index}>
+        <div className="aspect-w-1 aspect-h-1">
+          <img 
+            src={image} 
+            alt={`Product ${index + 1}`}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      </SwiperSlide>
+    ))}
+  </Swiper>
 
+  {/* Thumbs Swiper */}
+  <Swiper
+    onSwiper={setThumbsSwiper}
+    spaceBetween={10}
+    slidesPerView={6}
+    freeMode={true}
+    watchSlidesProgress={true}
+    modules={[FreeMode, Navigation, Thumbs]}
+    className="thumbs-swiper mt-4"
+  >
+    {product.images?.map((image, index) => (
+      <SwiperSlide key={index}>
+        <div className="cursor-pointer">
+          <img 
+            src={image} 
+            alt={`Thumbnail ${index + 1}`}
+            className={`w-full h-full object-cover rounded-md transition duration-300
+              ${index === activeIndex ? 'brightness-100 opacity-50' : 'brightness-75 opacity-100'}`} 
+          />
+        </div>
+      </SwiperSlide>
+    ))}
+  </Swiper>
+</div>
           {/* Product Details */}
           <div className="w-full md:w-1/2 px-4"> 
             <h2 className="text-3xl font-bold mb-2 flex ">
@@ -266,14 +334,6 @@ function ProductDetails() {
     </select>
   </div>
 )}
-
-
-
-
-
-
-
-
 
             {/* Size Section with Radio Buttons */}
 <div className="mt-6 mb-6">
@@ -541,9 +601,42 @@ function ProductDetails() {
       </div>
     </div>
 
-    <MoreProducts />
+    <MoreProducts1 />
     <MoreProduct2 />
     <MoreProduct3/>
+
+    <style jsx>{`
+        .swiper-button-next,
+        .swiper-button-prev {
+          color: #4a5568;
+          background: rgba(255, 255, 255, 0.8);
+          padding: 20px;
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+        }
+
+        .swiper-button-next:after,
+        .swiper-button-prev:after {
+          font-size: 16px;
+          font-weight: bold;
+        }
+
+        .swiper-button-disabled {
+          opacity: 0.35;
+          cursor: not-allowed;
+        }
+
+        .thumbs-swiper .swiper-slide {
+          opacity: 0.6;
+          transition: opacity 0.3s ease;
+        }
+
+        .thumbs-swiper .swiper-slide-thumb-active {
+          opacity: 1;
+        }
+      `}</style>
+    
     </>
   );
 }

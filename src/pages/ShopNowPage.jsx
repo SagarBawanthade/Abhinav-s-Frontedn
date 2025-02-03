@@ -26,6 +26,10 @@ const ShopNowPage = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    if (location.pathname !== "/shop") {
+      sessionStorage.clear();
+    }   
   }, [location]);
 
   return (

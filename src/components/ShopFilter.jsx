@@ -3,7 +3,12 @@ import { Plus, Minus, Check} from "lucide-react";
 import { Link } from "react-router-dom";
 
 const ShopFilters = ({ onFiltersChange }) => {
+
+
+
+
   const [filters, setFilters] = useState({
+
     priceOpen: false,
     colorOpen: false,
     sizeOpen: false,
@@ -20,16 +25,15 @@ const ShopFilters = ({ onFiltersChange }) => {
     setFilters((prev) => ({ ...prev, [filterKey]: !prev[filterKey] }));
   };
 
+
+
   const clearFilters = () => {
     setPriceRange(12500);
     setSelectedColors([]);
     setSelectedSizes([]);
   };
 
-  const handleFiltersChange = (updatedFilters) => {
-    console.log("Updated filters:", updatedFilters);
-    setFilters(updatedFilters);
-  };
+  
 
   useEffect(() => {
     onFiltersChange({ priceRange, selectedColors, selectedSizes });
@@ -40,10 +44,12 @@ const ShopFilters = ({ onFiltersChange }) => {
       setSelectedColors((prev) =>
         prev.includes(item) ? prev.filter((c) => c !== item) : [...prev, item]
       );
+      setFilters((prev) => ({ ...prev, colorOpen: false })); 
     } else if (type === "size") {
       setSelectedSizes((prev) =>
         prev.includes(item) ? prev.filter((s) => s !== item) : [...prev, item]
       );
+      setFilters((prev) => ({ ...prev, sizeOpen: false }));
     }
   };
 
@@ -65,10 +71,12 @@ const ShopFilters = ({ onFiltersChange }) => {
         {[  "Hoodies", "Oversize-Tshirt", "Tshirt" , "Couple-Tshirt"].map((category) => (
           <li key={category}>
             <Link
+          
               to={`/shop/${category}`} 
               className="text-left w-full mb-4 text-gray-700 hover:underline"
             >
               {category}
+             
             </Link>
           </li>
         ))}

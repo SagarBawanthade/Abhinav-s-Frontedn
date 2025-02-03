@@ -7,6 +7,8 @@ import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
 import ProductsHeader from '../components/ProductsHeader';
 import { fetchProducts } from '../feature/productSlice';
 
+
+
 const Shop = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const shopRef = useRef(null);
@@ -15,11 +17,14 @@ const Shop = () => {
   const location = useLocation();
   const { items: products, loading } = useSelector((state) => state.products);
   const wishlist = useSelector(state => state.wishlist.items);
-  const scrollRestorationAttempted = useRef(false);
-
-  // Track initial load and category changes
-  const initialLoad = useRef(true);
   const prevCategory = useRef(category);
+
+
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [contentOpacity, setContentOpacity] = useState(0);
+
+
+
 
   // Filter states
   const [filters, setFilters] = useState({
@@ -29,7 +34,13 @@ const Shop = () => {
   });
   const [filteredProducts, setFilteredProducts] = useState([]);
 
+
   
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []); 
+
+
 
   // Fetch products if needed
   useEffect(() => {
@@ -82,57 +93,57 @@ const Shop = () => {
     }
   };
 
+ // Improved scroll position handling
+ useEffect(() => {
+  const handleScrollPosition = async () => {
+    const storageKey = category ? `shopScrollPosition_${category}` : 'shopScrollPosition';
+    const savedPosition = sessionStorage.getItem(storageKey);
 
+    // Start transition
+    setIsTransitioning(true);
+    setContentOpacity(0);
 
+    // Wait for fade out
+    await new Promise(resolve => setTimeout(resolve, 300));
 
-
-   // MODIFIED: Enhanced scroll position handling
-  useEffect(() => {
-    const handleScrollPosition = () => {
-      // Case 1: Coming back from product page
-      if (location.state?.fromProduct && !scrollRestorationAttempted.current) {
-        // Get category-specific scroll position
-        const storageKey = category ? `shopScrollPosition_${category}` : 'shopScrollPosition';
-        const savedPosition = sessionStorage.getItem(storageKey);
-        
-        if (savedPosition && shopRef.current) {
-          setTimeout(() => {
-            shopRef.current.scrollTop = parseInt(savedPosition);
-            window.scrollTo(0, 0);
-            // Only remove the specific category's scroll position
-            sessionStorage.removeItem(storageKey);
-          }, 100);
-        }
-        scrollRestorationAttempted.current = true;
-      } 
-      // Case 2: Fresh navigation or category change
-      else if (!location.state?.fromProduct || category !== prevCategory.current) {
-        if (shopRef.current) {
-          shopRef.current.scrollTop = 0;
-          window.scrollTo(0, 0);
-        }
-      }
-    };
-  
-    if (!loading) {
-      handleScrollPosition();
-    }
-  
-    prevCategory.current = category;
-  
-    return () => {
-      scrollRestorationAttempted.current = false;
-    };
-  }, [location.state, category, loading]);
-
-    // ADDED: Store category-specific scroll positions
-    const saveScrollPosition = () => {
+    if (savedPosition && shopRef.current) {
+      // Disable smooth scroll temporarily
+      shopRef.current.style.scrollBehavior = 'auto';
+      shopRef.current.scrollTop = parseInt(savedPosition);
+      
+      // Small delay to ensure scroll completes
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      // Re-enable smooth scroll
+      shopRef.current.style.scrollBehavior = 'smooth';
+    } else if (!location.state?.fromProduct || category !== prevCategory.current) {
       if (shopRef.current) {
-        const currentScroll = shopRef.current.scrollTop;
-        const storageKey = category ? `shopScrollPosition_${category}` : 'shopScrollPosition';
-        sessionStorage.setItem(storageKey, currentScroll.toString());
+        shopRef.current.style.scrollBehavior = 'auto';
+        shopRef.current.scrollTop = 0;
+        window.scrollTo(0, 0);
+        shopRef.current.style.scrollBehavior = 'smooth';
       }
-    };
+    }
+
+    // End transition
+    await new Promise(resolve => setTimeout(resolve, 100));
+    setContentOpacity(1);
+    setIsTransitioning(false);
+  };
+
+  if (!loading) {
+    handleScrollPosition();
+  }
+  
+  prevCategory.current = category;
+}, [location.state, category, loading]);
+
+const handleProductClick = (productId) => {
+  if (shopRef.current) {
+    const storageKey = category ? `shopScrollPosition_${category}` : 'shopScrollPosition';
+    sessionStorage.setItem(storageKey, shopRef.current.scrollTop.toString());
+  }
+};
 
 
   return (
@@ -154,19 +165,33 @@ const Shop = () => {
         </div>
       </div>
 
+      {/* Loading Spinner - Added backdrop blur for better visual */}
+      {(loading || isTransitioning) && (
+        <div className="fixed inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm z-50 transition-all duration-300">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="w-8 h-8 border-4 border-gray-200 border-t-gray-700 rounded-full animate-spin" />
+            <p className="text-gray-600 font-medium">Loading...</p>
+          </div>
+        </div>
+      )}
+
       {/* Shop Layout */}
+
+      
       <div 
         ref={shopRef}
         className="bg-headerBackGround flex flex-col md:flex-row"
         style={{ 
           height: 'calc(100vh - 60px)', 
           overflowY: 'auto',
-          scrollBehavior: 'smooth'
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch'
         }}
       >
+        
         {/* Sidebar */}
         <div
-          className={`fixed z-50 top-0 left-0 w-72 h-full bg-headerBackGround p-6 transition-transform duration-500 transform ${
+          className={`fixed z-50 top-0 left-0 w-72 h-full bg-headerBackGround p-6 transition-transform duration-200 transform ${
             drawerOpen ? 'translate-x-0' : '-translate-x-full'
           } md:translate-x-0 md:relative md:block`}
         >
@@ -185,19 +210,23 @@ const Shop = () => {
         <div className="bg-headerBackGround w-full px-4 md:px-6 py-8">
           <ProductsHeader category={category} filteredProducts={filteredProducts} />
 
-          {loading ? (
-            <div className="flex justify-center items-center h-60">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6 mb-28">
-              {filteredProducts.length > 0 ? (
+          
+            
+          <div 
+            className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6 mb-28"
+            style={{
+              transition: 'opacity 300ms ease-in-out, transform 300ms ease-in-out',
+              opacity: contentOpacity,
+              transform: `translateY(${contentOpacity === 0 ? '10px' : '0'})`,
+            }}
+          > 
+          {filteredProducts.length > 0 ? (
                 filteredProducts.map((product) => (
                   <div key={product._id} className="group relative bg-headerBackGround rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
                     <div className="relative">
                     <Link 
   to={`/product-details/${product._id}`} 
-  onClick={saveScrollPosition}
+  onClick={() => handleProductClick(product._id)}
   state={{ fromProduct: false, fromShop: true, fromCategory: category ? `/shop/${category}` : '/shop' }}
 >
                         <div className="aspect-[5/5] overflow-hidden rounded-t-xl">
@@ -306,7 +335,7 @@ const Shop = () => {
                 </p>
               )}
             </div>
-          )}
+          
         </div>
       </div>
     </>
