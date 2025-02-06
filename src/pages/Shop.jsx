@@ -67,10 +67,18 @@ const Shop = () => {
         return matchesCategory && matchesPrice && matchesColor && matchesSize;
       });
   
-      const hoodieProducts = filtered.filter(p => p.category.toLowerCase() === 'hoodies');
-      const nonHoodieProducts = filtered.filter(p => p.category.toLowerCase() !== 'hoodies');
-      const reversedNonHoodies = nonHoodieProducts.reverse();
-      const sortedProducts = [...reversedNonHoodies, ...hoodieProducts];
+      // Separate and reverse hoodies
+      const hoodieProducts = filtered
+        .filter(p => p.category.toLowerCase() === 'hoodies')
+        .reverse();
+      
+      // Get other products (already reversed)
+      const nonHoodieProducts = filtered
+        .filter(p => p.category.toLowerCase() !== 'hoodies')
+        .reverse();
+      
+      // Combine all products
+      const sortedProducts = [ ...nonHoodieProducts,...hoodieProducts,];
   
       setFilteredProducts(sortedProducts);
     };

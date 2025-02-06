@@ -9,14 +9,14 @@ const AppLayout = ({ children }) => {
   const cartItems = useSelector((state) => state.cart.items);
 
   useEffect(() => {
-    console.log('Redux State - auth:', { userId, token });
+    // console.log('Redux State - auth:', { userId, token });
     if (userId && token) {
       dispatch(fetchCartItems({ userId, token }));
     }
   }, [dispatch, userId, token]);
 
   useEffect(() => {
-    console.log('Cart Items:', cartItems);
+    // console.log('Cart Items:', cartItems);
   }, [cartItems]);
 
   return <>{children}</>;

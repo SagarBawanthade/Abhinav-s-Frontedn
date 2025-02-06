@@ -168,89 +168,58 @@ const CheckoutPage = () => {
         description: "Payment for your order",
         image: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/IMG_0823.JPG",
         order_id: orderId,
+        
         handler: async (response) => {
           try {
-            console.log('Raw Razorpay Response:', response);
-        
-            // Check for different signature locations in the response
-            const signature = 
-              response.razorpay_signature || 
-              response?.upi?.signature || 
-              response?.payment?.entity?.signature ||
-              response?.signature;
+            console.log("Payment Response:", response);
         
             const verificationPayload = {
-              razorpay_payment_id: response.razorpay_payment_id,
               razorpay_order_id: response.razorpay_order_id,
-              razorpay_signature: response.razorpay_signature || signature,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            
+           
             };
         
-            // Log the constructed payload
-            console.log('Constructed Verification Payload:', verificationPayload);
-        
-            // For UPI payments, we might need to wait for the payment status
-            if (!signature && response.upi) {
-              // Add a small delay to allow the payment status to update
-              await new Promise(resolve => setTimeout(resolve, 2000));
-              
-              // Try to fetch the payment status
-              const paymentStatus = await axios.get(
-                `https://backend.abhinavsofficial.com/api/order/payment-status/${response.razorpay_payment_id}`
-              );
-              
-              if (paymentStatus.data.signature) {
-                verificationPayload.razorpay_signature = paymentStatus.data.signature;
-              }
-            }
-        
-            // Final validation
-            if (!verificationPayload.razorpay_payment_id || 
-                !verificationPayload.razorpay_order_id || 
-                !verificationPayload.razorpay_signature) {
-              console.error('Missing fields in final payload:', {
-                hasPaymentId: !!verificationPayload.razorpay_payment_id,
-                hasOrderId: !!verificationPayload.razorpay_order_id,
-                hasSignature: !!verificationPayload.razorpay_signature
-              });
-              throw new Error('Missing required payment verification fields');
-            }
+            console.log("Verification Payload:", verificationPayload);
         
             const verifyPayment = await axios.post(
               "https://backend.abhinavsofficial.com/api/order/verify-razorpay-payment",
               verificationPayload
             );
         
-            if (verifyPayment.status === 200) {
-              const finalizedOrderData = {
-                ...orderData,
-                paymentInformation: { 
-                  method: "Razorpay",
-                  ...verificationPayload
-                },
-              };
-        
-              const orderResponse = await axios.post(
-                "https://backend.abhinavsofficial.com/api/order/create-order",
-                finalizedOrderData
-              );
-              toast.success("Order placed successfully!");
-              navigate("/order-confirm");
-            } else {
-              toast.error("Payment verification failed");
+            if (verifyPayment.status !== 200) {
+              toast.error("Payment verification failed.");
               navigate("/order-fail");
+              return;
             }
+        
+            const finalizedOrderData = {
+              ...orderData,
+              paymentInformation: {
+                method: "Razorpay",
+                ...verificationPayload,
+              },
+            };
+        
+            
+            const orderResponse = await axios.post("https://backend.abhinavsofficial.com/api/order/create-order", finalizedOrderData);
+        
+            
+            const sendEmail = await axios.post("https://backend.abhinavsofficial.com/api/order/send-email", orderResponse);
+              
+              
+              
+            toast.success("Order placed successfully!");
+            navigate("/order-confirm");
+        
           } catch (error) {
-            console.error("Error during payment verification:", error);
-            toast.error(
-              error.message === 'Missing required payment verification fields' 
-                ? "Payment verification failed: Missing required fields" 
-                : "Payment verification failed. Please try again."
-            );
+            
+            toast.error("Payment verification failed. Please try again.");
             navigate("/order-fail");
-          } finally {
-            setLoading(false);
           }
         },
+        
         prefill: {
           name: `${formData.firstName} ${formData.lastName}`,
           email: formData.email,

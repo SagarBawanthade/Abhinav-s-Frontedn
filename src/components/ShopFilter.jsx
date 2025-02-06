@@ -33,6 +33,10 @@ const ShopFilters = ({ onFiltersChange }) => {
     setSelectedSizes([]);
   };
 
+  const handleFiltersChange = (updatedFilters) => {
+    console.log("Updated filters:", updatedFilters);
+    setFilters(updatedFilters);
+  };
   
 
   useEffect(() => {
@@ -44,12 +48,12 @@ const ShopFilters = ({ onFiltersChange }) => {
       setSelectedColors((prev) =>
         prev.includes(item) ? prev.filter((c) => c !== item) : [...prev, item]
       );
-      setFilters((prev) => ({ ...prev, colorOpen: false })); 
+    
     } else if (type === "size") {
       setSelectedSizes((prev) =>
         prev.includes(item) ? prev.filter((s) => s !== item) : [...prev, item]
       );
-      setFilters((prev) => ({ ...prev, sizeOpen: false }));
+     
     }
   };
 
