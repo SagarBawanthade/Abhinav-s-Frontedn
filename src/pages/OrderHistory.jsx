@@ -1,9 +1,8 @@
-import Spinner from '../components/Spinner';
-import { Eye, RotateCw, Check, Clock, Truck } from 'lucide-react'; // Add the icons
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import  { useEffect, useState } from 'react';
+import { Eye, RotateCw, Check, Clock, Truck } from 'lucide-react';
+import { useLocation, Link } from 'react-router-dom';
 import OrderDetailsModal from '../components/OrderDetailsModal';
-import { Link } from 'react-router-dom';
+
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
@@ -13,16 +12,14 @@ const OrderHistory = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    window.scrollTo(0, 0); // Scroll to top of the page
+    window.scrollTo(0, 0);
   }, [location]);
 
   useEffect(() => {
-    // Fetch orders from the backend
     const fetchOrders = async () => {
       try {
         const response = await fetch('https://backend.abhinavsofficial.com/api/order/orders');
         const data = await response.json();
-        console.log('Orders:', data);
         setOrders(data);
       } catch (error) {
         console.error('Error fetching orders:', error);
@@ -30,98 +27,130 @@ const OrderHistory = () => {
         setLoading(false);
       }
     };
-
     fetchOrders();
   }, []);
 
-  const getStatusIcon = (status) => {
+  const getStatusStyles = (status) => {
+    const baseStyles = "flex items-center px-3 py-1 rounded-full text-sm font-medium";
     switch (status.toLowerCase()) {
       case 'pending':
-        return <Clock className="h-6 w-6 mr-2 text-yellow-800 dark:text-yellow-300" />;
-      case 'confirmed':
-        return <Check className="h-6 w-6 mr-2 text-green-800 dark:text-green-300" />;
-      case 'in-transit':
-        return <Truck className="h-6 w-6 mr-2 text-blue-800 dark:text-blue-300" />;
-      
+        return `${baseStyles} bg-yellow-100 text-yellow-800`;
+      case 'delivered':
+        return `${baseStyles} bg-green-100 text-green-800`;
+      case 'in transit':
+        return `${baseStyles} bg-blue-100 text-blue-800`;
+      default:
+        return `${baseStyles} bg-gray-100 text-gray-800`;
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    const iconClass = "h-4 w-4 mr-2";
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return <Clock className={iconClass} />;
+      case 'delivered':
+        return <Check className={iconClass} />;
+      case 'in transit':
+        return <Truck className={iconClass} />;
       default:
         return null;
     }
   };
 
-
-
   if (loading) {
-    return <div className="text-center"><Spinner/></div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-gray-200 rounded-full animate-spin border-t-blue-500" />
+      </div>
+    );
   }
 
+
+
+  
+
   return (
-    <section className="bg-headerBackGround font-forumNormal py-8 antialiased dark:bg-gray-900 md:py-16">
-      <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
-        <div className="mx-auto max-w-5xl">
-          <h2 className="text-xl font-semibold text-gray-900 mb-3 dark:text-white sm:text-2xl">My Orders</h2>
-          <hr className="border-gray-300 dark:border-gray-700" />
-          <div className="mt-6 flow-root sm:mt-8">
-            <div className="divide-y divide-gray-200 dark:divide-gray-700">
-              {orders.map((order) => (
-                <div key={order._id} className="flex flex-wrap items-center gap-y-4 py-6">
-                  <dl className="w-1/2 sm:w-1/4 lg:w-auto lg:flex-1">
-                    <dt className="text-base font-medium text-gray-500 dark:text-gray-400">Order ID:</dt>
-                    <dd className="w-32 md:w-32 mt-1.5 text-base font-semibold text-gray-900 dark:text-white">
-                      <p className="w-32 md:w-32 truncate">#{order._id}</p>
-                    </dd>
-                  </dl>
-                  <dl className="w-1/2 sm:w-1/4 lg:w-auto lg:flex-1">
-                    <dt className="text-base font-medium text-gray-500 dark:text-gray-400">Created Date:</dt>
-                    <dd className="mt-1.5 text-base font-semibold text-gray-900 dark:text-white">
+    <div className="min-h-screen bg-headerBackGround py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-forumNormal text-gray-900 mb-8">Order History</h1>
+        
+        <div className="space-y-4">
+          {orders.map((order) => (
+            <div 
+              key={order._id}
+              className="bg-headerBackGround  rounded-lg shadow-sm border border-gray-250 overflow-hidden hover:shadow-md transition-shadow duration-200"
+            >
+              <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                  <div>
+                    <div className="text-sm text-gray-500">Order ID</div>
+                    <div className="mt-1 font-medium text-gray-900 truncate">
+                      #{order._id}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="text-sm text-gray-500">Date</div>
+                    <div className="mt-1 font-medium text-gray-900">
                       {new Date(order.orderDate).toLocaleDateString()}
-                    </dd>
-                  </dl>
-                  <dl className="w-1/2 sm:w-1/4 lg:w-auto lg:flex-1">
-                    <dt className="text-base font-medium text-gray-500 dark:text-gray-400">Total:</dt>
-                    <dd className="mt-1.5 text-base font-semibold text-gray-900 dark:text-white">
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="text-sm text-gray-500">Total Amount</div>
+                    <div className="mt-1 font-medium text-gray-900">
                       ₹{order.orderSummary.total.toFixed(2)}
-                    </dd>
-                  </dl>
-                  <dl className="w-1/2 sm:w-1/4 lg:w-auto lg:flex-1">
-                    <dt className="text-base font-medium text-gray-500 dark:text-gray-400">Status:</dt>
-                    <dd className={`mt-1.5 inline-flex items-center rounded px-2.5 py-0.5 text-xs font-medium ${getStatusIcon(order.status)}`}>
-                      {getStatusIcon(order.status)} 
-                      {order.status}
-                    </dd>
-                  </dl>
-                  <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:w-auto">
-                    {order.status.toLowerCase() !== 'confirmed' && (
-                      <Link to={`/product-details/${order.orderSummary.items[0].product}`}>
-                        <button
-                          type="button"
-                          className="inline-flex bg-gray-600 w-full items-center justify-center gap-2 rounded-lg border border-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:border-red-500 dark:text-red-500 dark:hover:bg-red-600 dark:hover:text-white"
-                        >
-                          <RotateCw className="h-4 w-4 text-white" />
-                          <span>Buy Again</span>
-                        </button>
-                      </Link>
-                    )}
-                    <button
-                      onClick={() => {
-                        setSelectedOrderId(order._id);
-                        setIsModalOpen(true);
-                      }}
-                      type="button"
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
-                    >
-                      <Eye className="h-4 w-4" />
-                      <span>View Details</span>
-                    </button>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="text-sm text-gray-500">Status</div>
+                    <div className="mt-1">
+                      <span className={getStatusStyles(order.status)}>
+                        {getStatusIcon(order.status)}
+                        {order.status}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              ))}
+
+                <div className="flex flex-col sm:flex-row gap-3 mt-6 pt-6 border-t border-gray-250">
+                  {order.status.toLowerCase() !== 'confirmed' && (
+                    <Link 
+                      to={`/product-details/${order.orderSummary.items[0].product}`}
+                      className="flex-1"
+                    >
+                      <button className="w-full px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 flex items-center justify-center gap-2">
+                        <RotateCw className="h-4 w-4" />
+                        Buy Again
+                      </button>
+                    </Link>
+                  )}
+                  
+                  <button
+                    onClick={() => {
+                      setSelectedOrderId(order._id);
+                      setIsModalOpen(true);
+                    }}
+                    className="flex-1 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 flex items-center justify-center gap-2"
+                  >
+                    <Eye className="h-4 w-4" />
+                    View Details
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
 
-      <OrderDetailsModal orderId={selectedOrderId} open={isModalOpen} onOpenChange={setIsModalOpen} />
-    </section>
+      <OrderDetailsModal 
+        orderId={selectedOrderId} 
+        open={isModalOpen} 
+        onOpenChange={setIsModalOpen} 
+      />
+    </div>
   );
 };
 

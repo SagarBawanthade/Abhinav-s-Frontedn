@@ -52,7 +52,13 @@ const ManageProducts = () => {
     }
   };
 
-  if (loading) return <div className="text-center mt-10">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <div className="loader border-t-4 border-b-4 border-gray-800 rounded-full w-16 h-16 animate-spin"></div>
+      </div>
+    );
+  }
 
   const categories = ["Hoodies", "Tshirt", "Oversize-Tshirt", "Couple-Tshirt"];
   const categorizedProducts = categories.reduce((acc, category) => {

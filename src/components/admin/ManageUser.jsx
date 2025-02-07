@@ -51,7 +51,13 @@ const ManageUser = () => {
       .padStart(2, "0")}/${newDate.getFullYear()}`;
   };
 
-  if (loading) return <div className="text-center text-lg font-semibold">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <div className="loader border-t-4 border-b-4 border-gray-800 rounded-full w-16 h-16 animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">

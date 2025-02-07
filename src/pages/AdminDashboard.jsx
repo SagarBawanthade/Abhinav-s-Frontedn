@@ -30,6 +30,7 @@ const AdminDashboard = () => {
       hoodies: 0,
       tshirts: 0,
       oversizeTshirts: 0,
+      coupleTshirts: 0
     },
     orders: {
       pending: 0,
@@ -56,6 +57,9 @@ const AdminDashboard = () => {
         const oversizeTshirts = productsData.filter(
           (product) => product.category === "Oversize-Tshirt"
         ).length;
+        const coupleTshirts = productsData.filter(
+          (product) => product.category === "Couple-Tshirt"
+        ).length;
 
         const pendingOrders = ordersData.filter((order) => order.status === "Pending").length;
         const inTransitOrders = ordersData.filter((order) => order.status === "In Transit").length;
@@ -68,6 +72,7 @@ const AdminDashboard = () => {
             hoodies,
             tshirts,
             oversizeTshirts,
+            coupleTshirts,
           },
           orders: {
             pending: pendingOrders,
@@ -82,6 +87,8 @@ const AdminDashboard = () => {
 
     fetchDashboardData();
   }, []);
+
+  
 
   return (
     <div className="bg-gray-100 min-h-screen py-10">
@@ -121,6 +128,10 @@ const AdminDashboard = () => {
               <div className="flex justify-between">
                 <span>Oversize T-Shirts:</span>
                 <span className="font-semibold">{dashboardData.products.oversizeTshirts}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Couple T-Shirts:</span>
+                <span className="font-semibold">{dashboardData.products.coupleTshirts}</span>
               </div>
             </div>
           </div>

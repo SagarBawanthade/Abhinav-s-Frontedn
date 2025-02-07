@@ -41,9 +41,9 @@ export default function OrderDetailsModal({ orderId, open, onOpenChange }) {
     switch (status.toLowerCase()) {
       case 'pending':
         return <Clock className="h-5 w-5 text-yellow-500" />;
-      case 'confirmed':
+      case 'delivered':
         return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case 'in-transit':
+      case 'in transit':
         return  <Truck  className="h-5 w-5 text-blue-500" />;
       default:
         return <AlertCircle className="h-5 w-5 text-gray-500" />;
@@ -51,6 +51,9 @@ export default function OrderDetailsModal({ orderId, open, onOpenChange }) {
   };
 
   if (!open) return null;
+
+  
+  
 
   return (
     <div 

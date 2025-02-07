@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { FaCircle, FaCheckCircle, FaTruck, FaArrowLeft } from "react-icons/fa";
+import { FaCircle, FaCheckCircle, FaTruck, FaArrowLeft, FaSpinner } from "react-icons/fa";
+
 
 const OrderDetails = () => {
   const [order, setOrder] = useState(null);
   const navigate = useNavigate();
   const { orderId } = useParams();
+  const [loading , setLoading] = useState(false);
 
   useEffect(() => {
     if (!orderId) {
@@ -29,19 +31,40 @@ const OrderDetails = () => {
   }, [orderId, navigate]);
 
   const updateOrderStatus = async (newStatus) => {
+    setLoading(true);
     try {
       await axios.patch(
         `https://backend.abhinavsofficial.com/api/order/update-status/${orderId}`,
         { status: newStatus }
       );
       setOrder((prevState) => prevState ? { ...prevState, status: newStatus } : null);
-      toast.success("Order status updated successfully!");
+      // toast.success("Order status updated successfully!");
+      
+      await axios.post("https://backend.abhinavsofficial.com/api/order/send-update-order-email", {
+        orderData: order,  // Pass the entire order object to use in the template
+        newStatus: newStatus
+      });
+      toast.success("Order status updated successfully && Email has been sent to User!");
+      setLoading(false);
     } catch (error) {
       toast.error("Error updating order status");
     }
   };
 
-  if (!order) return <div className="text-center py-20">Loading...</div>;
+  if (!order) return (
+     <div className="flex justify-center items-center h-screen bg-gray-100">
+  <div className="loader border-t-4 border-b-4 border-gray-800 rounded-full w-16 h-16 animate-spin"></div>
+</div>
+  );
+
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <div className="loader border-t-4 border-b-4 border-gray-800 rounded-full w-16 h-16 animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-screen-lg mx-auto pt-10 px-5">
@@ -100,7 +123,7 @@ const OrderDetails = () => {
           {order.orderSummary.items.map((item, index) => (
             <div key={index} className="flex items-center mb-4">
               <img
-                src={item.productImage}
+                src={item.productImage[0]}
                 alt={item.productName}
                 className="w-20 h-20 object-cover rounded-lg"
               />

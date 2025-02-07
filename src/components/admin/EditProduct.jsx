@@ -142,6 +142,15 @@ const EditProduct = () => {
     }
   };
 
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <div className="loader border-t-4 border-b-4 border-gray-800 rounded-full w-16 h-16 animate-spin"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto p-8">
       <h2 className="text-3xl text-center mb-6">Edit Product</h2>

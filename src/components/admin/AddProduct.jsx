@@ -123,6 +123,14 @@ const AddProduct = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <div className="loader border-t-4 border-b-4 border-gray-800 rounded-full w-16 h-16 animate-spin"></div>
+      </div>
+    );
+  }
+  
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
       <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">

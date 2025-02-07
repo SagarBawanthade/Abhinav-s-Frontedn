@@ -72,8 +72,8 @@ const toggleLike = (item) => {
         const response = await fetch("https://backend.abhinavsofficial.com/api/product/getproducts");
         const data = await response.json();
         
-        setProducts3(data.slice(175, 179));
-        setProducts2(data.slice(16, 20));
+        setProducts3(data.slice(210, 220));//Tshirts
+        setProducts2(data.slice(16, 20)); //Hoodies
         setProducts(data.slice(81, 86)); // OverSized Tshirt
         setShowHeading(true);
       } catch (error) {

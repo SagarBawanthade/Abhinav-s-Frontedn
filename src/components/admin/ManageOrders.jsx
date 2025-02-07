@@ -74,7 +74,13 @@ const ManageOrders = () => {
     setSelectedOrder(null);
   };
 
-  if (loading) return <p className="text-center text-gray-500">{"Loading.."}</p>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <div className="loader border-t-4 border-b-4 border-gray-800 rounded-full w-16 h-16 animate-spin"></div>
+      </div>
+    );
+  }
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
