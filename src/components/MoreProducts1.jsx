@@ -6,11 +6,13 @@ import { Heart } from 'lucide-react';
 import { removeFromWishlist, addToWishlist } from "../feature/wishlistSlice";
 import { toast } from 'react-toastify';
 import 'swiper/css';
+import ProductSkeletonLoader from './ProductSkeletonLoader';
 
 const MoreProducts1 = () => {
   const [products, setProducts] = useState([]);
   const wishlist = useSelector(state => state.wishlist.items);
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
 
   const isProductInWishlist = (productId) => {
     return wishlist.some(item => item._id === productId);
@@ -28,18 +30,29 @@ const MoreProducts1 = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    
+    setLoading(true);
+
     fetch('https://backend.abhinavsofficial.com/api/product/getproducts')
       .then((response) => response.json())
       .then((data) => {
         const sortedProducts = data.sort((a, b) => b._id.localeCompare(a._id));
         setProducts(sortedProducts);
       })
-      .catch((error) => console.error('Error:', error));
+      .catch((error) => console.error('Error:', error))
+      .finally(() => {
+        // Add a small delay for smoother transition
+        setTimeout(() => {
+          setLoading(false);
+        }, 800);
+      });
   }, []);
 
+  if (loading) {
+    return <ProductSkeletonLoader />;
+  }
+
   return (
-    <div className="bg-white py-12">
+    <div className="bg-headerBackGround py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-2xl font-medium text-gray-900 mb-4">
           You Might Also Like

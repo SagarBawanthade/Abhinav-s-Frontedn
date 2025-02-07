@@ -177,8 +177,8 @@ const handleProductClick = (productId) => {
       {(loading || isTransitioning) && (
         <div className="fixed inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm z-50 transition-all duration-300">
           <div className="flex flex-col items-center space-y-4">
-            <div className="w-8 h-8 border-4 border-gray-200 border-t-gray-700 rounded-full animate-spin" />
-            <p className="text-gray-600 font-medium">Loading...</p>
+            <div className="w-8 h-8 border-2 border-gray-200 border-t-gray-900 rounded-full animate-spin" />
+            <p className="text-gray-600 font-forumNormal">Loading...</p>
           </div>
         </div>
       )}

@@ -34,12 +34,10 @@ const EditProduct = () => {
         );
         
         const productData = response.data;
-        // Convert color string to array for UI if it's a string
-        const colorArray = typeof productData.color === 'string'
-          ? productData.color.split(',').map(c => c.trim())
-          : Array.isArray(productData.color)
-            ? productData.color
-            : [];
+       // Handle color data, ensuring it's always an array
+      const colorArray = Array.isArray(productData.color) 
+      ? productData.color 
+      : productData.color?.split(',').map(c => c.trim()) || [];
 
         setFormData({
           ...productData,

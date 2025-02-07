@@ -10,9 +10,7 @@ import 'swiper/css/pagination';
 import "swiper/css";
 import "swiper/css/pagination";
 import { Autoplay, Navigation } from 'swiper/modules';
-
-
-import { Heart, TrendingUp, Stars,Timer } from 'lucide-react';
+import { Heart, TrendingUp,Timer } from 'lucide-react';
 import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
 import { addToLocalCart, fetchCartItems } from "../feature/cartSlice";
 
@@ -31,8 +29,7 @@ const HoodiesPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [cartLoading, setCartLoading] = useState(false);
   const [giftWrapping, setGiftWrapping] = useState(false);
-
-
+  const [loading, setLoading] = useState(true);
   const userId = useSelector((state) => state.auth.id);
   const token = useSelector((state) => state.auth.token);
   const wishlist = useSelector(state => state.wishlist.items);
@@ -68,20 +65,41 @@ const toggleLike = (item) => {
     setActiveIndex(swiper.activeIndex);
   };
 
-  
   useEffect(() => {
-    fetch("https://backend.abhinavsofficial.com/api/product/getproducts")
-      .then((response) => response.json())
-      .then((data) => {
-        setProducts3(data.slice(175,179));
-      setProducts2(data.slice(16,20));
-        // Assuming the API response contains an array of products
+    const fetchProducts = async () => {
+      setLoading(true); // Set loading to true before fetching
+      try {
+        const response = await fetch("https://backend.abhinavsofficial.com/api/product/getproducts");
+        const data = await response.json();
+        
+        setProducts3(data.slice(175, 179));
+        setProducts2(data.slice(16, 20));
         setProducts(data.slice(81, 86)); // OverSized Tshirt
-      })
-      .catch((error) => console.error("Error fetching products:", error));
-    
-    setShowHeading(true);
+        setShowHeading(true);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        toast.error("Failed to load products");
+      } finally {
+        setLoading(false); // Set loading to false after fetching completes
+      }
+    };
+
+    fetchProducts();
   }, []);
+  
+  // useEffect(() => {
+  //   fetch("https://backend.abhinavsofficial.com/api/product/getproducts")
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setProducts3(data.slice(175,179));
+  //     setProducts2(data.slice(16,20));
+  //       // Assuming the API response contains an array of products
+  //       setProducts(data.slice(81, 86)); // OverSized Tshirt
+  //     })
+  //     .catch((error) => console.error("Error fetching products:", error));
+    
+  //   setShowHeading(true);
+  // }, []);
 
   const addToCart = async () => {
     // if (!userId) {
@@ -107,7 +125,7 @@ const toggleLike = (item) => {
       
     };
 
-    console.log(cartData)
+   
 
     // try {
     //   setCartLoading(true);
@@ -215,6 +233,18 @@ const toggleLike = (item) => {
     window.scrollTo(0, 0); // Scroll to top of the page
   }, [location]);
   
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#E9EBCA] flex items-center justify-center">
+        <div className="text-center">
+          <Spinner className="w-8 h-8 text-gray-900 border-1 mx-auto" /> {/* Using your existing Spinner component */}
+          <p className="mt-4 text-gray-900 font-forumNormal">Loading products...</p>
+        </div>
+      </div>
+
+     
+    );
+  }
 
   return (
     <div className="forum-regular bg-[#E9EBCA] min-h-screen py-10">
