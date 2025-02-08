@@ -10,7 +10,7 @@ import 'swiper/css/pagination';
 import "swiper/css";
 import "swiper/css/pagination";
 import { Autoplay, Navigation } from 'swiper/modules';
-import { Heart, TrendingUp,Timer } from 'lucide-react';
+import { Heart, TrendingUp,Timer,ShoppingCart } from 'lucide-react';
 import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
 import { addToLocalCart, fetchCartItems } from "../feature/cartSlice";
 
@@ -33,23 +33,16 @@ const HoodiesPage = () => {
   const userId = useSelector((state) => state.auth.id);
   const token = useSelector((state) => state.auth.token);
   const wishlist = useSelector(state => state.wishlist.items);
-
-
   const isLoggedIn = useSelector((state) => Boolean(state.auth.id && state.auth.token));
 
 const handleButtonClick = (item) => {
-  
     handlecart(item);
-  
 };
- 
-
- 
+  
 const isProductInWishlist = (productId) => {
   return wishlist.some(item => item._id === productId);
 };
 
-// Modify your toggleLike function:
 const toggleLike = (item) => {
   if (isProductInWishlist(item._id)) {
     dispatch(removeFromWishlist(item._id));
@@ -60,14 +53,13 @@ const toggleLike = (item) => {
   }
 };
 
-  
   const handleSlideChange = (swiper) => {
     setActiveIndex(swiper.activeIndex);
   };
 
   useEffect(() => {
     const fetchProducts = async () => {
-      setLoading(true); // Set loading to true before fetching
+      setLoading(true); 
       try {
         const response = await fetch("https://backend.abhinavsofficial.com/api/product/getproducts");
         const data = await response.json();
@@ -86,27 +78,8 @@ const toggleLike = (item) => {
 
     fetchProducts();
   }, []);
-  
-  // useEffect(() => {
-  //   fetch("https://backend.abhinavsofficial.com/api/product/getproducts")
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       setProducts3(data.slice(175,179));
-  //     setProducts2(data.slice(16,20));
-  //       // Assuming the API response contains an array of products
-  //       setProducts(data.slice(81, 86)); // OverSized Tshirt
-  //     })
-  //     .catch((error) => console.error("Error fetching products:", error));
-    
-  //   setShowHeading(true);
-  // }, []);
 
   const addToCart = async () => {
-    // if (!userId) {
-    //   toast.error("Please login to add products to cart!");
-      
-    //   return;
-    // }
     if (!selectedSize || !selectedColor) {
       toast.error("Please select size and color before adding to cart!");
       return;
@@ -124,39 +97,6 @@ const toggleLike = (item) => {
 
       
     };
-
-   
-
-    // try {
-    //   setCartLoading(true);
-
-    //   const response = await fetch("https://backend.abhinavsofficial.com/api/cart/add-to-cart", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       Authorization: `Bearer ${token}`,
-    //     },
-    //     body: JSON.stringify({ userId, ...cartData }),
-    //   });
-
-    //   const data = await response.json();
-    //   if (data.cart) {
-    //     navigate("/cart");
-      
-       
-       
-    //     toast.success("Product added to Cart Successfully!");
-       
-    //   } else {
-    //     throw new Error(data.message || "Failed to add product to cart");
-    //   }
-    // } catch (error) {
-    //   console.error("Error adding to cart:", error);
-    //   toast.error("Failed to add product to cart.");
-    // } finally {
-    //   setCartLoading(false);
-    // }
-  
 
      if (userId && token) {
           try {
@@ -192,11 +132,6 @@ const toggleLike = (item) => {
           toast.success("Product added to cart!");
           navigate("/cart");
         }
-
-
-
-
-   
     
   };
 
@@ -260,14 +195,6 @@ const toggleLike = (item) => {
   </div>
 
   <hr className="border-t mt-5 mb-10 border-black w-full" />
-
-  
-
-
-  
-
-
-
 {/* Hoodie Items Section */}
 <div className="bg-[#E9EBCA] px-6 py-8">
       <div className="max-w-8xl mx-auto">
@@ -516,52 +443,15 @@ const toggleLike = (item) => {
                     </span>
                   </div>
 
-                  {/* <button
-                    onClick={() => handlecart(item)}
+                  <Link to={`/product-details/${item._id}`}>
+                  <button
+                 
+                    // onClick={() => handlecart(item)}
                     className="w-full bg-gray-900 text-white rounded-lg py-3 flex items-center justify-center space-x-2 hover:bg-gray-800 transform transition-all duration-300 "
                   >
                       <ShoppingCart className="w-4 h-4 mr-2" />
-                    <span className="text-xl font-medium">Add to Cart</span>
-                  </button> */}
-
-
-
-                  {/* Comming Soon Button COde Starrt*/}
-<button 
-      className="group relative w-full py-4 px-6 bg-gradient-to-r from-gray-600 via-gray-800 to-gray-600 rounded-lg overflow-hidden disabled:cursor-not-allowed"
-      disabled
-    >
-      {/* Background animation */}
-      <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900 to-gray-900 animate-gradient-x" />
-      
-      {/* Glass effect overlay */}
-      <div className="absolute inset-0 bg-white/10 backdrop-blur-sm" />
-      
-      {/* Content container */}
-      <div className="relative flex items-center justify-center space-x-3">
-        <Timer className="w-5 h-5 text-red-600 animate-bounce" />
-        
-        <span className="text-xs sm:text-xl font-bold text-yellow-300 tracking-wider transform transition-all duration-300 group-hover:scale-105">
-          COMING SOON
-        </span>
-        
-        {/* Animated dots */}
-        {/* <div className="flex space-x-1">
-          <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-          <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-          <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-        </div> */}
-      </div>
-      
-      {/* Glow effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-      
-      {/* Border gradient */}
-      <div className="absolute inset-0 border-2 border-white/20 rounded-lg" />
-    </button>
-    {/* Comming Soon Button COde End */}
-
-
+                    <span className="text-xl font-forumNormal">Explore more...</span>
+                  </button></Link>
                 </div>
               </div>
             </SwiperSlide>
@@ -687,7 +577,9 @@ const toggleLike = (item) => {
                     className="w-full bg-gray-900 text-white rounded-lg py-3 flex items-center justify-center space-x-2 hover:bg-gray-800 transform transition-all duration-300 "
                   >
                       {/* <ShoppingCart className="w-5 h-5 mr-2" /> */}
-                    <span className="text-lg font-forumNormal font-medium">Explore more</span>
+                      <ShoppingCart className="w-4 h-4 mr-2" />
+                      <span className="text-xl font-forumNormal">Explore more...</span>
+                      
                   </button></Link>
                 </div>
               </div>

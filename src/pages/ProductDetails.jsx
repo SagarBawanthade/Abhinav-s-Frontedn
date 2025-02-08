@@ -63,7 +63,7 @@ function ProductDetails() {
   const [cartLoading, setCartLoading] = useState(false);
   const [quantity, setQuantity] = useState(1); // Highlighted for quantity updates
   const [selectedSize, setSelectedSize] = useState(""); // Highlighted for size updates
-  const [selectedColor, setSelectedColor] = useState(""); // Highlighted for color updates
+  const [selectedColor, setSelectedColor] = useState([""]); // Highlighted for color updates
   const [giftWrapping, setGiftWrapping] = useState(false);
 
  
@@ -106,15 +106,16 @@ function ProductDetails() {
   }, [productId]);
 
   const handleAddToCart = async () => {
-    if (!selectedSize || !selectedColor) {
-      toast.error("Please select size and color before adding to cart!");
+    if (!selectedSize) {
+      toast.error("Please select size before adding to cart!");
       return;
     }
   
     const cartItem = {
       product: productId, // Ensure this matches "product" in back-end
       quantity,
-      color: selectedColor,
+      // color: selectedColor,
+      color: product.color && product.color.length > 0 ? selectedColor : "",
       size: selectedSize,
       giftWrapping: giftWrapping,
       name: product.name,
@@ -427,9 +428,10 @@ function ProductDetails() {
 
 
   {(!product.category || product.category.toLowerCase() === 'hoodies' || 
-  (product.category.toLowerCase() !== 'tshirt' && 
-   product.category.toLowerCase() !== 'oversize-tshirt' &&
-  product.category.toLowerCase() !== 'couple-tshirt')) ? (
+  // (product.category.toLowerCase() !== 'tshirt' && 
+  ( product.category.toLowerCase() !== 'oversize-tshirt' 
+  // product.category.toLowerCase() !== 'couple-tshirt'
+)) ? (
   // Add to Cart button for hoodies and other categories
   <button
     onClick={handleAddToCart}

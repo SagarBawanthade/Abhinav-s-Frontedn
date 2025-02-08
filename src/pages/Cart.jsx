@@ -7,31 +7,18 @@ import { useDispatch } from "react-redux";
 import { fetchCartItems, loadLocalStorage, removeFromLocalCart, removeItemFromCart } from "../feature/cartSlice.jsx";
 import { toast } from "react-toastify";
 import useCartManagement from "../components/CartManagamnet.jsx";
-// import LoginPrompt from "../components/LoginPrompt.jsx";
 
 const Cart = () => {
-  
+  const location = useLocation();
   const userId = useSelector((state) => state.auth.id);
   const token = useSelector((state) => state.auth.token);
   const isLoggedIn = Boolean(userId && token);
-
-    // // State to control the modal visibility
-    // const [isModalOpen, setIsModalOpen] = useState(!isLoggedIn);
-
-    // // Function to close the modal
-    // const closeModal = () => {
-    //   setIsModalOpen(false);
-    // };
- 
-  
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-
   const Cart = useRef(null);
   const cartItems = useSelector((state) => state.cart.items);
-  console.log("Very Last cartItems:-",cartItems);
 
   useEffect(() => {
     if (userId && token) {
@@ -39,6 +26,9 @@ const Cart = () => {
     }
   }, [dispatch, userId, token]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
 
   const handleCheckoutClick = () => {
     if (cartItems.length === 0) {
@@ -47,47 +37,22 @@ const Cart = () => {
     }
   
     if (!isLoggedIn) {
-      // Save the intended destination
       localStorage.setItem('redirectAfterLogin', '/checkout');
-      // Redirect to login page
       navigate('/login');
       toast.info("Please login to proceed with checkout");
     } else {
-      // User is logged in, go directly to checkout
       navigate('/checkout');
     }
   };
 
-   
-
-
-
-  //  // Load cart data based on auth status
-  //  useEffect(() => {
-  //   if (isLoggedIn) {
-  //     dispatch(fetchCartItems({ userId, token }));
-  //   }
-  // }, [isLoggedIn, dispatch, userId, token]);
-
-  // // Sync local cart with backend after login
-  // useEffect(() => {
-  //   if (isLoggedIn && cartItems.length > 0) {
-  //     dispatch(syncLocalCartWithBackend({ userId, token, localCart: cartItems }));
-  //   }
-  // }, [isLoggedIn]);
-
-// In both Cart.jsx and CheckoutPage.jsx
 useCartManagement();
- 
 
-// Calculate Subtotal
 const subtotal = cartItems.reduce(
   (acc, item) => acc + item.price * item.quantity + (item.giftWrapping ? 30 * item.quantity : 0), // Add 30 for gift wrapping if applicable
   0
 );
 
-  const delivery = 0; // Delivery fee
-
+  const delivery = 0;
   const total = subtotal + delivery;
 
   useEffect(() => {
@@ -99,68 +64,38 @@ const subtotal = cartItems.reduce(
     }
   }, []);
 
-  // Show loading or error if cartItems is empty or still loading
   useEffect(() => {
     if (!userId || !token) {
       setError("No user logged in.");
     }
   }, [userId, token]);
 
-
-
   useEffect(() => {
-    
     if (!isLoggedIn) {
       dispatch(loadLocalStorage());
     }
   }, []);
 
-
-
-
-// In your Cart component (Cart.jsx)
-const handleRemoveItem = async (product) => {
-  
-  console.log("Attempting to remove product:", product);
-  
+const handleRemoveItem = async (product) => {  
   if (isLoggedIn) {
     try {
-      // For logged-in users, make the API call first
       const result = await dispatch(removeItemFromCart({ 
         userId, 
         token, 
-        product: product // Changed from product to productId for consistency
-      })).unwrap(); // Add .unwrap() to properly handle the promise
-      
-      // Only proceed with local removal if the API call was successful
+        product: product
+      })).unwrap();
       if (result) {
-       
         toast.success("Item removed successfully from Cart");
-        // Consider if you really need this fetch since we already updated the state
-        // dispatch(fetchCartItems({ userId, token }));
       }
     } catch (error) {
-      console.error('Error removing item:', error);
       toast.error("Error removing item: " + (error.message || 'Unknown error'));
     }
   } else {
-    // For non-logged-in users, just remove from local storage
     dispatch(removeFromLocalCart({ product }));
     toast.success("Item removed successfully");
   }
 };
 
-
-  const location = useLocation();
-  
-  useEffect(() => {
-    
-    window.scrollTo(0, 0); // Scroll to top of the page
-  }, [location]);
-
-
-  
-  
   return (
     <section ref={Cart} className="bg-headerBackGround py-8 antialiased dark:bg-gray-900 md:py-16">
       <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
@@ -240,9 +175,12 @@ const handleRemoveItem = async (product) => {
               </p>
           
             <div className="text-sm text-gray-500 dark:text-gray-400">
-              <p className="text-black text-lg font-forumNormal">
-                Color: <span className="font-forumNormal text-black">{item.color}</span>
-              </p>
+
+            {item.color && item.color.length > 0 && (
+  <p  className="text-black text-lg font-forumNormal">
+    Color: <span className="font-forumNormal text-black">{item.color}</span>
+  </p>
+)}
               <p className="font-forumNormal text-black text-lg">
                 Size: <span className="font-forumNormal text-black">{item.size}</span>
               </p>

@@ -1,11 +1,9 @@
-import { useEffect} from 'react';
-import { HiShieldCheck, HiUser, HiLockClosed } from 'react-icons/hi'; // Icons for various sections
+import  { useEffect } from 'react';
+import { HiShieldCheck, HiUser, HiLockClosed } from 'react-icons/hi';
 import { useLocation } from 'react-router-dom';
 
 const PolicyPage = () => {
- 
   const location = useLocation();
-  
   
   useEffect(() => {
     const currentScroll = window.scrollY;
@@ -16,14 +14,10 @@ const PolicyPage = () => {
         behavior: 'smooth'
       });
     }
-  }, [location]); 
-
-  
-  
- 
+  }, [location]);
 
   return (
-    <div  className="bg-headerBackGround min-h-screen py-8">
+    <div className="bg-headerBackGround min-h-screen py-8">
       <div className="container mx-auto px-6 md:px-12">
         <h2 className="text-5xl forum-regular font-extrabold text-orange-800 mb-6">Privacy Policy</h2>
 
@@ -32,11 +26,21 @@ const PolicyPage = () => {
           this website.
         </p>
 
+        {/* Contact Information */}
+        <section className="mb-12">
+          <h2 className="text-3xl forum-regular font-semibold text-orange-700 dark:text-orange-300 mb-4">Contact Information</h2>
+          <p className="mb-6 font-forumNormal text-gray-700 dark:text-gray-300">
+            Address: Plot No-6, Building Panchganga 01/A, Room No-2<br />
+            Nagri Nivara Parishad, Goregaon East<br />
+            Mumbai, Maharashtra - 400065
+          </p>
+        </section>
+
         {/* Information We Collect */}
         <section className="mb-12">
           <h2 className="text-5xl forum-regular font-extrabold text-orange-700 dark:text-orange-300 mb-4">Information We Collect</h2>
           <div className="space-y-4 font-forumNormal text-gray-700 dark:text-gray-300">
-            <div className="flex  items-center space-x-3">
+            <div className="flex items-center space-x-3">
               <HiUser className="text-green-600 dark:text-green-400 text-xl" />
               <p>Your name and contact information</p>
             </div>
