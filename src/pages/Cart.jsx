@@ -6,7 +6,7 @@ import Spinner from "../components/Spinner.jsx";
 import { useDispatch } from "react-redux";
 import { fetchCartItems, loadLocalStorage, removeFromLocalCart, removeItemFromCart } from "../feature/cartSlice.jsx";
 import { toast } from "react-toastify";
-import useCartManagement from "../components/CartManagamnet.jsx";
+
 
 const Cart = () => {
   const location = useLocation();
@@ -19,6 +19,10 @@ const Cart = () => {
   const navigate = useNavigate();
   const Cart = useRef(null);
   const cartItems = useSelector((state) => state.cart.items);
+
+  useEffect(() => {
+    console.log('Auth state changed:', { isLoggedIn, userId, token });
+  }, [isLoggedIn, userId, token]);
 
   useEffect(() => {
     if (userId && token) {
@@ -45,7 +49,8 @@ const Cart = () => {
     }
   };
 
-useCartManagement();
+
+
 
 const subtotal = cartItems.reduce(
   (acc, item) => acc + item.price * item.quantity + (item.giftWrapping ? 30 * item.quantity : 0), // Add 30 for gift wrapping if applicable

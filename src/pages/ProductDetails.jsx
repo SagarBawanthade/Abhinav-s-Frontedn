@@ -427,12 +427,8 @@ function ProductDetails() {
   {/* Check if category is tshirt or oversized-tshirt */}
 
 
-  {(!product.category || product.category.toLowerCase() === 'hoodies' || 
-  // (product.category.toLowerCase() !== 'tshirt' && 
-  ( product.category.toLowerCase() !== 'oversize-tshirt' 
-  // product.category.toLowerCase() !== 'couple-tshirt'
-)) ? (
-  // Add to Cart button for hoodies and other categories
+ 
+  
   <button
     onClick={handleAddToCart}
     className="flex-1 rounded-lg bg-gray-800 py-3 text-lg font-semibold text-white transition duration-300 hover:bg-gray-600"
@@ -442,31 +438,7 @@ function ProductDetails() {
       <span>Add to Cart</span>
     </div>
   </button>
-) : (
-  // Coming Soon button for t-shirts and oversized t-shirts
-  <button
-    disabled
-    className="flex-1 rounded-lg bg-gradient-to-r from-gray-500 to-gray-900 py-3 text-lg font-semibold text-yellow-300 transition-all duration-300 relative overflow-hidden group"
-  >
-    <div className="absolute inset-0 bg-gradient-to-r from-gray-600 to-gray-800 animate-pulse" />
-    
-    <div className="relative flex items-center justify-center space-x-2">
-      <div className="flex items-center justify-center space-x-3">
-        <Clock className="w-5 h-5 animate-spin-slow group-hover:animate-spin" />
-        <span className="text-base sm:text-lg">Coming Soon</span>
-        <div className="flex space-x-1">
-          <div className="w-1.5 h-1.5 bg-yellow-300 rounded-full animate-bounce"
-               style={{ animationDelay: '0ms' }} />
-          <div className="w-1.5 h-1.5 bg-yellow-300 rounded-full animate-bounce"
-               style={{ animationDelay: '150ms' }} />
-          <div className="w-1.5 h-1.5 bg-yellow-300 rounded-full animate-bounce"
-               style={{ animationDelay: '300ms' }} />
-        </div>
-      </div>
-    </div>
-    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-  </button>
-)}
+
 
 {/*Addtocart Deafult Button Code below*/}
 {/* <button 

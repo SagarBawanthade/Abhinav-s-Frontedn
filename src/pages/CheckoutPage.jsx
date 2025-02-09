@@ -3,10 +3,8 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
-
 import { CreditCard, Package, Truck, Mail, Phone, User, Home, MapPin } from "lucide-react";
-
-// import useCartManagement from "../components/CartManagamnet";
+import useCartManagement from "../components/CartManagamnet.jsx";
 
 const loadRazorpayScript = () => {
   return new Promise((resolve) => {
@@ -157,6 +155,7 @@ const CheckoutPage = () => {
         toast.error("Failed to load Razorpay SDK.");
         setLoading(false);
         return;
+        
       }
   
       // Razorpay options
@@ -226,6 +225,13 @@ const CheckoutPage = () => {
           contact: formData.phoneNo,
         },
         theme: { color: "#3399cc" },
+        modal: {
+          ondismiss: function() {
+            setLoading(false);
+            document.body.style.overflow = 'auto';
+            window.location.reload();
+          }
+        }
       };
   
       // Open Razorpay modal
@@ -244,12 +250,24 @@ const CheckoutPage = () => {
       setLoading(false);
     }
   };
-
+  useCartManagement();
+ 
 const location = useLocation();
   
 useEffect(() => {
   window.scrollTo(0, 0); // Scroll to top of the page
 }, [location]);
+
+if (loading) {
+  return (
+   
+      <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-[3px] flex justify-center items-center z-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+        
+      </div>
+   
+  );
+}
 
 
   return (
@@ -316,7 +334,7 @@ useEffect(() => {
                             <div className="mt-2 space-y-1 text-sm text-gray-600">
                               <p>Size: {productDetails.size}</p>
                               <p>Quantity: {productDetails.quantity}</p>
-                              <p>Color: {productDetails.color}</p>
+                              {productDetails.color && <p>Color: {productDetails.color}</p>}
                               <p className="font-medium text-gray-800">₹{finalPrice.toLocaleString()}</p>
                             </div>
                           </div>

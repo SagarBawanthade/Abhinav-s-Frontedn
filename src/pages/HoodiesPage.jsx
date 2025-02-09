@@ -285,49 +285,15 @@ const toggleLike = (item) => {
                       20% OFF
                     </span>
                   </div>
-
-                  {/* <button
-                    onClick={() => handlecart(item)}
+                   <Link to="/shop/Oversize-Tshirt">
+                  <button
+                    // onClick={() => handlecart(item)}
                     className="w-full bg-gray-900 text-white rounded-lg py-3 flex items-center justify-center space-x-2 hover:bg-gray-800 transform transition-all duration-300 "
                   >
                       <ShoppingCart className="w-4 h-4 mr-2" />
-                    <span className="text-xl font-medium">Add to Cart</span>
-                  </button> */}
+                      <span className="text-xl font-forumNormal">Explore more...</span>
+                  </button></Link>
 
-{/* Comming Soon Button COde Starrt*/}
-<button 
-      className="group relative w-full py-4 px-6 bg-gradient-to-r from-gray-600 via-gray-800 to-gray-600 rounded-lg overflow-hidden disabled:cursor-not-allowed"
-      disabled
-    >
-      {/* Background animation */}
-      <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900 to-gray-900 animate-gradient-x" />
-      
-      {/* Glass effect overlay */}
-      <div className="absolute inset-0 bg-white/10 backdrop-blur-sm" />
-      
-      {/* Content container */}
-      <div className="relative flex items-center justify-center space-x-3">
-        <Timer className="w-5 h-5 text-red-400 animate-bounce" />
-        
-        <span className="text-xs sm:text-xl font-bold text-yellow-300 tracking-wider transform transition-all duration-300 group-hover:scale-105">
-          COMING SOON
-        </span>
-        
-        {/* Animated dots */}
-        {/* <div className="flex space-x-1">
-          <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-          <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-          <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-        </div> */}
-      </div>
-      
-      {/* Glow effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-      
-      {/* Border gradient */}
-      <div className="absolute inset-0 border-2 border-white/20 rounded-lg" />
-    </button>
-    {/* Comming Soon Button COde End */}
 
                 </div>
               </div>
@@ -443,7 +409,7 @@ const toggleLike = (item) => {
                     </span>
                   </div>
 
-                  <Link to={`/product-details/${item._id}`}>
+                  <Link to="/shop/Tshirt">
                   <button
                  
                     // onClick={() => handlecart(item)}

@@ -133,12 +133,13 @@ export const syncLocalCartWithBackend = createAsyncThunk(
         product: item.product,
         quantity: item.quantity,
         size: item.size,
-        color: item.color,
+        color: item.color || '',
         price: item.price,
         name: item.name,
         images: item.images,
         giftWrapping: item.giftWrapping || false
       }));
+      
 
       const response = await axios.post(
         'https://backend.abhinavsofficial.com/api/cart/sync-cart',
