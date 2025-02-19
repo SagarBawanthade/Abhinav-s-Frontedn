@@ -88,7 +88,9 @@ const AddProduct = () => {
       };
 
       const response = await fetch(
-        "https://backend.abhinavsofficial.com/api/product/addproduct",
+        "https://backend.abhinavsofficial.com/api/product/addproduct"
+
+         ,
         {
           method: 'POST',
           headers: {

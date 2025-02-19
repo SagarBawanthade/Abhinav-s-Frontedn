@@ -42,8 +42,13 @@ const Footer = () => {
     <p className="text-lg">8828458883</p>
     <p className="text-lg">7620397865</p>
     {/* Show email only on mobile and large screens (laptop/desktop), hide on tablets */}
-    <p className="text-lg block md:hidden break-words">abhinavsofficial033@gmail.com</p>
-    <p className="text-lg hidden lg:block break-words">abhinavsofficial033@gmail.com</p>
+    <a href="mailto:abhinavsofficial033@gmail.com" className="text-lg block md:hidden break-words hover:cursor-auto ">
+  abhinavsofficial033@gmail.com
+</a>
+<a href="mailto:abhinavsofficial033@gmail.com" className="text-lg hidden lg:block break-words ">
+  abhinavsofficial033@gmail.com
+</a>
+
   </div>
 </div>
 

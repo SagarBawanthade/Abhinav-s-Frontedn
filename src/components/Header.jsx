@@ -117,21 +117,6 @@ const Header = () => {
   };
   
 
-  // const handleRemoveItem = (productId) => {
-  //   dispatch(removeItemFromCart({ userId, token, productId })).then(() => {
-    
-  //  dispatch(fetchCartItems({ userId, token }));
-  //   setMenuOpen(true);
-  //   const updatedCart = cartItems.filter(item => item.productId !== productId);
-  //    localStorage.setItem('cart', JSON.stringify(updatedCart));
-  //    dispatch(loadLocalCart());
-  //    toast.success("Item removed successfully");
-        
-  // }).catch((error) => {
-  //     toast.error("Error removing item: ", error);
-        
-  //   });
-  // }
   return (
     // <header href="/" className="text-allFontColor bg-headerBackGround flex items-center justify-between px-4 py-4 md:py-6  shadow-lg font-avenir">
     <header className="bg-headerBackGround text-allFontColor shadow-lg">
@@ -210,57 +195,6 @@ const Header = () => {
       />
       </div>
 
-        {/* Dropdown Menu
-        {menuOpen && (
-          <div
-            ref={menuRef}
-            className="absolute left-4 top-16 z-20 w-48 bg-headerBackGround border border-gray-300 rounded-lg shadow-lg"
-          >
-            <ul className="py-2">
-              {!isLoggedIn ? (
-                <>
-                  <Link to="/login" onClick={() => setMenuOpen(false)}>
-                    <li className="flex items-center px-4 py-2 hover:bg-gray-300 transition-colors">
-                      <LogIn size={16} className="mr-2" />
-                      <span>Log In</span>
-                    </li>
-                  </Link>
-                  <Link to="/register" onClick={() => setMenuOpen(false)}>
-                    <li className="flex items-center px-4 py-2 hover:bg-gray-300 transition-colors">
-                      <UserPen size={16} className="mr-2" />
-                      <span>Register</span>
-                    </li>
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link to="/user-profile" onClick={() => setMenuOpen(false)}>
-                    <li className="flex items-center px-4 py-2 hover:bg-gray-300 transition-colors">
-                      <User size={16} className="mr-2" />
-                      <span>Profile</span>
-                    </li>
-                  </Link>
-                  <Link to="/order-history" onClick={() => setMenuOpen(false)}>
-                    <li className="flex items-center px-4 py-2 hover:bg-gray-300 transition-colors">
-                      <Package size={16} className="mr-2" />
-                      <span>My Orders</span>
-                    </li>
-                  </Link>
-                  <li 
-                    className="flex items-center px-4 py-2 hover:bg-gray-300 transition-colors cursor-pointer"
-                    onClick={handleLogout}
-                  >
-                    <LogOut size={16} className="mr-2" />
-                    <span>Log out</span>
-                  </li>
-                </>
-              )}
-            </ul>
-          </div>
-        )}
-      </div> */}
-
-
     
 
       {/* Cart Panel - Sliding from right */}
@@ -303,16 +237,7 @@ const Header = () => {
         cartItems.map((item) => (
           <li key={item._id} className="flex py-6">
             <div className="size-24 shrink-0 overflow-hidden rounded-md border border-gray-200">
-            
-  {/* <img
-    className="h-28 w-28"
-    src={
-      Array.isArray(item.images)
-        ? item.images[0] // Use the first image if `images` is an array
-        : item.images || item.image // Use `images` or `image` if it's a string
-    }
-    alt={item.name}
-  /> */}
+
 
               <img
                 alt={item.name}

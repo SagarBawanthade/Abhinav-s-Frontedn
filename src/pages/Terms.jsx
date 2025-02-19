@@ -21,7 +21,7 @@ const TermsAndConditions = () => {
     <div ref={termsRef} className="bg-headerBackGround text-black font-forumNormal  dark:bg-black dark:text-white">
       <div className="container mx-auto px-12 md:px-16 py-8">
         <p className="mb-6 text-sm text-gray-600 dark:text-gray-300">
-          <strong className='font-avenir'>Effective Date:</strong> 2024-07-15
+          <strong className='font-avenir'>Effective Date:</strong> 2025-02-20
         </p>
         <div className="w-full flex">
           <h1 className="text-5xl forum-regular font-extrabold mb-6 text-orange-800 dark:text-orange-300">
@@ -81,9 +81,49 @@ const TermsAndConditions = () => {
                 Our liability is limited to the amount you paid for the services, and we shall not be responsible for any
                 indirect, special, or consequential damages.
               </p>
+         
+
             </li>
           </ul>
         </div>
+
+
+        <div className="pb-5">
+          <h2 className="text-3xl forum-regular font-extrabold text-orange-700 dark:text-orange-300 mb-5">Refunds</h2>
+          <ul className="space-y-5">
+           
+           
+
+            <li className="flex items-start space-x-4 text-base text-gray-700 dark:text-gray-300">
+            <HiCheckCircle className="text-black-600 dark:text-green-400 text-2xl mt-1" />
+            <p>
+              For booking bulk order you have to <strong>pay advance 80%</strong>of the total amount. 
+              </p>
+
+             
+
+            </li>
+            <li className="flex items-start space-x-4 text-base text-gray-700 dark:text-gray-300">
+            <HiCheckCircle className="text-black-600 dark:text-green-400 text-2xl mt-1" />
+            <p>
+             For bulk order contact us on <strong>8828458883/7620397865</strong> or mail us at <strong>abhinavsofficial033@gmail.com</strong>.
+              </p>
+
+             
+
+            </li>
+
+
+            <li className="flex items-start space-x-4 text-base text-gray-700 dark:text-gray-300">
+            <HiCheckCircle className="text-black-600 dark:text-green-400 text-2xl mt-1" />
+            <p>
+              If bulk order cancelled by customer, only  <strong>30% will refund </strong> of total advance payment you made.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+
 
       </div>
     </div>

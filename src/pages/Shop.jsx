@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
 import ProductsHeader from '../components/ProductsHeader';
 import { fetchProducts } from '../feature/productSlice';
+import PromoBadge from '../components/PromoBadge';
 
 
 
@@ -231,21 +232,42 @@ const handleProductClick = (productId) => {
           {filteredProducts.length > 0 ? (
                 filteredProducts.map((product) => (
                   <div key={product._id} className="group relative bg-headerBackGround rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
-                    <div className="relative">
-                    <Link 
-  to={`/product-details/${product._id}`} 
-  onClick={() => handleProductClick(product._id)}
-  state={{ fromProduct: false, fromShop: true, fromCategory: category ? `/shop/${category}` : '/shop' }}
->
-                        <div className="aspect-[5/5] overflow-hidden rounded-t-xl">
-                          <img
-                            src={product.images[0]}
-                            alt={product.name}
-                            className="h-full w-full object-cover object-center transform group-hover:scale-110 transition-transform duration-500"
-                          />
-                        </div>
-                      </Link>
-                      
+  <div className="relative">
+    <Link 
+      to={`/product-details/${product._id}`} 
+      onClick={() => handleProductClick(product._id)}
+      state={{ fromProduct: false, fromShop: true, fromCategory: category ? `/shop/${category}` : '/shop' }}
+    >
+     <div className="aspect-[5/5] overflow-hidden rounded-t-xl relative">
+  <img
+    src={product.images[0]}
+    alt={product.name}
+    className="h-full w-full object-cover object-center transform group-hover:scale-110 transition-transform duration-500"
+  />
+  
+  {product.category && (
+    <div className="absolute top-0 left-0 w-24 h-24 overflow-hidden">
+      <div className={`
+        bg-[#0C3937]
+        text-white shadow-lg  text-xs
+        absolute font-semibold  top-0 left-0 transform -rotate-45 translate-y-4 -translate-x-14 w-40 text-center md:py-1 md:text-md
+      `}>
+    <div className="flex items-center justify-center sm:line-height-[normal] sm:text-base" style={{ lineHeight: "12px", fontSize: "10px" }}>
+
+          <span>
+            {product.category === "Oversize-Tshirt" ? "60%" : 
+              product.category === "Tshirt" ? "50%" : 
+              product.category === "Hoodies" ? "30%" : 
+              product.category === "Couple-Tshirt" ? "40%" : "SALE"}
+            <span className="ml-0.5">OFF</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  )}
+</div>
+    </Link>
+ 
                       <button 
                         onClick={() => toggleLike(product)}
                         className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-gray-100 transition-colors duration-300 transform hover:scale-110"
@@ -269,15 +291,28 @@ const handleProductClick = (productId) => {
                         <span className="text-lg md:text-xl font-bold font-forumNormal text-gray-900">
                           ₹{product.price}
                         </span>
-                        <span className="text-sm md:text-base font-forumNormal text-gray-500 line-through">
+                        {/* <span className="text-sm md:text-base font-forumNormal text-gray-500 line-through">
                           ₹{product.price + 100}
-                        </span>
+                        </span> */}
+                           <span className="text-lg font-bold font-forumNormal text-gray-700 line-through">
+  ₹
+  {product.price +
+    (product.category === "Oversize-Tshirt"
+      ? 1400
+      : product.category === "Tshirt"
+      ? 500
+      : product.category === "Hoodies"
+      ? 1500
+      : product.category === "Couple-Tshirt"
+      ? 1200
+      : 0)}
+</span>
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <span className="hidden sm:inline-flex items-center px-3.5 py-1 text-xs font-medium rounded-lg bg-red-100 text-red-800">
-                          Deal of the Day
-                        </span>
+                        
+                        <PromoBadge product={product} />
+
                       
 
 <Link 

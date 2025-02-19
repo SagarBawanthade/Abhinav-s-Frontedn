@@ -5,13 +5,12 @@ import { FaTruck, FaTimesCircle, FaExchangeAlt } from "react-icons/fa";
 import Spinner from "../components/Spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import MoreProducts from "../components/MoreProducts1";
 import { useLocation } from "react-router-dom";
 import MoreProduct3 from "../components/MoreProduct3";
 import MoreProduct2 from "../components/MoreProduct2";
 import { fetchCartItems } from "../feature/cartSlice";
 import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
-import { ShoppingCart, Heart, Clock } from 'lucide-react'; 
+import { ShoppingCart, Heart } from 'lucide-react'; 
 import { addToLocalCart } from "../feature/cartSlice";
 import ProductHeader from "../components/ProductHeader";
 import 'swiper/css';
@@ -297,7 +296,22 @@ function ProductDetails() {
             </h2>
             <div className="mb-4 flex items-center gap-4">
               <span className="text-2xl font-semibold ">₹{product.price}</span>
-              <span className="text-gray-700 line-through">₹{product.price + 100}</span>
+              {/* <span className="text-gray-700 line-through">₹{product.price + 1400}</span> */}
+              <span className="text-xl text-gray-700 line-through">
+  ₹
+  {product.price +
+    (product.category === "Oversize-Tshirt"
+      ? 1400
+      : product.category === "Tshirt"
+      ? 500
+      : product.category === "Hoodies"
+      ? 1500
+      : product.category === "Couple-Tshirt"
+      ? 1000
+      : 0)}
+</span>
+
+
             </div>
             <span className={`inline-block text-sm font-medium px-3 py-1 rounded mb-4 ${product.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
               {product.stock > 0 ? "In Stock" : "Out of Stock"}

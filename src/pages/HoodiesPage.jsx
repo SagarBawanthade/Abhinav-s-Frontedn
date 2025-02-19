@@ -64,7 +64,7 @@ const toggleLike = (item) => {
         const response = await fetch("https://backend.abhinavsofficial.com/api/product/getproducts");
         const data = await response.json();
         
-        setProducts3(data.slice(210, 220));//Tshirts
+        setProducts3(data.slice(215, 220));//Tshirts
         setProducts2(data.slice(16, 20)); //Hoodies
         setProducts(data.slice(81, 86)); // OverSized Tshirt
         setShowHeading(true);
@@ -214,93 +214,120 @@ const toggleLike = (item) => {
         </div>
 
         <Swiper
-        modules={[Autoplay, Navigation]}
-        speed={1000}
-    autoplay={{
-      delay: 4500,
-      disableOnInteraction: false,
-    }}
-    loop={true}
-          className="sm:block lg:hidden"
-          slidesPerView={1.5}
-          spaceBetween={16}
-          grabCursor={true}
-          onSlideChange={handleSlideChange}
-          scrollbar={{ draggable: true }}
-          pagination={{ clickable: true }}
-          breakpoints={{
-            640: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 }
-          }}
-        >
-          {products.map((item) => (
-            <SwiperSlide key={item._id}>
-              <div className="group relative bg-[#E9EBCA] rounded-xl shadow-sm hover:shadow-xl transition-all duration-300">
-                <div className="relative overflow-hidden">
-                  {/* <Link to={`/product-details/${item._id}`}> */}
-                  <Link to="/shop/Oversize-Tshirt">
-                    <div className="aspect-square overflow-hidden rounded-t-xl">
-                      <img
-                        src={item.images[0]}
-                        alt={item.name}
-                        className="w-full h-full object-cover  transition-transform duration-500"
-                      />
-                    </div>
-                  </Link>
-
-                  <button
-                    onClick={() => toggleLike(item)}
-                    className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-gray-100 transition-all duration-300 transform hover:scale-110"
-                  >
-                   
-                      <Heart
-    className={`w-5 h-5 ${
-      isProductInWishlist(item._id) ? 'text-red-500 fill-red-500' : 'text-gray-600'
-    } transition-colors`}
-  />
-                  </button>
-
-                  <div className="absolute top-2 left-2">
-                    <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-gray-900/80 text-white backdrop-blur-sm">
-                      Premium
-                    </span>
-                  </div>
-                </div>
-
-                <div className="p-4">
-                  <h3 className="font-forumNormal text-lg text-gray-800 mb-2 truncate group-hover:text-gray-900">
-                    {item.name}
-                  </h3>
-
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex font-avenir items-baseline space-x-2">
-                      <span className="text-xl font-avenir font-semibold text-gray-900">
-                        ₹{item.price}
-                      </span>
-                      <span className="text-sm text-gray-500 line-through">
-                        ₹{(item.price + 100).toFixed(0)}
-                      </span>
-                    </div>
-                    <span className="text-xs font-bold text-green-600">
-                      20% OFF
-                    </span>
-                  </div>
-                   <Link to="/shop/Oversize-Tshirt">
-                  <button
-                    // onClick={() => handlecart(item)}
-                    className="w-full bg-gray-900 text-white rounded-lg py-3 flex items-center justify-center space-x-2 hover:bg-gray-800 transform transition-all duration-300 "
-                  >
-                      <ShoppingCart className="w-4 h-4 mr-2" />
-                      <span className="text-xl font-forumNormal">Explore more...</span>
-                  </button></Link>
-
-
-                </div>
+  modules={[Autoplay, Navigation]}
+  speed={1000}
+  autoplay={{
+    delay: 4500,
+    disableOnInteraction: false,
+  }}
+  loop={true}
+  className="sm:block lg:hidden"
+  slidesPerView={1.5}
+  spaceBetween={16}
+  grabCursor={true}
+  onSlideChange={handleSlideChange}
+  scrollbar={{ draggable: true }}
+  pagination={{ clickable: true }}
+  breakpoints={{
+    640: { slidesPerView: 2 },
+    1024: { slidesPerView: 3 }
+  }}
+>
+  {products.map((item) => (
+    <SwiperSlide key={item._id}>
+      <div className="group relative bg-[#E9EBCA] rounded-xl shadow-sm hover:shadow-xl transition-all duration-300">
+        <div className="relative overflow-hidden">
+          {/* Corner Ribbon - Adjusted to be more in corner and longer */}
+          <div className="absolute -top-1 -left-1 overflow-hidden w-32 h-32 z-10">
+            <div className={`
+              ${item.category === "Oversize-Tshirt" ? " bg-[#0C3937]" : 
+                item.category === "Tshirt" ? " bg-[#0C3937]" : 
+                item.category === "Hoodies" ? " bg-[#0C3937]" : 
+                item.category === "Couple-Tshirt" ? " bg-[#0C3937]" : " bg-[#0C3937]"} 
+              text-white shadow-lg font-bold text-xs md:text:sm font-forumNormal
+              absolute top-0 left-0 transform -rotate-45 translate-y-6 -translate-x-12 w-40 text-center md:py-1 md:text-md
+            `}>
+              <div className="flex items-center justify-center gap-1">
+                
+                <span>
+                  {item.category === "Oversize-Tshirt" ? "60%" : 
+                    item.category === "Tshirt" ? "50%" : 
+                    item.category === "Hoodies" ? "30%" : 
+                    item.category === "Couple-Tshirt" ? "40%" : "SALE"}
+                  <span className="ml-0.5">OFF</span>
+                </span>
               </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+            </div>
+          </div>
+          {/* Link to Product */}
+          <Link to="/shop/Oversize-Tshirt">
+            <div className="aspect-square overflow-hidden rounded-t-xl">
+              <img
+                src={item.images[0]}
+                alt={item.name}
+                className="w-full h-full object-cover transition-transform duration-500"
+              />
+            </div>
+          </Link>
 
+          <button
+            onClick={() => toggleLike(item)}
+            className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-gray-100 transition-all duration-300 transform hover:scale-110"
+          >
+            <Heart
+              className={`w-5 h-5 ${
+              isProductInWishlist(item._id) ? 'text-red-500 fill-red-500' : 'text-gray-600'
+              } transition-colors`}
+            />
+          </button>
+
+          <div className="absolute top-2 left-2">
+            
+          </div>
+        </div>
+
+        <div className="p-4">
+          <h3 className="font-forumNormal text-lg text-gray-800 mb-2 truncate group-hover:text-gray-900">
+            {item.name}
+          </h3>
+
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex font-avenir items-baseline space-x-2">
+              <span className="text-xl font-avenir font-semibold text-gray-900">
+                ₹{item.price}
+              </span>
+              <span className="text-sm font-avenir  text-gray-500 line-through">
+                      
+                      ₹
+                      {item.price +
+                        (item.category === "Oversize-Tshirt"
+                          ? 1400
+                          : item.category === "Tshirt"
+                          ? 500
+                          : item.category === "Hoodies"
+                          ? 1500
+                          : item.category === "Couple-Tshirt"
+                          ? 1200
+                          : 0)}
+                    </span>
+            </div>
+            <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-gray-900/80 text-white backdrop-blur-sm">
+              Premium
+            </span>
+          </div>
+          <Link to="/shop/Oversize-Tshirt">
+            <button
+              className="w-full bg-gray-900 text-white rounded-lg py-3 flex items-center justify-center space-x-2 hover:bg-gray-800 transform transition-all duration-300"
+            >
+              <ShoppingCart className="w-4 h-4 mr-2" />
+              <span className="text-xl font-forumNormal">Explore more...</span>
+            </button>
+          </Link>
+        </div>
+      </div>
+    </SwiperSlide>
+  ))}
+</Swiper>
         <div className="flex justify-center gap-2 md:hidden mt-6">
           {products.map((_, index) => (
             <button
@@ -342,6 +369,7 @@ const toggleLike = (item) => {
           className="sm:block lg:hidden"
           slidesPerView={1.5}
           spaceBetween={16}
+          loop={true}
           grabCursor={true}
           onSlideChange={handleSlideChange}
           scrollbar={{ draggable: true }}
@@ -361,6 +389,28 @@ const toggleLike = (item) => {
               <div className="group relative bg-[#E9EBCA] rounded-xl shadow-sm hover:shadow-xl transition-all duration-300">
                 <div className="relative overflow-hidden">
                   {/* <Link to={`/product-details/${item._id}`}> */}
+                  {/* Corner Ribbon - Adjusted to be more in corner and longer */}
+          <div className="absolute -top-1 -left-1 overflow-hidden w-32 h-32 z-10">
+            <div className={`
+              ${item.category === "Oversize-Tshirt" ? " bg-[#0C3937]" : 
+                item.category === "Tshirt" ? " bg-[#0C3937]" : 
+                item.category === "Hoodies" ? " bg-[#0C3937]" : 
+                item.category === "Couple-Tshirt" ? " bg-[#0C3937]" : " bg-[#0C3937]"} 
+              text-white shadow-lg font-bold text-xs md:text:sm font-forumNormal
+               absolute top-0 left-0 transform -rotate-45 translate-y-6 -translate-x-12 w-40 text-center md:py-1 md:text-md
+            `}>
+              <div className="flex items-center justify-center gap-1">
+                
+                <span>
+                  {item.category === "Oversize-Tshirt" ? "60%" : 
+                    item.category === "Tshirt" ? "50%" : 
+                    item.category === "Hoodies" ? "30%" : 
+                    item.category === "Couple-Tshirt" ? "40%" : "SALE%"}
+                  <span className="ml-0.5">OFF</span>
+                </span>
+              </div>
+            </div>
+          </div>
                   <Link to="/shop/Tshirt">
                     <div className="aspect-square overflow-hidden rounded-t-xl">
                       <img
@@ -383,11 +433,7 @@ const toggleLike = (item) => {
   />
                   </button>
 
-                  <div className="absolute top-2 left-2">
-                    <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-gray-900/80 text-white backdrop-blur-sm">
-                      Premium
-                    </span>
-                  </div>
+                  
                 </div>
 
                 <div className="p-4">
@@ -401,12 +447,24 @@ const toggleLike = (item) => {
                         ₹{item.price}
                       </span>
                       <span className="text-sm font-avenir  text-gray-500 line-through">
-                        ₹{(item.price + 100).toFixed(0)}
-                      </span>
+                      
+  ₹
+  {item.price +
+    (item.category === "Oversize-Tshirt"
+      ? 1400
+      : item.category === "Tshirt"
+      ? 500
+      : item.category === "Hoodies"
+      ? 1500
+      : item.category === "Couple-Tshirt"
+      ? 1200
+      : 0)}
+</span>
+                    
                     </div>
-                    <span className="text-xs font-bold text-green-600">
-                      20% OFF
-                    </span>
+                    <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-gray-900/80 text-white backdrop-blur-sm">
+              Premium
+            </span>
                   </div>
 
                   <Link to="/shop/Tshirt">
@@ -486,6 +544,31 @@ const toggleLike = (item) => {
               <div className="group relative bg-[#E9EBCA] rounded-xl shadow-sm hover:shadow-xl transition-all duration-300">
                 <div className="relative overflow-hidden">
                   {/* <Link to={`/product-details/${item._id}`}> */}
+
+
+                  {/* Corner Ribbon - Adjusted to be more in corner and longer */}
+          <div className="absolute -top-1 -left-1 overflow-hidden w-32 h-32 z-10">
+            <div className={`
+              ${item.category === "Oversize-Tshirt" ? " bg-[#0C3937]" : 
+                item.category === "Tshirt" ? " bg-[#0C3937]" : 
+                item.category === "Hoodies" ? " bg-[#0C3937]" : 
+                item.category === "Couple-Tshirt" ? " bg-[#0C3937]" : " bg-[#0C3937]"} 
+              text-white shadow-lg font-bold text-xs md:text:sm font-forumNormal
+              absolute top-0 left-0 transform -rotate-45 translate-y-6 -translate-x-12 w-40 text-center md:py-1 md:text-md
+            `}>
+              <div className="flex items-center justify-center gap-1">
+                
+                <span>
+                  {item.category === "Oversize-Tshirt" ? "60%" : 
+                    item.category === "Tshirt" ? "50%" : 
+                    item.category === "Hoodies" ? "30%" : 
+                    item.category === "Couple-Tshirt" ? "40%" : "SALE"}
+                  <span className="ml-0.5">OFF</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
                  
                     <div className="aspect-square overflow-hidden rounded-t-xl">
                       <img
@@ -509,11 +592,7 @@ const toggleLike = (item) => {
   />
                   </button>
 
-                  <div className="absolute top-2 left-2">
-                    <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-gray-900/80 text-white backdrop-blur-sm">
-                      Premium
-                    </span>
-                  </div>
+                  
                 </div>
 
                 <div className="p-4">
@@ -526,13 +605,26 @@ const toggleLike = (item) => {
                       <span className="text-xl font-avenir font-semibold text-gray-900">
                         ₹{item.price}
                       </span>
-                      <span className="text-sm font-avenir text-gray-500 line-through">
-                        ₹{(item.price + 100).toFixed(0)}
-                      </span>
-                    </div>
-                    <span className="text-xs font-bold text-green-600">
-                      20% OFF
+                      
+                      <span className="text-sm font-avenir  text-gray-500 line-through">
+                      
+                      ₹
+                      {item.price +
+                        (item.category === "Oversize-Tshirt"
+                          ? 1400
+                          : item.category === "Tshirt"
+                          ? 500
+                          : item.category === "Hoodies"
+                          ? 1500
+                          : item.category === "Couple-Tshirt"
+                          ? 1200
+                          : 0)}
                     </span>
+                     
+                    </div>
+                    <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-gray-900/80 text-white backdrop-blur-sm">
+              Premium
+            </span>
                   </div>
 
 

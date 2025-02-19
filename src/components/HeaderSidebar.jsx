@@ -208,7 +208,7 @@ const HeaderSidebar = ({ isOpen, onClose, isLoggedIn, handleLogout }) => {
                         <ul className="space-y-1">
                           {[
                             { icon: Gift, label: 'Deals', to: '/deals', comingSoon: true },
-                            { icon: BadgePercent, label: 'Offers', to: '/offers', comingSoon: true },
+                            { icon: BadgePercent, label: 'Offers', to: '/shop/Tshirt', comingSoon: false },
                             { icon: Truck, label: 'Track Order', to: '/order-history', comingSoon: false },
                           ].map((item, index) => (
                             <Link 
@@ -227,9 +227,16 @@ const HeaderSidebar = ({ isOpen, onClose, isLoggedIn, handleLogout }) => {
                                       size={22} 
                                       className="text-gray-600 group-hover:scale-110 transition-all duration-200" 
                                     />
-                                    <span className="text-gray-700 group-hover:text-gray-600 font-medium">
-                                      {item.label}
-                                    </span>
+                                    <>
+  {item.label === "Offers" && (
+    <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-md font-semibold mr-2">
+      50% OFF
+    </span>
+  )}
+  <span className="text-gray-700 group-hover:text-gray-600 font-medium">
+    {item.label}
+  </span>
+</>
                                   </div>
                                   {item.comingSoon && (
                                     <span className="text-xs text-gray-500 font-semibold uppercase">
