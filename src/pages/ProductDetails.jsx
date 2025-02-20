@@ -261,6 +261,27 @@ function ProductDetails() {
             className="w-full h-full object-cover"
           />
         </div>
+        
+  {product.category && (
+    <div className="absolute top-0 left-0 w-24 h-24 overflow-hidden">
+      <div className={`
+        bg-[#0C3937]
+        text-white shadow-lg  text-xs
+        absolute font-semibold  top-0 left-0 transform -rotate-45 translate-y-8 -translate-x-12 w-40 text-center md:py-2 md:text-md
+      `}>
+    <div className="flex text-sm items-center justify-center sm:line-height-[normal] md:text-md" style={{ lineHeight: "12px" }}>
+
+          <span>
+            {product.category === "Oversize-Tshirt" ? "60%" : 
+              product.category === "Tshirt" ? "50%" : 
+              product.category === "Hoodies" ? "30%" : 
+              product.category === "Couple-Tshirt" ? "40%" : "SALE"}
+            <span className="ml-0.5">OFF</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  )}
       </SwiperSlide>
     ))}
   </Swiper>
@@ -284,6 +305,8 @@ function ProductDetails() {
             className={`w-full h-full object-cover rounded-md transition duration-300
               ${index === activeIndex ? 'brightness-100 opacity-50' : 'brightness-75 opacity-100'}`} 
           />
+
+          
         </div>
       </SwiperSlide>
     ))}
