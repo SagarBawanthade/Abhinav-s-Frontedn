@@ -64,7 +64,8 @@ function ProductDetails() {
   const [selectedSize, setSelectedSize] = useState(""); // Highlighted for size updates
   const [selectedColor, setSelectedColor] = useState([""]); // Highlighted for color updates
   const [giftWrapping, setGiftWrapping] = useState(false);
-
+  const [selectedMenSize, setSelectedMenSize] = useState("");
+  const [selectedWomenSize, setSelectedWomenSize] = useState("");
  
   const [productDetailsHeight, setProductDetailsHeight] = useState(0);
   const [returnPolicyHeight, setReturnPolicyHeight] = useState(0);
@@ -105,25 +106,36 @@ function ProductDetails() {
   }, [productId]);
 
   const handleAddToCart = async () => {
-    if (!selectedSize) {
-      toast.error("Please select size before adding to cart!");
-      return;
+    let formattedSize;
+  
+    if (product.category === "Couple-Tshirt") {
+      // Ensure both sizes are selected for couple t-shirts
+      if (!selectedMenSize || !selectedWomenSize) {
+        toast.error("Please select sizes for both men and women!");
+        return;
+      }
+      formattedSize = `Men: ${selectedMenSize}, Women: ${selectedWomenSize}`;
+    } else {
+      // Ensure a single size is selected for other categories
+      if (!selectedSize) {
+        toast.error("Please select a size before adding to cart!");
+        return;
+      }
+      formattedSize = selectedSize;
     }
   
     const cartItem = {
-      product: productId, // Ensure this matches "product" in back-end
+      product: productId,
       quantity,
-      // color: selectedColor,
       color: product.color && product.color.length > 0 ? selectedColor : "",
-      size: selectedSize,
+      size: formattedSize, // Ensure size is always a string
       giftWrapping: giftWrapping,
       name: product.name,
       images: product.images,
       price: product.price,
-      // Default
     };
   
-    console.log("Cart Item:- ",cartItem); 
+    
     if (userId && token) {
       try {
         setCartLoading(true);
@@ -373,29 +385,84 @@ function ProductDetails() {
   </div>
 )}
 
-            {/* Size Section with Radio Buttons */}
 <div className="mt-6 mb-6">
   <h3 className="text-lg font-semibold mb-2">Size:</h3>
-  <div className="flex gap-4">
-    {product.size.map((size) => (
-      <label key={size} className="flex items-center">
-        <input 
-          type="radio" 
-          name="size" 
-          value={size}
-          className="hidden" 
-          onChange={() => setSelectedSize(size)}
-        />
-        <span 
-          className={`w-10 h-10 flex items-center justify-center rounded-full border text-gray-800 cursor-pointer hover:bg-gray-500 hover:text-white transition duration-300 
-          ${selectedSize === size ? "bg-gray-500 text-white border-gray-500" : "bg-white border-gray-400"}`}
-        >
-          {size}
-        </span>
-      </label>
-    ))}
-  </div>
+
+  {/* Show separate size options only for couple t-shirts */}
+  {product.category === "Couple-Tshirt" ? (
+    <div className="flex flex-col gap-4">
+      {/* Men's Size */}
+      <div>
+        <h4 className="font-semibold">Men's Size:</h4>
+        <div className="flex gap-4">
+          {product.size.map((size) => (
+            <label key={`men-${size}`} className="flex items-center">
+              <input 
+                type="radio" 
+                name="men-size" 
+                value={size}
+                className="hidden" 
+                onChange={() => setSelectedMenSize(size)}
+              />
+              <span 
+                className={`w-10 h-10 flex items-center justify-center rounded-full border text-gray-800 cursor-pointer hover:bg-gray-500 hover:text-white transition duration-300 
+                ${selectedMenSize === size ? "bg-gray-500 text-white border-gray-500" : "bg-white border-gray-400"}`}
+              >
+                {size}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Women's Size */}
+      <div>
+        <h4 className="font-semibold">Women's Size:</h4>
+        <div className="flex gap-4">
+          {product.size.map((size) => (
+            <label key={`women-${size}`} className="flex items-center">
+              <input 
+                type="radio" 
+                name="women-size" 
+                value={size}
+                className="hidden" 
+                onChange={() => setSelectedWomenSize(size)}
+              />
+              <span 
+                className={`w-10 h-10 flex items-center justify-center rounded-full border text-gray-800 cursor-pointer hover:bg-gray-500 hover:text-white transition duration-300 
+                ${selectedWomenSize === size ? "bg-gray-500 text-white border-gray-500" : "bg-white border-gray-400"}`}
+              >
+                {size}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+    </div>
+  ) : (
+    // Normal single size selection for other categories
+    <div className="flex gap-4">
+      {product.size.map((size) => (
+        <label key={size} className="flex items-center">
+          <input 
+            type="radio" 
+            name="size" 
+            value={size}
+            className="hidden" 
+            onChange={() => setSelectedSize(size)} // Using selectedMenSize for consistency
+          />
+          <span 
+            className={`w-10 h-10 flex items-center justify-center rounded-full border text-gray-800 cursor-pointer hover:bg-gray-500 hover:text-white transition duration-300 
+            ${selectedSize === size ? "bg-gray-500 text-white border-gray-500" : "bg-white border-gray-400"}`}
+          >
+            {size}
+          </span>
+        </label>
+      ))}
+    </div>
+  )}
 </div>
+
 
 
 {/* Quantity Selection */}
@@ -555,10 +622,10 @@ function ProductDetails() {
 
 
             <p><strong>Fabric:- </strong> {product.details.fabric}</p>
-            <p><strong>Care Instructions:- </strong> {product.details.careInstructions}</p>
+            {/* <p><strong>Care Instructions:- </strong> {product.details.careInstructions}</p> */}
             <p><strong>FabricCare:- </strong>{product.details.fabricCare}</p>
             {/* <p><strong>Hooded:- </strong> {product.details.hooded}</p> */}
-            <p><strong>KnitType:- </strong> {product.details.knitType}</p>
+            {/* <p><strong>KnitType:- </strong> {product.details.knitType}</p> */}
             <p><strong>Material:- </strong> {product.details.material}</p>
             <p><strong>Neck:- </strong> {product.details.neck}</p>
             {/* <p><strong>NetQuantity:- </strong> {product.details.netQuantity}</p> */}

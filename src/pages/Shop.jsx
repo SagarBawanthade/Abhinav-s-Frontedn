@@ -157,9 +157,19 @@ const handleProductClick = (productId) => {
 
   return (
     <>
+    {/* <div>
+<Link 
+  to="/shop/Tshirt" 
+  className="block max-w-xl forum-regular bg-[#E6FF87] p-3 text-center text-black font-bold text-xl rounded-md shadow hover:shadow-md hover:bg-[#DBFF61] hover:-translate-y-0.5 transition duration-200 cursor-pointer"
+>
+  <p className="m-0 font-">PRINTED T-SHIRTS (BUY ANY 3 @ ₹1299)</p>
+</Link>
+</div> */}
+
+
       {/* Navigation Bar */}
       <div className="relative">
-        <div className="flex items-center justify-between text-xl p-4 font-forumNormal bg-[#E6FF87] text-black">
+        <div className="flex items-center justify-between text-xl p-4 font-forumNormal bg-[#0C3937] text-white">
           <div>
             <Link to="/" className="pl-3">Home</Link>
             <span className="mx-2">&gt;</span>
@@ -167,7 +177,7 @@ const handleProductClick = (productId) => {
           </div>
           <button
             onClick={() => setDrawerOpen(!drawerOpen)}
-            className="md:hidden block p-2 text-black rounded-lg"
+            className="md:hidden block p-2 text-white rounded-lg"
           >
             {drawerOpen ? <X className="w-6 h-6" /> : <SlidersHorizontal className="w-6 h-6" />}
           </button>

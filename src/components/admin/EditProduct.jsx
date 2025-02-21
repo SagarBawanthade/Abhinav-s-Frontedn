@@ -245,7 +245,7 @@ const EditProduct = () => {
         <div>
           <label className="block text-sm font-semibold mb-2">Sizes</label>
           <div className="flex flex-wrap gap-4">
-            {["S", "M", "L", "XL"].map((size) => (
+            {["S", "M", "L", "XL","XXL"].map((size) => (
               <label key={size} className="inline-flex items-center">
                 <input
                   type="checkbox"

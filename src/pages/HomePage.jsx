@@ -11,7 +11,8 @@ const HomepageCarousel = () => {
   const [loadedImages, setLoadedImages] = useState({});
 
   const products = [
-    { image: '/images/collection9.jpg', link: '/' },
+    { image: '/images/abhinav1.jpg', link: '/' },
+    { image: '/images/vivek1.jpg', link: '/' },
     { image: '/images/collection1.jpg', link: '/' },
     { image: '/images/collection2.png', link: '/' },
     { image: '/images/collection3.png', link: '/product-details/678beffdf3e7241bb47480c7' },

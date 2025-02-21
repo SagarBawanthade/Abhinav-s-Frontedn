@@ -18,6 +18,7 @@ const ShopNowPage = () => {
   const backgroundY = useTransform(scrollY, [0, 500], [0, 100]);
   
   const images = [
+   
     "/images/college.jpg",
     "/images/collection6.png",
     "/images/collection5.png",

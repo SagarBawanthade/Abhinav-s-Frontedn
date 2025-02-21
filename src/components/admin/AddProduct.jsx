@@ -246,7 +246,7 @@ const AddProduct = () => {
           <div>
             <label className="block text-sm font-semibold">Sizes</label>
             <div className="space-x-4">
-              {["S", "M", "L", "XL"].map((size) => (
+              {["S", "M", "L", "XL","XXL"].map((size) => (
                 <label key={size} className="inline-flex items-center">
                   <input
                     type="checkbox"
