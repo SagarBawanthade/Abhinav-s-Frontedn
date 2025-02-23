@@ -157,14 +157,14 @@ const handleProductClick = (productId) => {
 
   return (
     <>
-    {/* <div>
-<Link 
-  to="/shop/Tshirt" 
-  className="block max-w-xl forum-regular bg-[#E6FF87] p-3 text-center text-black font-bold text-xl rounded-md shadow hover:shadow-md hover:bg-[#DBFF61] hover:-translate-y-0.5 transition duration-200 cursor-pointer"
->
-  <p className="m-0 font-">PRINTED T-SHIRTS (BUY ANY 3 @ ₹1299)</p>
-</Link>
-</div> */}
+    <div className="w-full  bg-[#E6FF87]">
+  <Link 
+    to="/shop/Tshirt" 
+    className="block w-full h px-4 py-3 sm:px-6 md:px-8 text-center text-black sm:text-xl md:text-xl lg:text-2xl font-bold hover:-translate-y-0.5 transition duration-200 cursor-pointer"
+  >
+    <p className="m-0 font-bold forum-regular">PRINTED T-SHIRTS (BUY ANY 3 @ ₹1299)</p>
+  </Link>
+</div>
 
 
       {/* Navigation Bar */}

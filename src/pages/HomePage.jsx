@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation } from 'swiper/modules';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -11,15 +12,16 @@ const HomepageCarousel = () => {
   const [loadedImages, setLoadedImages] = useState({});
 
   const products = [
-    { image: '/images/abhinav1.jpg', link: '/' },
-    { image: '/images/vivek1.jpg', link: '/' },
-    { image: '/images/collection1.jpg', link: '/' },
-    { image: '/images/collection2.png', link: '/' },
-    { image: '/images/collection3.png', link: '/product-details/678beffdf3e7241bb47480c7' },
-    { image: '/images/collection4.png', link: '/' },
-    { image: '/images/tshirt-collection.jpg', link: '/product-details/6795df48e32e6373237a7d67' },
-    { image: '/images/tshirt-collection2.jpg', link: '/product-details/6795dffce32e6373237a7d75' },
-    { image: '/images/tshirt-collection3.jpg', link: '/product-details/6795dffce32e6373237a7d75' },
+  
+    { image: '/images/2.jpg', link: '/' },
+    { image: '/images/3.jpg', link: '/' },
+    { image: '/images/4.jpg', link: '/' },
+    { image: '/images/5.jpg', link: '/' },
+    { image: '/images/6.jpg', link: '/' },
+    { image: '/images/7.jpg', link: '/' },
+    { image: '/images/8.jpg', link: '/' },
+    { image: '/images/9.jpg', link: '/' },
+    { image: '/images/10.jpg', link: '/' },
   ];
 
   const handleImageLoad = (index) => {
@@ -30,7 +32,14 @@ const HomepageCarousel = () => {
   };
 
   return (
-    <>
+    <> <div className="w-full  bg-[#E6FF87]">
+    <Link 
+      to="/shop/Tshirt" 
+      className="block w-full h px-4 py-3 sm:px-6 md:px-8 text-center text-black sm:text-xl md:text-xl lg:text-2xl font-bold hover:-translate-y-0.5 transition duration-200 cursor-pointer"
+    >
+      <p className="m-0 font-bold forum-regular">PRINTED T-SHIRTS (BUY ANY 3 @ ₹1299)</p>
+    </Link>
+  </div>
    
     <Swiper
       modules={[Autoplay, Navigation]}

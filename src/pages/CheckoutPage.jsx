@@ -105,6 +105,7 @@ const CheckoutPage = () => {
       return;
     }
   
+    const amount = calculateTotalPrice();
     // Prepare order data
     const orderData = {
       user: { email: formData.email, id: userId },
@@ -130,10 +131,10 @@ const CheckoutPage = () => {
           color: item.color || "N/A",
           giftWrapping: item.giftWrapping || false,
         })),
-        subtotal: totalCartPrice,
+        subtotal: amount,
         shipping: 0,
         taxes: 0,
-        total: totalCartPrice,
+        total: amount,
       },
     };
   
@@ -141,7 +142,7 @@ const CheckoutPage = () => {
   
     try {
       // Create Razorpay order
-      const amountInPaise = (totalCartPrice) * 100;
+      const amountInPaise = (amount) * 100;
       const razorpayOrder = await axios.post(
         "https://backend.abhinavsofficial.com/api/order/create-razorpay-order",
         { amount: amountInPaise }
@@ -258,6 +259,51 @@ useEffect(() => {
   window.scrollTo(0, 0); // Scroll to top of the page
 }, [location]);
 
+
+const checkSpecialTshirtOffer = (cartItems) => {
+  const tshirts = cartItems.filter(item => {
+    const name = item.name || (item.product && item.product.name);
+    return name.toLowerCase().includes('t-shirt') && item.quantity === 1;
+  });
+  
+  return tshirts.length === 3;
+};
+
+// Function to calculate product price
+const calculateProductPrice = (product) => {
+  const productDetails = {
+    name: product.name || (product.product && product.product.name),
+    price: product.price,
+    quantity: product.quantity,
+    giftWrapping: product.giftWrapping
+  };
+
+  const additionalCost = productDetails.giftWrapping ? productDetails.quantity * 30 : 0;
+  return (productDetails.price * productDetails.quantity) + additionalCost;
+};
+
+// Calculate total cart price with special offer
+const calculateTotalPrice = () => {
+  if (checkSpecialTshirtOffer(cartItems)) {
+    // Apply special price of 1299 for the t-shirts
+    const nonTshirtItems = cartItems.filter(item => {
+      const name = item.name || (item.product && item.product.name);
+      return !name.toLowerCase().includes('t-shirt');
+    });
+
+    const nonTshirtTotal = nonTshirtItems.reduce((total, item) => {
+      return total + calculateProductPrice(item);
+    }, 0);
+
+    return nonTshirtTotal + 1299; // Special price for 3 t-shirts
+  }
+
+  // Regular price calculation
+  return cartItems.reduce((total, item) => {
+    return total + calculateProductPrice(item);
+  }, 0);
+};
+
 if (loading) {
   return (
    
@@ -278,9 +324,9 @@ if (loading) {
         </h1>
         
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Cart Summary Section */}
+          {/* Cart Summary */}
           <div className="lg:col-span-1 order-2 lg:order-1">
-            <div className="bg-headerBackGround  rounded-xl shadow-sm border border-gray-300 sticky top-4">
+            <div className="bg-headerBackGround rounded-xl shadow-sm border border-gray-200 sticky top-4">
               <div className="p-6">
                 <div className="flex items-center gap-2 mb-6">
                   <Package className="h-5 w-5 text-gray-600" />
@@ -289,53 +335,42 @@ if (loading) {
                 
                 <div className="space-y-6 divide-y divide-gray-100">
                   {cartItems.map((product, index) => {
-                     // Extract product details handling both logged-in and non-logged-in states
                     const productDetails = {
                       name: product.name || (product.product && product.product.name),
                       images: product.images || (product.product && product.product.images),
-                      price: product.price,
+                      price: calculateProductPrice(product),
                       quantity: product.quantity,
                       size: product.size,
                       color: product.color,
                       giftWrapping: product.giftWrapping
                     };
 
-                    const productTotal = productDetails.quantity * productDetails.price;
-                    const additionalCost = productDetails.giftWrapping ? productDetails.quantity * 30 : 0;
-                    const finalPrice = productTotal + additionalCost;
-
                     return (
                       <div key={index} className="pt-6 first:pt-0">
                         <div className="flex gap-4">
-                          <div className="w-20 h-20 rounded-lg border border-gray-300 overflow-hidden">
-
-                          <img
-    className="w-full h-full object-cover"
-    src={
-      Array.isArray(productDetails.images)
-        ? productDetails.images[0] // Use the first image if `images` is an array
-        : productDetails.images || productDetails.image // Use `images` or `image` if it's a string
-    }
-    alt={productDetails.name}
-  />
-                            {/* <img
-                              src={product.images[0]}
-                              alt={product.name}
+                          <div className="w-20 h-20 rounded-lg border border-gray-300 overflow-hidden bg-headerBackGround">
+                            <img
                               className="w-full h-full object-cover"
-                            /> */}
+                              src={Array.isArray(productDetails.images)
+                                ? productDetails.images[0]
+                                : productDetails.images || productDetails.image}
+                              alt={productDetails.name}
+                            />
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center justify-between">
                               <h3 className="font-medium text-gray-800">{productDetails.name}</h3>
                               {productDetails.giftWrapping && (
-                                <span className="text-xl">🎁</span>
+                                <span className="text-xl" title="Gift Wrapped">🎁</span>
                               )}
                             </div>
                             <div className="mt-2 space-y-1 text-sm text-gray-600">
                               <p>Size: {productDetails.size}</p>
                               <p>Quantity: {productDetails.quantity}</p>
                               {productDetails.color && <p>Color: {productDetails.color}</p>}
-                              <p className="font-medium text-gray-800">₹{finalPrice.toLocaleString()}</p>
+                              <p className="font-medium text-gray-800">
+                                ₹{productDetails.price.toLocaleString()}
+                              </p>
                             </div>
                           </div>
                         </div>
@@ -345,7 +380,7 @@ if (loading) {
                 </div>
               </div>
               
-              <div className="border-t border-gray-300 p-6">
+              <div className="border-t border-gray-200 p-6 bg-headerBackGround rounded-b-xl">
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2 text-green-600">
@@ -354,9 +389,17 @@ if (loading) {
                     </div>
                     <span className="text-green-600">₹0</span>
                   </div>
-                  <div className="flex justify-between items-center text-lg font-semibold">
+                  
+                  {checkSpecialTshirtOffer(cartItems) && (
+                    <div className="flex justify-between items-center text-green-600 bg-green-50 p-3 rounded-lg">
+                      <span>Special T-shirt Offer Applied!</span>
+                      <span>3 T-shirts for ₹1299</span>
+                    </div>
+                  )}
+                  
+                  <div className="flex justify-between items-center text-lg font-semibold pt-2">
                     <span>Total</span>
-                    <span>₹{totalCartPrice.toLocaleString()}</span>
+                    <span>₹{calculateTotalPrice().toLocaleString()}</span>
                   </div>
                 </div>
               </div>
@@ -365,17 +408,16 @@ if (loading) {
 
           {/* Checkout Form */}
           <div className="lg:col-span-2 order-1 lg:order-2">
-            <div className="bg-headerBackGround rounded-xl shadow-sm border border-gray-300 p-6">
+            <div className="bg-headerBackGround rounded-xl shadow-sm border border-gray-200 p-6">
               <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Personal Details */}
-                <div>
+                <section>
                   <div className="flex items-center gap-2 mb-6">
                     <User className="h-5 w-5 text-gray-600" />
                     <h2 className="text-xl font-semibold text-gray-800">Personal Details</h2>
                   </div>
-                  <div className="grid bg-headerBackGround md:grid-cols-2 gap-4">
+                  <div className="grid md:grid-cols-2 gap-4">
                     <InputField
-                    className=""
                       icon={User}
                       name="firstName"
                       placeholder="First Name"
@@ -406,10 +448,10 @@ if (loading) {
                       onChange={handleChange}
                     />
                   </div>
-                </div>
+                </section>
 
                 {/* Shipping Address */}
-                <div>
+                <section>
                   <div className="flex items-center gap-2 mb-6">
                     <Home className="h-5 w-5 text-gray-600" />
                     <h2 className="text-xl font-semibold text-gray-800">Shipping Address</h2>
@@ -446,34 +488,34 @@ if (loading) {
                       onChange={handleChange}
                     />
                   </div>
-                </div>
+                </section>
 
                 {/* Payment Method */}
-                <div>
+                <section>
                   <div className="flex items-center gap-2 mb-6">
                     <CreditCard className="h-5 w-5 text-gray-600" />
                     <h2 className="text-xl font-semibold text-gray-800">Payment Method</h2>
                   </div>
-                  <div className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg">
-  <input
-    type="radio"
-    name="paymentMethod"
-    value="Razorpay"
-    checked
-    readOnly
-    className="h-4 w-4 border-gray-300 text-gray-600 accent-gray-500 focus:ring-gray-500"
-  />
-            <label className="flex items-center gap-2">
+                  <div className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="Razorpay"
+                      checked
+                      readOnly
+                      className="h-4 w-4 border-gray-300 text-gray-600 accent-gray-500 focus:ring-gray-500"
+                    />
+                    <label className="flex items-center gap-2 cursor-pointer">
                       <CreditCard className="h-5 w-5 text-gray-600" />
                       <span>Razorpay</span>
                     </label>
                   </div>
-                </div>
+                </section>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full px-6 py-3 bg-gray-800 text-white text-lg rounded-lg hover:bg-gray-600 transition duration-200 flex items-center justify-center gap-2 disabled:opacity-70"
+                  className="w-full px-6 py-3 bg-gray-800 text-white text-lg rounded-lg hover:bg-gray-700 transition duration-200 flex items-center justify-center gap-2 disabled:opacity-70 disabled:hover:bg-gray-800"
                 >
                   {loading ? (
                     <Spinner />

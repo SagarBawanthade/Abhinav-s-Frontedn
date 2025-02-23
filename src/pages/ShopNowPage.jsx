@@ -19,8 +19,8 @@ const ShopNowPage = () => {
   
   const images = [
    
-    "/images/college.jpg",
-    "/images/collection6.png",
+    "/images/abhinav1.jpg",
+    "/images/vivek1.jpg",
     "/images/collection5.png",
     "/images/BOY TSHIRT 2.png"
   ];

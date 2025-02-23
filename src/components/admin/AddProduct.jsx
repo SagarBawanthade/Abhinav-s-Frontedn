@@ -87,10 +87,7 @@ const AddProduct = () => {
         stock: Number(formData.stock)
       };
 
-      const response = await fetch(
-        "https://backend.abhinavsofficial.com/api/product/addproduct"
-
-         ,
+      const response = await fetch("https://backend.abhinavsofficial.com/api/product/addproduct",
         {
           method: 'POST',
           headers: {

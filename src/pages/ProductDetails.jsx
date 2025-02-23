@@ -20,6 +20,7 @@ import 'swiper/css/thumbs';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
 import MoreProducts1 from "../components/MoreProducts1";
+import SpecialOffer from "../components/SpecialOffer";
 
 function ProductDetails() {
   const [mainImage, setMainImage] = useState(
@@ -523,9 +524,7 @@ function ProductDetails() {
     onChange={() => setGiftWrapping((prev) => !prev)}
   />
 </div>
-<p className="mt-3 mb-3 text-center text-sm sm:text-base lg:text-lg font-medium bg-gradient-to-r from-red-600 to-green-900 text-transparent bg-clip-text animate-pulse">
-  Stay tuned! Something extraordinary is about to arrive. We're perfecting every detail just for you.
-</p>
+
 <div className="flex w-full gap-4">
 
   {/* Check if category is tshirt or oversized-tshirt */}
@@ -544,17 +543,6 @@ function ProductDetails() {
   </button>
 
 
-{/*Addtocart Deafult Button Code below*/}
-{/* <button 
-  onClick={handleAddToCart} 
-  className="flex-1 rounded-lg bg-gray-800 py-3 text-lg font-semibold text-white transition duration-300 hover:bg-gray-600"
->
-  <div className="flex items-center justify-center space-x-2">
-    <ShoppingCart className="w-5 h-5" />
-    <span>Add to Cart</span>
-  </div>
-</button> */}
-
 
 <button
   onClick={handleWishlist}
@@ -567,7 +555,8 @@ function ProductDetails() {
 </button>
     </div>
 
-           
+    {product.category === "Tshirt" && <SpecialOffer />}
+
 
             {/* Product Details Dropdown */}
 
