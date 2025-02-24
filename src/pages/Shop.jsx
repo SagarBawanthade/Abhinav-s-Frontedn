@@ -1,14 +1,12 @@
 import { Link, useLocation, useParams } from 'react-router-dom';
 import ShopFilters from '../components/ShopFilter';
 import { useEffect, useRef, useState } from 'react';
-import { X, SlidersHorizontal, Heart, ShoppingCart, Clock } from 'lucide-react';
+import { X, SlidersHorizontal, Heart, ShoppingCart } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
 import ProductsHeader from '../components/ProductsHeader';
 import { fetchProducts } from '../feature/productSlice';
 import PromoBadge from '../components/PromoBadge';
-
-
 
 const Shop = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -20,12 +18,17 @@ const Shop = () => {
   const wishlist = useSelector(state => state.wishlist.items);
   const prevCategory = useRef(category);
 
-
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [contentOpacity, setContentOpacity] = useState(0);
-
-
-
+  
+  // Pagination state
+  const [visibleProducts, setVisibleProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(() => {
+    // Initialize from sessionStorage if available
+    const savedPage = sessionStorage.getItem(`currentPage_${category || 'all'}`);
+    return savedPage ? parseInt(savedPage) : 1;
+  });
+  const productsPerPage = 21;
 
   // Filter states
   const [filters, setFilters] = useState({
@@ -35,20 +38,20 @@ const Shop = () => {
   });
   const [filteredProducts, setFilteredProducts] = useState([]);
 
-
-  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []); 
 
-
-
-  // Fetch products if needed
   useEffect(() => {
     if (products.length === 0) {
       dispatch(fetchProducts());
     }
   }, [dispatch, products]);
+
+  // Save current page to sessionStorage whenever it changes
+  useEffect(() => {
+    sessionStorage.setItem(`currentPage_${category || 'all'}`, currentPage.toString());
+  }, [currentPage, category]);
 
   // Filter products
   useEffect(() => {
@@ -68,24 +71,39 @@ const Shop = () => {
         return matchesCategory && matchesPrice && matchesColor && matchesSize;
       });
   
-      // Separate and reverse hoodies
       const hoodieProducts = filtered
         .filter(p => p.category.toLowerCase() === 'hoodies')
         .reverse();
       
-      // Get other products (already reversed)
       const nonHoodieProducts = filtered
         .filter(p => p.category.toLowerCase() !== 'hoodies')
         .reverse();
       
-      // Combine all products
-      const sortedProducts = [ ...nonHoodieProducts,...hoodieProducts,];
+      const sortedProducts = [...nonHoodieProducts, ...hoodieProducts];
   
       setFilteredProducts(sortedProducts);
+      
+      // Update visible products based on current page
+      const endIndex = currentPage * productsPerPage;
+      setVisibleProducts(sortedProducts.slice(0, endIndex));
     };
   
     applyFilters();
-  }, [filters, products, category]);
+  }, [filters, products, category, currentPage]); // Added currentPage as dependency
+
+  // Reset pagination when category changes
+  useEffect(() => {
+    if (category !== prevCategory.current) {
+      setCurrentPage(1);
+      sessionStorage.removeItem(`currentPage_${prevCategory.current || 'all'}`);
+    }
+  }, [category]);
+
+  // Handle "Show More" click
+  const handleShowMore = () => {
+    const nextPage = currentPage + 1;
+    setCurrentPage(nextPage);
+  };
 
   // Wishlist functions
   const isProductInWishlist = (productId) => {
@@ -95,64 +113,54 @@ const Shop = () => {
   const toggleLike = (item) => {
     if (isProductInWishlist(item._id)) {
       dispatch(removeFromWishlist(item._id));
-      // toast.success("Product removed from Wishlist!");
     } else {
       dispatch(addToWishlist(item));
-      // toast.success("Product Added to Wishlist!");
     }
   };
 
- // Improved scroll position handling
- useEffect(() => {
-  const handleScrollPosition = async () => {
-    const storageKey = category ? `shopScrollPosition_${category}` : 'shopScrollPosition';
-    const savedPosition = sessionStorage.getItem(storageKey);
+  // Scroll position handling
+  useEffect(() => {
+    const handleScrollPosition = async () => {
+      const storageKey = category ? `shopScrollPosition_${category}` : 'shopScrollPosition';
+      const savedPosition = sessionStorage.getItem(storageKey);
 
-    // Start transition
-    setIsTransitioning(true);
-    setContentOpacity(0);
+      setIsTransitioning(true);
+      setContentOpacity(0);
 
-    // Wait for fade out
-    await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, 300));
 
-    if (savedPosition && shopRef.current) {
-      // Disable smooth scroll temporarily
-      shopRef.current.style.scrollBehavior = 'auto';
-      shopRef.current.scrollTop = parseInt(savedPosition);
-      
-      // Small delay to ensure scroll completes
-      await new Promise(resolve => setTimeout(resolve, 50));
-      
-      // Re-enable smooth scroll
-      shopRef.current.style.scrollBehavior = 'smooth';
-    } else if (!location.state?.fromProduct || category !== prevCategory.current) {
-      if (shopRef.current) {
+      if (savedPosition && shopRef.current) {
         shopRef.current.style.scrollBehavior = 'auto';
-        shopRef.current.scrollTop = 0;
-        window.scrollTo(0, 0);
+        shopRef.current.scrollTop = parseInt(savedPosition);
+        await new Promise(resolve => setTimeout(resolve, 50));
         shopRef.current.style.scrollBehavior = 'smooth';
+      } else if (!location.state?.fromProduct || category !== prevCategory.current) {
+        if (shopRef.current) {
+          shopRef.current.style.scrollBehavior = 'auto';
+          shopRef.current.scrollTop = 0;
+          window.scrollTo(0, 0);
+          shopRef.current.style.scrollBehavior = 'smooth';
+        }
       }
+
+      await new Promise(resolve => setTimeout(resolve, 100));
+      setContentOpacity(1);
+      setIsTransitioning(false);
+    };
+
+    if (!loading) {
+      handleScrollPosition();
     }
+    
+    prevCategory.current = category;
+  }, [location.state, category, loading]);
 
-    // End transition
-    await new Promise(resolve => setTimeout(resolve, 100));
-    setContentOpacity(1);
-    setIsTransitioning(false);
+  const handleProductClick = (productId) => {
+    if (shopRef.current) {
+      const storageKey = category ? `shopScrollPosition_${category}` : 'shopScrollPosition';
+      sessionStorage.setItem(storageKey, shopRef.current.scrollTop.toString());
+    }
   };
-
-  if (!loading) {
-    handleScrollPosition();
-  }
-  
-  prevCategory.current = category;
-}, [location.state, category, loading]);
-
-const handleProductClick = (productId) => {
-  if (shopRef.current) {
-    const storageKey = category ? `shopScrollPosition_${category}` : 'shopScrollPosition';
-    sessionStorage.setItem(storageKey, shopRef.current.scrollTop.toString());
-  }
-};
 
 
   return (
@@ -232,15 +240,15 @@ const handleProductClick = (productId) => {
           
             
           <div 
-            className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6 mb-28"
+            className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6 mb-8"
             style={{
               transition: 'opacity 300ms ease-in-out, transform 300ms ease-in-out',
               opacity: contentOpacity,
               transform: `translateY(${contentOpacity === 0 ? '10px' : '0'})`,
             }}
           > 
-          {filteredProducts.length > 0 ? (
-                filteredProducts.map((product) => (
+          {visibleProducts.length > 0 ? (
+                visibleProducts.map((product) => (
                   <div key={product._id} className="group relative bg-headerBackGround rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
   <div className="relative">
     <Link 
@@ -348,6 +356,24 @@ const handleProductClick = (productId) => {
                 </p>
               )}
             </div>
+
+
+            {filteredProducts.length > visibleProducts.length && (
+  <div className="flex justify-center ">
+    <button
+      onClick={handleShowMore}
+      className="group flex items-center mb-14 gap-3 px-8 py-2 bg-[#0C3937] text-white rounded-md hover:bg-[#0a2e2c] transition-all duration-300 font-medium shadow-md hover:shadow-lg"
+    >
+      <ShoppingCart className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+      <span className='font-forumNormal'>Show More Products</span>
+      <div className="w-8 h-8 flex items-center justify-center bg-white/10 rounded-full ml-2">
+        <span className="text-sm">
+          +{filteredProducts.length - visibleProducts.length}
+        </span>
+      </div>
+    </button>
+  </div>
+)}
           
         </div>
       </div>
