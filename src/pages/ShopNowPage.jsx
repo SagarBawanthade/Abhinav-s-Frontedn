@@ -21,8 +21,8 @@ const ShopNowPage = () => {
    
     "/images/abhinav1.jpg",
     "/images/vivek1.jpg",
-    "/images/collection5.png",
-    "/images/BOY TSHIRT 2.png"
+    "/images/12.jpg",
+    "/images/11.jpg"
   ];
 
   useEffect(() => {
@@ -69,13 +69,14 @@ const ShopNowPage = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-8 py-8 lg:py-16">
           {/* Left Section - Swiper Image */}
-          <motion.div 
-            className="w-full lg:w-1/2"
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
+          
+         <motion.div
+         className="w-full lg:w-1/2 h-auto"
+         initial={{ opacity: 0, x: -20 }}
+         whileInView={{ opacity: 1, x: 0 }}
+         viewport={{ once: true }}
+         transition={{ duration: 0.8 }}
+       >
             <div className="relative group">
               <Swiper
                 modules={[Autoplay, EffectCreative, Pagination]}

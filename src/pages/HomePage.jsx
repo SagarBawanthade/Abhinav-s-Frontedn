@@ -13,6 +13,9 @@ const HomepageCarousel = () => {
 
   const products = [
   
+    { image: '/images/13.jpg', link: '/' },
+    { image: '/images/14.jpg', link: '/' },
+    { image: '/images/15.jpg', link: '/' },
     { image: '/images/2.jpg', link: '/' },
     { image: '/images/3.jpg', link: '/' },
     { image: '/images/4.jpg', link: '/' },
