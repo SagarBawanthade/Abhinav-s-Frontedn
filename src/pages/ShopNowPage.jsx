@@ -22,7 +22,7 @@ const ShopNowPage = () => {
     "/images/abhinav1.jpg",
     "/images/vivek1.jpg",
     "/images/12.jpg",
-    "/images/11.jpg"
+    // "/images/11.jpg"
   ];
 
   useEffect(() => {
