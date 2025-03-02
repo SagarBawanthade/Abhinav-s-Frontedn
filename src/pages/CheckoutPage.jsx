@@ -393,7 +393,7 @@ if (loading) {
                   {checkSpecialTshirtOffer(cartItems) && (
                     <div className="flex justify-between items-center text-green-600 bg-green-50 p-3 rounded-lg">
                       <span>Special T-shirt Offer Applied!</span>
-                      <span>2 T-shirts for ₹1299</span>
+                      <span>2 T-shirts for ₹699</span>
                     </div>
                   )}
                   

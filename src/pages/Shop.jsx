@@ -170,7 +170,7 @@ const Shop = () => {
     to="/shop/Tshirt" 
     className="block w-full h px-4 py-3 sm:px-6 md:px-8 text-center text-black sm:text-xl md:text-xl lg:text-2xl font-bold hover:-translate-y-0.5 transition duration-200 cursor-pointer"
   >
-    <p className="m-0 font-bold forum-regular">₹799 PREMIUM TSHIRT Body Fit (BUY ANY 2 @₹1299)</p>
+    <p className="m-0 font-bold forum-regular">PREMIUM TSHIRT Body Fit (BUY ANY 2 @₹699)</p>
   </Link>
 </div>
 
