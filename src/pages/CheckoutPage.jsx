@@ -295,7 +295,7 @@ const calculateTotalPrice = () => {
       return total + calculateProductPrice(item);
     }, 0);
 
-    return nonTshirtTotal + 1299; // Special price for 3 t-shirts
+    return nonTshirtTotal + 699; // Special price for 3 t-shirts
   }
 
   // Regular price calculation
