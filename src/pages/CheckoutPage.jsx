@@ -266,7 +266,7 @@ const checkSpecialTshirtOffer = (cartItems) => {
     return name.toLowerCase().includes('t-shirt') && item.quantity === 1;
   });
   
-  return tshirts.length === 3;
+  return tshirts.length === 2;
 };
 
 // Function to calculate product price
@@ -393,7 +393,7 @@ if (loading) {
                   {checkSpecialTshirtOffer(cartItems) && (
                     <div className="flex justify-between items-center text-green-600 bg-green-50 p-3 rounded-lg">
                       <span>Special T-shirt Offer Applied!</span>
-                      <span>3 T-shirts for ₹1299</span>
+                      <span>2 T-shirts for ₹1299</span>
                     </div>
                   )}
                   

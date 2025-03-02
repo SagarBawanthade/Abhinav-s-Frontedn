@@ -36,6 +36,7 @@ function App() {
 
   // Check if the current path starts with "/admin"
   const isAdminRoute = location.pathname.startsWith("/admin");
+  const isShopRoute = location.pathname === "/shop" || location.pathname.startsWith("/shop/");
 
   return (
     <>
@@ -84,7 +85,7 @@ function App() {
       </Routes>
 
       {/* Show Footer only for non-admin routes */}
-      {!isAdminRoute && <Footer />}
+      {!isAdminRoute && !isShopRoute && <Footer />}
     </>
   );
 }

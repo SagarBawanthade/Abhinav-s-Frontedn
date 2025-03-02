@@ -38,9 +38,9 @@ const HomepageCarousel = () => {
     <> <div className="w-full  bg-[#E6FF87]">
     <Link 
       to="/shop/Tshirt" 
-      className="block w-full h px-4 py-3 sm:px-6 md:px-8 text-center text-black sm:text-xl md:text-xl lg:text-2xl font-bold hover:-translate-y-0.5 transition duration-200 cursor-pointer"
+      className="block w-full h px-4 py-3 sm:px-6 md:px-8 text-center text-black text-md md:text-xl lg:text-2xl font-bold hover:-translate-y-0.5 transition duration-200 cursor-pointer"
     >
-      <p className="m-0 font-bold forum-regular">PRINTED T-SHIRTS (BUY ANY 3 @ ₹1299)</p>
+      <p className="m-0 font-bold forum-regular">₹799 PREMIUM TSHIRT Body Fit (BUY ANY 2 @₹1299)</p>
     </Link>
   </div>
    
