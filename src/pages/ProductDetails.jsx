@@ -349,14 +349,35 @@ function ProductDetails() {
 
 
             </div>
-            <span className={`inline-block text-sm font-medium px-3 py-1 rounded mb-4 ${product.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-              {product.stock > 0 ? "In Stock" : "Out of Stock"}
+            <span className={`inline-block text-sm font-medium px-3 py-1 rounded mb-4 ${product.stock > 0 ? 'bg-red-400 text-white' : 'bg-red-100 text-red-800'}`}>
+              {product.stock > 0 ? "Only Few Left, Hurry Up!!" : "Out of Stock"}
             </span>
+
+            
+            {/* Social Proof Gradient Strip */}
+            <div className="w-full p-2 mb-5 bg-gradient-to-r from-[#0C3937] to-blue-50 text-white flex items-center">
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+    <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+  </svg>
+  <span className="font-forumNormal text-sm md:text-lg">
+    {/* Calculate a consistent but seemingly random number based on product ID or name */}
+    {(() => {
+      // Generate a number between 50 and 129 based on product properties
+      // This ensures the same product always shows the same number
+      const baseNumber = product.id ? 
+        (parseInt(product.id) % 80) + 50 : 
+        (product.name.length * 7) % 80 + 50;
+      
+      return `${baseNumber} people bought this in the last 7 days`;
+    })()}
+  </span>
+</div>
+
+
             <p className="text-gray-700 mb-6">
               {product.description}
             </p>
 
-            {/* Color Dropdown */}
             
             {/* Modified Color Dropdown */}
             {(product.color && product.color !== '-' && 
@@ -406,7 +427,7 @@ function ProductDetails() {
                 onChange={() => setSelectedMenSize(size)}
               />
               <span 
-                className={`w-10 h-10 flex items-center justify-center rounded-full border text-gray-800 cursor-pointer hover:bg-gray-500 hover:text-white transition duration-300 
+                className={`w-10 h-10 flex items-center justify-center rounded-md border text-gray-800 cursor-pointer hover:bg-gray-500 hover:text-white transition duration-300 
                 ${selectedMenSize === size ? "bg-gray-500 text-white border-gray-500" : "bg-white border-gray-400"}`}
               >
                 {size}
@@ -430,7 +451,7 @@ function ProductDetails() {
                 onChange={() => setSelectedWomenSize(size)}
               />
               <span 
-                className={`w-10 h-10 flex items-center justify-center rounded-full border text-gray-800 cursor-pointer hover:bg-gray-500 hover:text-white transition duration-300 
+                className={`w-10 h-10 flex items-center justify-center rounded-md  border text-gray-800 cursor-pointer hover:bg-gray-500 hover:text-white transition duration-300 
                 ${selectedWomenSize === size ? "bg-gray-500 text-white border-gray-500" : "bg-white border-gray-400"}`}
               >
                 {size}
@@ -453,7 +474,7 @@ function ProductDetails() {
             onChange={() => setSelectedSize(size)} // Using selectedMenSize for consistency
           />
           <span 
-            className={`w-10 h-10 flex items-center justify-center rounded-full border text-gray-800 cursor-pointer hover:bg-gray-500 hover:text-white transition duration-300 
+            className={`w-10 h-10 flex items-center justify-center rounded-md border text-gray-800 cursor-pointer hover:bg-gray-500 hover:text-white transition duration-300 
             ${selectedSize === size ? "bg-gray-500 text-white border-gray-500" : "bg-white border-gray-400"}`}
           >
             {size}

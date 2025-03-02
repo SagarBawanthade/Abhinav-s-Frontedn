@@ -250,41 +250,56 @@ const Shop = () => {
           {visibleProducts.length > 0 ? (
                 visibleProducts.map((product) => (
                   <div key={product._id} className="group relative bg-headerBackGround rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
-  <div className="relative">
-    <Link 
-      to={`/product-details/${product._id}`} 
-      onClick={() => handleProductClick(product._id)}
-      state={{ fromProduct: false, fromShop: true, fromCategory: category ? `/shop/${category}` : '/shop' }}
-    >
-     <div className="aspect-[5/5] overflow-hidden rounded-t-xl relative">
-  <img
-    src={product.images[0]}
-    alt={product.name}
-    className="h-full w-full object-cover object-center transform group-hover:scale-110 transition-transform duration-500"
-  />
-  
-  {product.category && (
-    <div className="absolute top-0 left-0 w-24 h-24 overflow-hidden">
-      <div className={`
-        bg-[#0C3937]
-        text-white shadow-lg  text-xs
-        absolute font-semibold  top-0 left-0 transform -rotate-45 translate-y-4 -translate-x-14 w-40 text-center md:py-1 md:text-md
-      `}>
-    <div className="flex items-center justify-center sm:line-height-[normal] sm:text-base" style={{ lineHeight: "12px", fontSize: "10px" }}>
+            <div className="relative">
+              <Link 
+                to={`/product-details/${product._id}`} 
+                onClick={() => handleProductClick(product._id)}
+                state={{ fromProduct: false, fromShop: true, fromCategory: category ? `/shop/${category}` : '/shop' }}
+              >
+               
+               <div className="aspect-[5/5] overflow-hidden rounded-t-xl relative">
+                      <img
+                        src={product.images[0]}
+                        alt={product.name}
+                        className="h-full w-full object-cover object-center transform group-hover:scale-110 transition-transform duration-500"
+                      />
 
-          <span>
-            {product.category === "Oversize-Tshirt" ? "60%" : 
-              product.category === "Tshirt" ? "50%" : 
-              product.category === "Hoodies" ? "30%" : 
-              product.category === "Couple-Tshirt" ? "40%" : "SALE"}
-            <span className="ml-0.5">OFF</span>
-          </span>
-        </div>
-      </div>
-    </div>
-  )}
-</div>
-    </Link>
+                      {product.category && (
+                        <div className="absolute top-0 left-0 w-24 h-24 overflow-hidden">
+                          <div className={`
+                            bg-[#0C3937]
+                            text-white shadow-lg text-xs
+                            absolute font-semibold top-0 left-0 transform -rotate-45 translate-y-4 -translate-x-14 w-40 text-center md:py-1 md:text-md
+                          `}>
+                            <div className="flex items-center justify-center sm:line-height-[normal] sm:text-base" style={{ lineHeight: "12px", fontSize: "10px" }}>
+                              <span>
+                                {product.category === "Oversize-Tshirt" ? "60%" : 
+                                  product.category === "Tshirt" ? "50%" : 
+                                  product.category === "Hoodies" ? "30%" : 
+                                  product.category === "Couple-Tshirt" ? "40%" : "SALE"}
+                                <span className="ml-0.5">OFF</span>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Bestseller tag - you can conditionally render this based on product properties */}
+                      {/* {((product.category === "Hoodies" && product.price >= 599) || 
+                          (product.category === "Oversize-Tshirt" && product.price <= 799)) && (
+                          <div className="absolute top-0 right-0 bg-yellow-500 text-black font-bold px-3 py-1 rounded-bl-lg shadow-md">
+                            BESTSELLER
+                          </div>
+                        )} */}
+
+                      {/* Conditional offer strip - only shown for Tshirt with price 599 */}
+                      {product.category === "Tshirt" && product.price === 599 && (
+                        <div className="absolute bottom-0 left-0 right-0 bg-green-500 font-bold text-xs text-white text-center font-forumNormal">
+                          BUY 2 AT ₹699
+                        </div>
+                      )}
+                    </div>
+                    </Link>
  
                       <button 
                         onClick={() => toggleLike(product)}
