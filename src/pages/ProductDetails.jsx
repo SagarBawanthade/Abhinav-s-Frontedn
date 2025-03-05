@@ -675,9 +675,19 @@ function ProductDetails() {
           }}
         >
           <div className="px-4 py-3 text-gray-700 font-forumNormal">
-            <p>The brand does not accept returns, but replacements are possible subject to availability. 
+            {/* <p>The brand does not accept returns, but replacements are possible subject to availability. 
             Please initiate replacements from the &#39;My Orders&#39; section in the App within 2 days of Delivery. 
-            The product must be in its original condition with all tags attached.</p>
+            The product must be in its original condition with all tags attached.</p> */}
+
+
+            <p>
+              The brand does accept returns, but replacements are possible subject to availability.  
+              Please initiate replacements from the &#39;My Orders&#39; section in the App within 7 days of Delivery.  
+              The product must be in its original condition with all tags attached.  
+              Return/Exchange is available for 7 days from the date of delivery.
+            </p>
+
+
           </div>
         </div>
       </div>
