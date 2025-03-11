@@ -318,8 +318,6 @@ function ProductDetails() {
             className={`w-full h-full object-cover rounded-md transition duration-300
               ${index === activeIndex ? 'brightness-100 opacity-50' : 'brightness-75 opacity-100'}`} 
           />
-
-          
         </div>
       </SwiperSlide>
     ))}
@@ -329,23 +327,23 @@ function ProductDetails() {
           <div className="w-full md:w-1/2 px-4"> 
             <h2 className="text-3xl font-bold mb-2 flex ">
              {product.name}<ProductHeader product={product} />
-            </h2>
-            <div className="mb-4 flex items-center gap-4">
-              <span className="text-2xl font-semibold ">₹{product.price}</span>
-              {/* <span className="text-gray-700 line-through">₹{product.price + 1400}</span> */}
-              <span className="text-xl text-gray-700 line-through">
-  ₹
-  {product.price +
-    (product.category === "Oversize-Tshirt"
-      ? 1400
-      : product.category === "Tshirt"
-      ? 500
-      : product.category === "Hoodies"
-      ? 1500
-      : product.category === "Couple-Tshirt"
-      ? 1000
-      : 0)}
-</span>
+                      </h2>
+                      <div className="mb-4 flex items-center gap-4">
+                        <span className="text-2xl font-semibold ">₹{product.price}</span>
+                        {/* <span className="text-gray-700 line-through">₹{product.price + 1400}</span> */}
+                        <span className="text-xl text-gray-700 line-through">
+            ₹
+            {product.price +
+              (product.category === "Oversize-Tshirt"
+                ? 1400
+                : product.category === "Tshirt"
+                ? 500
+                : product.category === "Hoodies"
+                ? 1500
+                : product.category === "Couple-Tshirt"
+                ? 1000
+                : 0)}
+          </span>
 
 
             </div>
@@ -354,24 +352,23 @@ function ProductDetails() {
             </span>
 
             
-            {/* Social Proof Gradient Strip */}
-            <div className="w-full p-2 mb-5 bg-gradient-to-r from-[#0C3937] to-blue-50 text-white flex items-center">
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-    <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
-  </svg>
-  <span className="font-forumNormal text-sm md:text-lg">
-    {/* Calculate a consistent but seemingly random number based on product ID or name */}
-    {(() => {
-      // Generate a number between 50 and 129 based on product properties
-      // This ensures the same product always shows the same number
-      const baseNumber = product.id ? 
-        (parseInt(product.id) % 80) + 50 : 
-        (product.name.length * 7) % 80 + 50;
-      
-      return `${baseNumber} people bought this in the last 7 days`;
-    })()}
-  </span>
-</div>
+                      {/* Only show for products created before March 4, 2025 */}
+{new Date(product.createdAt) < new Date('2025-03-04') && (
+  <div className="w-full p-2 mb-5 bg-gradient-to-r from-[#0C3937] to-blue-50 text-white flex items-center">
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+      <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+    </svg>
+    <span className="font-forumNormal text-sm md:text-lg">
+      {(() => {
+        const baseNumber = product._id ? 
+          (parseInt(product._id.toString().slice(-6), 16) % 80) + 50 : 
+          (product.name.length * 7) % 80 + 50;
+        
+        return `${baseNumber} people bought this in the last 7 days`;
+      })()}
+    </span>
+  </div>
+)}
 
 
             <p className="text-gray-700 mb-6">
@@ -579,7 +576,7 @@ function ProductDetails() {
     {product.category === "Tshirt" && <SpecialOffer />}
 
 
-            {/* Product Details Dropdown */}
+    
 
              {/* Product Details Dropdown */}
       <div className="mt-4">
@@ -612,20 +609,20 @@ function ProductDetails() {
       alt="Size Chart"
       className="w-full max-w-2xl mx-auto h-auto object-contain rounded-lg"
     />
-  </div>
+ </div>
 )}
 
 
-          {product.category !== "Hoodies" && product.category !== "Tshirt" && product.category !== "Couple-Tshirt" && (
-  <div className="mb-6">
-    <h4 className="font-semibold mb-3">Size Chart</h4>
-    <img
-      src="/images/oversize-size.jpg" // Replace with your actual image path
-      alt="Size Chart"
-      className="w-full max-w-2xl mx-auto h-auto object-contain rounded-lg"
-    />
-  </div>
-)}
+                        {product.category !== "Hoodies" && product.category !== "Tshirt" && product.category !== "Couple-Tshirt" && (
+                <div className="mb-6">
+                  <h4 className="font-semibold mb-3">Size Chart</h4>
+                  <img
+                    src="/images/oversize-size.jpg" // Replace with your actual image path
+                    alt="Size Chart"
+                    className="w-full max-w-2xl mx-auto h-auto object-contain rounded-lg"
+                  />
+                </div>
+              )}
 
 
 
