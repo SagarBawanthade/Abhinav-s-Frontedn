@@ -17,9 +17,10 @@ const Shop = () => {
   const { items: products, loading } = useSelector((state) => state.products);
   const wishlist = useSelector(state => state.wishlist.items);
   const prevCategory = useRef(category);
-
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [contentOpacity, setContentOpacity] = useState(0);
+  const [holiSpecialProduct, setHoliSpecialProduct] = useState([]);
+  const [loadingHoliProduct, setLoadingHoliProduct] = useState(false);
   
   // Pagination state
   const [visibleProducts, setVisibleProducts] = useState([]);
@@ -41,6 +42,48 @@ const Shop = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []); 
+
+  // Fetch Holi-Special product specifically when that category is selected
+ // Fetch Holi-Special products specifically when that category is selected
+ useEffect(() => {
+  if (category === 'Holi-Special') {
+    const fetchHoliSpecialProducts = async () => {
+      setLoadingHoliProduct(true);
+      try {
+        const response = await fetch('https://backend.abhinavsofficial.com/api/product/getproducts');
+        const data = await response.json();
+        
+        // Find products after the specific product ID: 67ce9635db546172156f4a8c
+        if (data && data.length > 0) {
+          // Find the index of the specific product
+          const targetIndex = data.findIndex(product => product._id === '67ce9635db546172156f4a8c');
+          
+          if (targetIndex !== -1) {
+            // Get all products after the specified product ID
+            const newerProducts = data.slice(targetIndex + 1);
+            setHoliSpecialProduct(newerProducts);
+          } else {
+            // If the specific product is not found, use the last 10 products as fallback
+            console.warn('Target product ID not found, using last 9 products as fallback');
+            const startIndex = Math.max(0, data.length - 9);
+            const lastProducts = data.slice(startIndex);
+            setHoliSpecialProduct(lastProducts);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching Holi-Special products:', error);
+      } finally {
+        setLoadingHoliProduct(false);
+      }
+    };
+    
+    fetchHoliSpecialProducts();
+  } else {
+    // Reset Holi-Special products when navigating to other categories
+    setHoliSpecialProduct([]);
+  }
+}, [category]);
+
 
   useEffect(() => {
     if (products.length === 0) {
@@ -80,16 +123,21 @@ const Shop = () => {
         .reverse();
       
       const sortedProducts = [...nonHoodieProducts, ...hoodieProducts];
-  
-      setFilteredProducts(sortedProducts);
-      
-      // Update visible products based on current page
-      const endIndex = currentPage * productsPerPage;
-      setVisibleProducts(sortedProducts.slice(0, endIndex));
+
+      // Don't apply regular filtering for Holi-Special as we're fetching directly
+      if (category !== 'Holi-Special') {
+        setFilteredProducts(sortedProducts);
+        
+        // Update visible products based on current page
+        const endIndex = currentPage * productsPerPage;
+        setVisibleProducts(sortedProducts.slice(0, endIndex));
+      }
     };
   
-    applyFilters();
-  }, [filters, products, category, currentPage]); // Added currentPage as dependency
+    if (!category || category !== 'Holi-Special') {
+      applyFilters();
+    }
+  }, [filters, products, category, currentPage]);
 
   // Reset pagination when category changes
   useEffect(() => {
@@ -148,12 +196,12 @@ const Shop = () => {
       setIsTransitioning(false);
     };
 
-    if (!loading) {
+    if (!loading && !loadingHoliProduct) {
       handleScrollPosition();
     }
     
     prevCategory.current = category;
-  }, [location.state, category, loading]);
+  }, [location.state, category, loading, loadingHoliProduct]);
 
   const handleProductClick = (productId) => {
     if (shopRef.current) {
@@ -162,18 +210,117 @@ const Shop = () => {
     }
   };
 
+  // Function to render the product card (reused for both normal and Holi-Special)
+  const renderProductCard = (product) => (
+    <div key={product._id} className="group relative bg-headerBackGround rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+      <div className="relative">
+        <Link 
+          to={`/product-details/${product._id}`} 
+          onClick={() => handleProductClick(product._id)}
+          state={{ fromProduct: false, fromShop: true, fromCategory: category ? `/shop/${category}` : '/shop' }}
+        >
+          <div className="aspect-[5/5] overflow-hidden rounded-t-xl relative">
+            <img
+              src={product.images[0]}
+              alt={product.name}
+              className="h-full w-full object-cover object-center transform group-hover:scale-110 transition-transform duration-500"
+            />
+
+            {product.category && (
+              <div className="absolute top-0 left-0 w-24 h-24 overflow-hidden">
+                <div className={`
+                  bg-[#0C3937]
+                  text-white shadow-lg text-xs
+                  absolute font-semibold top-0 left-0 transform -rotate-45 translate-y-4 -translate-x-14 w-40 text-center md:py-1 md:text-md
+                `}>
+                  <div className="flex items-center justify-center sm:line-height-[normal] sm:text-base" style={{ lineHeight: "12px", fontSize: "10px" }}>
+                    <span>
+                      {product.category === "Oversize-Tshirt" ? "60%" : 
+                        product.category === "Tshirt" ? "50%" : 
+                        product.category === "Hoodies" ? "30%" : 
+                        product.category === "Holi-Special" ? "45%" :
+                        product.category === "Couple-Tshirt" ? "40%" : "SALE"}
+                      <span className="ml-0.5">OFF</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {product.category === "Tshirt" && product.price === 599 && (
+              <div className="absolute bottom-0 left-0 right-0 bg-green-500 font-bold text-xs text-white text-center font-forumNormal">
+                BUY 2 AT ₹699
+              </div>
+            )}
+          </div>
+        </Link>
+
+        <button 
+          onClick={() => toggleLike(product)}
+          className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-gray-100 transition-colors duration-300 transform hover:scale-110"
+        >
+          <Heart
+            className={`w-5 h-5 ${
+              isProductInWishlist(product._id) ? 'text-red-500 fill-red-500' : 'text-gray-600'
+            } transition-colors`}
+          />
+        </button>
+      </div>
+
+      <div className="p-2">
+        <Link to={`/product-details/${product._id}`}>
+          <h3 className="font-forumNormal text-left text-sm md:text-lg text-gray-900 mb-1 truncate group-hover:text-black">
+            {product.name}
+          </h3>
+        </Link>
+
+        <div className="flex items-center space-x-2 mb-3">
+          <span className="text-lg md:text-xl font-bold font-forumNormal text-gray-900">
+            ₹{product.price}
+          </span>
+          <span className="text-lg font-bold font-forumNormal text-gray-700 line-through">
+            ₹
+            {product.price +
+              (product.category === "Oversize-Tshirt"
+                ? 1400
+                : product.category === "Tshirt"
+                ? 500
+                : product.category === "Hoodies"
+                ? 1500
+                : product.category === "Couple-Tshirt"
+                ? 1200
+                : product.category === "Holi-Special"
+                ? 1100
+                : 0)}
+          </span>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <PromoBadge product={product} />
+          <Link 
+            to={`/product-details/${product._id}`}
+            className="hidden lg:block"
+          >
+            <button className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg bg-gray-900 text-white hover:bg-gray-800 transition-colors">
+              <ShoppingCart className="w-4 h-4 mr-2" />
+              Add to Cart
+            </button>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <>
-    <div className="w-full  bg-[#E6FF87]">
-  <Link 
-    to="/shop/Tshirt" 
-    className="block w-full h px-4 py-3 sm:px-6 md:px-8 text-center text-black sm:text-xl md:text-xl lg:text-2xl font-bold hover:-translate-y-0.5 transition duration-200 cursor-pointer"
-  >
-    <p className="m-0 font-bold forum-regular">PREMIUM TSHIRT Body Fit (BUY ANY 2 @₹699)</p>
-  </Link>
-</div>
-
+      <div className="w-full bg-[#E6FF87]">
+        <Link 
+          to="/shop/Tshirt" 
+          className="block w-full h px-4 py-3 sm:px-6 md:px-8 text-center text-black sm:text-xl md:text-xl lg:text-2xl font-bold hover:-translate-y-0.5 transition duration-200 cursor-pointer"
+        >
+          <p className="m-0 font-bold forum-regular">PREMIUM TSHIRT Body Fit (BUY ANY 2 @₹699)</p>
+        </Link>
+      </div>
 
       {/* Navigation Bar */}
       <div className="relative">
@@ -192,8 +339,8 @@ const Shop = () => {
         </div>
       </div>
 
-      {/* Loading Spinner - Added backdrop blur for better visual */}
-      {(loading || isTransitioning) && (
+      {/* Loading Spinner */}
+      {(loading || loadingHoliProduct || isTransitioning) && (
         <div className="fixed inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm z-50 transition-all duration-300">
           <div className="flex flex-col items-center space-y-4">
             <div className="w-8 h-8 border-2 border-gray-200 border-t-gray-900 rounded-full animate-spin" />
@@ -203,8 +350,6 @@ const Shop = () => {
       )}
 
       {/* Shop Layout */}
-
-      
       <div 
         ref={shopRef}
         className="bg-headerBackGround flex flex-col md:flex-row"
@@ -215,7 +360,6 @@ const Shop = () => {
           WebkitOverflowScrolling: 'touch'
         }}
       >
-        
         {/* Sidebar */}
         <div
           className={`fixed z-50 top-0 left-0 w-72 h-full bg-headerBackGround p-6 transition-transform duration-200 transform ${
@@ -235,10 +379,22 @@ const Shop = () => {
 
         {/* Products Section */}
         <div className="bg-headerBackGround w-full px-4 md:px-6 py-8">
-          <ProductsHeader category={category} filteredProducts={filteredProducts} />
+          {/* Holi-Special Banner */}
+          {category === 'Holi-Special' && (
+            <div className="mb-6 p-4 bg-purple-100 text-purple-800 rounded-lg border border-purple-300">
+              <p className="font-forumNormal text-center">
+                Showing our latest Holi-Special item! Get your colorful festival wear now.
+              </p>
+            </div>
+          )}
 
-          
-            
+          {/* Products Header */}
+          <ProductsHeader 
+            category={category} 
+            filteredProducts={category === 'Holi-Special' ? holiSpecialProduct : filteredProducts} 
+          />
+
+          {/* Products Grid */}
           <div 
             className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6 mb-8"
             style={{
@@ -247,155 +403,50 @@ const Shop = () => {
               transform: `translateY(${contentOpacity === 0 ? '10px' : '0'})`,
             }}
           > 
-          {visibleProducts.length > 0 ? (
-                visibleProducts.map((product) => (
-                  <div key={product._id} className="group relative bg-headerBackGround rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
-            <div className="relative">
-              <Link 
-                to={`/product-details/${product._id}`} 
-                onClick={() => handleProductClick(product._id)}
-                state={{ fromProduct: false, fromShop: true, fromCategory: category ? `/shop/${category}` : '/shop' }}
-              >
-               
-               <div className="aspect-[5/5] overflow-hidden rounded-t-xl relative">
-                      <img
-                        src={product.images[0]}
-                        alt={product.name}
-                        className="h-full w-full object-cover object-center transform group-hover:scale-110 transition-transform duration-500"
-                      />
-
-                      {product.category && (
-                        <div className="absolute top-0 left-0 w-24 h-24 overflow-hidden">
-                          <div className={`
-                            bg-[#0C3937]
-                            text-white shadow-lg text-xs
-                            absolute font-semibold top-0 left-0 transform -rotate-45 translate-y-4 -translate-x-14 w-40 text-center md:py-1 md:text-md
-                          `}>
-                            <div className="flex items-center justify-center sm:line-height-[normal] sm:text-base" style={{ lineHeight: "12px", fontSize: "10px" }}>
-                              <span>
-                                {product.category === "Oversize-Tshirt" ? "60%" : 
-                                  product.category === "Tshirt" ? "50%" : 
-                                  product.category === "Hoodies" ? "30%" : 
-                                  product.category === "Couple-Tshirt" ? "40%" : "SALE"}
-                                <span className="ml-0.5">OFF</span>
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Bestseller tag - you can conditionally render this based on product properties */}
-                      {/* {((product.category === "Hoodies" && product.price >= 599) || 
-                          (product.category === "Oversize-Tshirt" && product.price <= 799)) && (
-                          <div className="absolute top-0 right-0 bg-yellow-500 text-black font-bold px-3 py-1 rounded-bl-lg shadow-md">
-                            BESTSELLER
-                          </div>
-                        )} */}
-
-                      {/* Conditional offer strip - only shown for Tshirt with price 599 */}
-                      {product.category === "Tshirt" && product.price === 599 && (
-                        <div className="absolute bottom-0 left-0 right-0 bg-green-500 font-bold text-xs text-white text-center font-forumNormal">
-                          BUY 2 AT ₹699
-                        </div>
-                      )}
-                    </div>
-                    </Link>
- 
-                      <button 
-                        onClick={() => toggleLike(product)}
-                        className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-gray-100 transition-colors duration-300 transform hover:scale-110"
-                      >
-                        <Heart
-                          className={`w-5 h-5 ${
-                            isProductInWishlist(product._id) ? 'text-red-500 fill-red-500' : 'text-gray-600'
-                          } transition-colors`}
-                        />
-                      </button>
-                    </div>
-
-                    <div className="p-2">
-                      <Link to={`/product-details/${product._id}`}>
-                        <h3 className="font-forumNormal text-left text-sm md:text-lg text-gray-900 mb-1 truncate group-hover:text-black">
-                          {product.name}
-                        </h3>
-                      </Link>
-
-                      <div className="flex items-center space-x-2 mb-3">
-                        <span className="text-lg md:text-xl font-bold font-forumNormal text-gray-900">
-                          ₹{product.price}
-                        </span>
-                        {/* <span className="text-sm md:text-base font-forumNormal text-gray-500 line-through">
-                          ₹{product.price + 100}
-                        </span> */}
-                           <span className="text-lg font-bold font-forumNormal text-gray-700 line-through">
-  ₹
-  {product.price +
-    (product.category === "Oversize-Tshirt"
-      ? 1400
-      : product.category === "Tshirt"
-      ? 500
-      : product.category === "Hoodies"
-      ? 1500
-      : product.category === "Couple-Tshirt"
-      ? 1200
-      : 0)}
-</span>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        
-                        <PromoBadge product={product} />
-
-                      
-
-<Link 
-  to={`/product-details/${product._id}`}
-  className="hidden lg:block"
->
- 
-    <button className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg bg-gray-900 text-white hover:bg-gray-800 transition-colors">
-      <ShoppingCart className="w-4 h-4 mr-2" />
-      Add to Cart
-    </button>
-  
-</Link>
-
-
-                      </div>
-                    </div>
-                  </div>
-                ))
+            {/* For Holi-Special category, show only the special product */}
+            {category === 'Holi-Special' ? (
+              loadingHoliProduct ? (
+                <p className="col-span-full text-center text-lg text-gray-500 py-12">
+                  Loading Holi-Special products...
+                </p>
+              ) : holiSpecialProduct && holiSpecialProduct.length > 0 ? (
+                holiSpecialProduct.map(product => renderProductCard(product))
+              ) : (
+                <p className="col-span-full text-center text-lg text-gray-500 py-12">
+                  No Holi-Special products found!
+                </p>
+              )
+            ) : (
+              // For other categories, show filtered products
+              visibleProducts.length > 0 ? (
+                visibleProducts.map(product => renderProductCard(product))
               ) : (
                 <p className="col-span-full text-center text-lg text-gray-500 py-12">
                   {loading ? 'Loading Products...' : 'No products found!'}      
                 </p>
-              )}
+              )
+            )}
+          </div>
+
+          {/* Show More Button - Only for non-Holi-Special categories */}
+          {category !== 'Holi-Special' && filteredProducts.length > visibleProducts.length && (
+            <div className="flex justify-center">
+              <button
+                onClick={handleShowMore}
+                className="group flex items-center mb-14 gap-3 px-8 py-2 bg-[#0C3937] text-white rounded-md hover:bg-[#0a2e2c] transition-all duration-300 font-medium shadow-md hover:shadow-lg"
+              >
+                <ShoppingCart className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                <span className='font-forumNormal'>Show More Products</span>
+                <div className="w-8 h-8 flex items-center justify-center bg-white/10 rounded-full ml-2">
+                  <span className="text-sm">
+                    +{filteredProducts.length - visibleProducts.length}
+                  </span>
+                </div>
+              </button>
             </div>
-
-
-            {filteredProducts.length > visibleProducts.length && (
-  <div className="flex justify-center ">
-    <button
-      onClick={handleShowMore}
-      className="group flex items-center mb-14 gap-3 px-8 py-2 bg-[#0C3937] text-white rounded-md hover:bg-[#0a2e2c] transition-all duration-300 font-medium shadow-md hover:shadow-lg"
-    >
-      <ShoppingCart className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-      <span className='font-forumNormal'>Show More Products</span>
-      <div className="w-8 h-8 flex items-center justify-center bg-white/10 rounded-full ml-2">
-        <span className="text-sm">
-          +{filteredProducts.length - visibleProducts.length}
-        </span>
-      </div>
-    </button>
-  </div>
-)}
-                  
-     
+          )}
         </div>
       </div>
-
-
-
     </>
   );
 };

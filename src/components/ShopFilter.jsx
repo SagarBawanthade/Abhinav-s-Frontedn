@@ -69,18 +69,18 @@ const ShopFilters = ({ onFiltersChange }) => {
             All Products
           </Link>
         </li>
-        {["Hoodies", "Oversize-Tshirt", "Tshirt", "Couple-Tshirt"].map((category) => (
+        {["Hoodies", "Oversize-Tshirt", "Tshirt", "Couple-Tshirt", "Holi-Special"].map((category) => (
   <li key={category}>
     <Link
       to={`/shop/${category}`}
       className="text-left w-full mb-4 text-gray-700 hover:underline"
     >
       {category}
-      {/* {category === "Customize" && (
-  <span className="flex ml-2 px-2 py-1 text-xs font-medium text-white bg-red-500 rounded-md opacity-50 cursor-not-allowed">
-     Soon
-  </span>
-)} */}
+     
+
+
+
+
 
     </Link>
   </li>

@@ -120,7 +120,8 @@ const HeaderSidebar = ({ isOpen, onClose, isLoggedIn, handleLogout }) => {
                             { icon: Shirt, label: 'Hoodies', to: '/shop/hoodies' },
                             { icon: Shirt, label: 'T-Shirts', to: '/shop/Tshirt' },
                             { icon: Users, label: 'Couple T-Shirts', to: '/shop/Couple-Tshirt' },
-                            { icon: Shirt, label: 'Oversize T-Shirts', to: '/shop/Oversize-Tshirt' }
+                            { icon: Shirt, label: 'Oversize T-Shirts', to: '/shop/Oversize-Tshirt' },
+                            { icon: Shirt, label: 'Holi-Special', to: '/shop/Holi-Special' }
                           ].map((item, index) => (
                             <Link 
                               key={index} 
