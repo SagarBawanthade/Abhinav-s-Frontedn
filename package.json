@@ -21,6 +21,7 @@
     "@mui/material": "^6.3.0",
     "@radix-ui/react-dialog": "^1.1.4",
     "@reduxjs/toolkit": "^2.5.0",
+    "@tailwindcss/vite": "^4.0.13",
     "axios": "^1.7.9",
     "lucide-preact": "^0.469.0",
     "lucide-react": "^0.469.0",
