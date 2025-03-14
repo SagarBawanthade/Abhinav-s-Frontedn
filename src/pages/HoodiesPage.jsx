@@ -21,10 +21,14 @@ const HoodiesPage = () => {
   const [cartItem, setCartItem] = useState(null);
   const [showHeading, setShowHeading] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+
   const [products, setProducts] = useState([]);
   const [products2, setProducts2] = useState([]);
   const [products3, setProducts3] = useState([]);
   const [products4, setProducts4] = useState([]);
+
+
+  
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
@@ -260,7 +264,7 @@ const toggleLike = (item) => {
             1024: { slidesPerView: 3 }
           }}
         >
-          {products3.map((item) => (
+          {products4.map((item) => (
             <SwiperSlide key={item._id}>
               <div className="group relative bg-[#E9EBCA] rounded-xl shadow-sm hover:shadow-xl transition-all duration-300">
                 <div className="relative overflow-hidden">
@@ -359,7 +363,7 @@ const toggleLike = (item) => {
         </Swiper>
 
         <div className="flex justify-center gap-2 md:hidden mt-6">
-          {products3.map((_, index) => (
+          {products4.map((_, index) => (
             <button
               key={index}
               onClick={() => setActiveIndex(index)}
@@ -417,7 +421,7 @@ const toggleLike = (item) => {
             1024: { slidesPerView: 3 }
           }}
         >
-          {products4.map((item) => (
+          {products3.map((item) => (
             <SwiperSlide key={item._id}>
               <div className="group relative bg-[#E9EBCA] rounded-xl shadow-sm hover:shadow-xl transition-all duration-300">
                 <div className="relative overflow-hidden">
