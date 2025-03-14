@@ -43,47 +43,50 @@ const Shop = () => {
     window.scrollTo(0, 0);
   }, []); 
 
-  // Fetch Holi-Special product specifically when that category is selected
- // Fetch Holi-Special products specifically when that category is selected
- useEffect(() => {
-  if (category === 'Holi-Special') {
-    const fetchHoliSpecialProducts = async () => {
-      setLoadingHoliProduct(true);
-      try {
-        const response = await fetch('https://backend.abhinavsofficial.com/api/product/getproducts');
-        const data = await response.json();
-        
-        // Find products after the specific product ID: 67ce9635db546172156f4a8c
-        if (data && data.length > 0) {
-          // Find the index of the specific product
-          const targetIndex = data.findIndex(product => product._id === '67ce9635db546172156f4a8c');
+  useEffect(() => {
+    if (category === 'Holi-Special') {
+      const fetchHoliSpecialProducts = async () => {
+        setLoadingHoliProduct(true);
+        try {
+          const response = await fetch('https://backend.abhinavsofficial.com/api/product/getproducts');
+          const data = await response.json();
           
-          if (targetIndex !== -1) {
-            // Get all products after the specified product ID
-            const newerProducts = data.slice(targetIndex + 1);
-            setHoliSpecialProduct(newerProducts);
+          console.log('Total products fetched:', data.length);
+          
+          if (data && data.length > 0) {
+            // Find the index of the specific product
+            const targetIndex = data.findIndex(product => product._id === '67ce9635db546172156f4a8c');
+            console.log('Target product index:', targetIndex);
+            
+            if (targetIndex !== -1) {
+              // Get exactly 8 products after the specified product ID
+              const newerProducts = data.slice(targetIndex + 1, targetIndex + 9);
+              console.log('Selected products count:', newerProducts.length);
+              console.log('Selected products:', newerProducts.map(p => p._id));
+              setHoliSpecialProduct(newerProducts);
+            } else {
+              // If the specific product is not found, use exactly 8 products as fallback
+              console.warn('Target product ID not found, using last 8 products as fallback');
+              const lastProducts = data.slice(-8);
+              console.log('Fallback products count:', lastProducts.length);
+              setHoliSpecialProduct(lastProducts);
+            }
           } else {
-            // If the specific product is not found, use the last 10 products as fallback
-            console.warn('Target product ID not found, using last 9 products as fallback');
-            const startIndex = Math.max(0, data.length - 9);
-            const lastProducts = data.slice(startIndex);
-            setHoliSpecialProduct(lastProducts);
+            console.log('No products data received');
           }
+        } catch (error) {
+          console.error('Error fetching Holi-Special products:', error);
+        } finally {
+          setLoadingHoliProduct(false);
         }
-      } catch (error) {
-        console.error('Error fetching Holi-Special products:', error);
-      } finally {
-        setLoadingHoliProduct(false);
-      }
-    };
-    
-    fetchHoliSpecialProducts();
-  } else {
-    // Reset Holi-Special products when navigating to other categories
-    setHoliSpecialProduct([]);
-  }
-}, [category]);
-
+      };
+      
+      fetchHoliSpecialProducts();
+    } else {
+      // Reset Holi-Special products when navigating to other categories
+      setHoliSpecialProduct([]);
+    }
+  }, [category]);
 
   useEffect(() => {
     if (products.length === 0) {
