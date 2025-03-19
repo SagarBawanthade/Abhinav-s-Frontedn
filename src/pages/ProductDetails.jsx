@@ -573,8 +573,8 @@ function ProductDetails() {
   </div>
 </button>
     </div>
-
-    {product.category === "Tshirt" && <SpecialOffer />}
+{/* 
+    {product.category === "Tshirt" && <SpecialOffer />} */}
 
 
     

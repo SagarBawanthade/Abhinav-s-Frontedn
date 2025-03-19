@@ -250,11 +250,11 @@ const Shop = () => {
               </div>
             )}
 
-            {product.category === "Tshirt" && product.price === 599 && (
+            {/* {product.category === "Tshirt" && product.price === 599 && (
               <div className="absolute bottom-0 left-0 right-0 bg-green-500 font-bold text-xs text-white text-center font-forumNormal">
                 BUY 2 AT ₹699
               </div>
-            )}
+            )} */}
           </div>
         </Link>
 
@@ -316,14 +316,14 @@ const Shop = () => {
 
   return (
     <>
-      <div className="w-full bg-[#E6FF87]">
+      {/* <div className="w-full bg-[#E6FF87]">
         <Link 
           to="/shop/Tshirt" 
           className="block w-full h px-4 py-3 sm:px-6 md:px-8 text-center text-black sm:text-xl md:text-xl lg:text-2xl font-bold hover:-translate-y-0.5 transition duration-200 cursor-pointer"
         >
           <p className="m-0 font-bold forum-regular">PREMIUM TSHIRT Body Fit (BUY ANY 2 @₹699)</p>
         </Link>
-      </div>
+      </div> */}
 
       {/* Navigation Bar */}
       <div className="relative">

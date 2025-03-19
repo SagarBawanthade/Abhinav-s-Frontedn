@@ -260,14 +260,6 @@ useEffect(() => {
 }, [location]);
 
 
-const checkSpecialTshirtOffer = (cartItems) => {
-  const tshirts = cartItems.filter(item => {
-    const name = item.name || (item.product && item.product.name);
-    return name.toLowerCase().includes('t-shirt') && item.quantity === 1;
-  });
-  
-  return tshirts.length === 2;
-};
 
 // Function to calculate product price
 const calculateProductPrice = (product) => {
@@ -282,23 +274,10 @@ const calculateProductPrice = (product) => {
   return (productDetails.price * productDetails.quantity) + additionalCost;
 };
 
+
 // Calculate total cart price with special offer
 const calculateTotalPrice = () => {
-  if (checkSpecialTshirtOffer(cartItems)) {
-    // Apply special price of 1299 for the t-shirts
-    const nonTshirtItems = cartItems.filter(item => {
-      const name = item.name || (item.product && item.product.name);
-      return !name.toLowerCase().includes('t-shirt');
-    });
-
-    const nonTshirtTotal = nonTshirtItems.reduce((total, item) => {
-      return total + calculateProductPrice(item);
-    }, 0);
-
-    return nonTshirtTotal + 699; // Special price for 3 t-shirts
-  }
-
-  // Regular price calculation
+  // Regular price calculation for all items
   return cartItems.reduce((total, item) => {
     return total + calculateProductPrice(item);
   }, 0);
@@ -314,7 +293,6 @@ if (loading) {
    
   );
 }
-
 
   return (
     <div className="font-forumNormal bg-headerBackGround min-h-screen p-4">
@@ -389,13 +367,13 @@ if (loading) {
                     </div>
                     <span className="text-green-600">₹0</span>
                   </div>
-                  
+{/*                   
                   {checkSpecialTshirtOffer(cartItems) && (
                     <div className="flex justify-between items-center text-green-600 bg-green-50 p-3 rounded-lg">
                       <span>Special T-shirt Offer Applied!</span>
                       <span>2 T-shirts for ₹699</span>
                     </div>
-                  )}
+                  )} */}
                   
                   <div className="flex justify-between items-center text-lg font-semibold pt-2">
                     <span>Total</span>
