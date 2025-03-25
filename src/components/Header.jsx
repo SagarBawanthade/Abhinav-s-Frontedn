@@ -1,4 +1,4 @@
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart , Search} from 'lucide-react';
 import { Heart } from 'lucide-react';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useState, useRef, useEffect } from 'react';
@@ -124,9 +124,11 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Left Section */}
           <div className="flex items-center">
+        
             {!isLoggedIn ? (
               <div className='flex flex-col items-center'>
               <MenuIcon 
+             
                 size={24}
                 // onClick={toggleMenu}
                 onClick={() => setSidebarOpen(true)}
@@ -157,35 +159,46 @@ const Header = () => {
           </div>
 
           {/* Right Section */}
-          <div className="flex items-center space-x-5">
-            <Link to="/wish-list">
-              <div className="flex flex-col items-center">
-                <Heart 
-                  size={24} 
-                  className="cursor-pointer hover:scale-110 transition-transform"
-                />
-                <span className="hidden sm:block font-forumNormal font-bold text-xs text-gray-600">Wishlist</span>
-              </div>
-            </Link>
+<div className="flex items-center space-x-3 sm:space-x-5">
+  {/* Search Icon */}
+  <div className='flex flex-col items-center'>
+    <Search
+      size={24}
+      onClick={() => setSidebarOpen(true)}
+      className="cursor-pointer hover:scale-110 transition-transform"
+    />
+    <span className="hidden sm:block font-forumNormal font-bold text-xs text-gray-600">Search</span>
+  </div>
 
-            <div className="relative">
-              <div className="flex flex-col items-center">
-                <ShoppingCart
-                  size={24}
-                  onClick={toggleCart}
-                  className="cursor-pointer hover:scale-110 transition-transform"
-                />
-                 <span className="hidden sm:block font-forumNormal font-bold text-xs text-gray-600">Cart</span>
-                {cartItems.length > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {cartItems.length}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+  {/* Wishlist - Hidden on Small Screens */}
+  <Link to="/wish-list" className="hidden sm:block">
+    <div className="flex flex-col items-center">
+      <Heart 
+        size={24} 
+        className="cursor-pointer hover:scale-110 transition-transform"
+      />
+      <span className="font-forumNormal font-bold text-xs text-gray-600">Wishlist</span>
+    </div>
+  </Link>
 
+  {/* Shopping Cart */}
+  <div className="relative">
+    <div className="flex flex-col items-center">
+      <ShoppingCart
+        size={24}
+        onClick={toggleCart}
+        className="cursor-pointer hover:scale-110 transition-transform"
+      />
+      <span className="hidden sm:block font-forumNormal font-bold text-xs text-gray-600">Cart</span>
+      {cartItems.length > 0 && (
+        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+          {cartItems.length}
+        </span>
+      )}
+    </div>
+  </div>
+</div>
+</div>
         {/* Sidebar Component */}
       <HeaderSidebar
         isOpen={sidebarOpen}
