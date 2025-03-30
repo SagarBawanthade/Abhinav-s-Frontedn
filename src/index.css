@@ -1,0 +1,103 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+
+
+
+@font-face {
+    font-family: 'AvenirLight';
+    src: url('/frontend-abhinavs/public/fonts/Avenir-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+  }
+
+
+  
+  .cinzel-hero {
+    font-family: "Cinzel", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  
+  .glory-glory{
+    font-family: "Glory", serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+  }
+
+  
+  .noto-serif-devanagari-regular {
+    font-family: "Noto Serif Devanagari", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings:
+      "wdth" 100;
+  }
+
+ 
+  .quicksand-forum-normal {
+    font-family: "Quicksand", serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+  }
+  
+
+  .forum-regular {
+    font-family: "Forum", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  /* Modal overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Modal content */
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 100%;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Buttons */
+.btn {
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.btn-primary {
+  background-color: black; /* Blue */
+  color: white;
+  
+}
+
+.btn-primary:hover {
+  background-color: #000000; /* Dark blue */
+}
+
+.btn-secondary {
+  background-color: #d1d5db; /* Light gray */
+  color: #1f2937; /* Dark gray */
+}
