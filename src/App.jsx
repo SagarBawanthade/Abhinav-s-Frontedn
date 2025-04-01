@@ -4,6 +4,7 @@ import Footer from "./components/Footer.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import ShopNowPage from "./pages/ShopNowPage.jsx";
 import HoodiesPage from "./pages/HoodiesPage.jsx";
+import Fandom from "./pages/Fandom.jsx";
 import InstagramPage from "./pages/InstaGramPage.jsx";
 import ServicesPage from "./pages/ServicesPage.jsx";
 import Shop from "./pages/Shop.jsx";
@@ -50,6 +51,7 @@ function App() {
             <HomePage /> {/* Render HomePage */}
             <ShopNowPage /> {/* Render ShopNowPage */}
             <HoodiesPage /> {/* Render HoodiesPage */}
+            <Fandom /> {/* Render Fandom */}
             <InstagramPage /> {/* Render InstagramPage */}
             <ServicesPage /> {/* Render ServicesPage */}
           </>
