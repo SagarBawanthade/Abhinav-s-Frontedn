@@ -50,10 +50,10 @@ const handleSearchInputChange = (query) => {
       { type: 'category', name: 'Hoodies', path: '/shop/hoodies' },
     ],
     'c': [
-      { type: 'category', name: 'Couple-Tshirts', path: '/shop/Couple-Tshirt' },
+      { type: 'category', name: 'Hoodies', path: '/shop/hoodies' },
     ],
     's': [
-      { type: 'category', name: 'Shorts', path: '/shop/Tshirt' },
+      { type: 'category', name: 'Shorts', path: '/shop/category/shorts' },
       { type: 'tag', name: 'Summer', path: '/shop/tag/summer' },
     ],
   };
@@ -125,21 +125,6 @@ const handleSearch = (e) => {
     }
   };
 
-  // const handleSearch = (e) => {
-  //   if (e.key === "Enter") {
-  //     const query = e.target.value.trim().toLowerCase();
-
-  //     if (query) {
-  //       navigate(`/shop/${query}`);
-  //       setSearchOpen(false); // Close search modal
-  //     }
-  //   }
-  // };
-
-  
-  
-
-  
   useEffect(() => {
     // Close the menu and search if clicked outside
     const handleClickOutside = (event) => {
@@ -285,47 +270,43 @@ const handleSearch = (e) => {
           </div>
 
           {/* Right Section */}
-<div className="flex items-center space-x-5">
-  {/* Search Icon - visible on all screens */}
-  <div className="flex flex-col items-center">
-    <Search 
-      size={24}
-      className="cursor-pointer hover:scale-110 transition-transform search-icon"
-      onClick={toggleSearch}
-    />
-    <span className="hidden sm:block font-forumNormal font-bold text-xs text-gray-600">Search</span>
-  </div>
-  
-  {/* Wishlist Icon - hidden on mobile, visible on sm and up */}
-  <div className="hidden sm:block">
-    <Link to="/wish-list">
-      <div className="flex flex-col items-center">
-        <Heart 
-          size={24} 
-          className="cursor-pointer hover:scale-110 transition-transform"
-        />
-        <span className="font-forumNormal font-bold text-xs text-gray-600">Wishlist</span>
-      </div>
-    </Link>
-  </div>
+          <div className="flex items-center space-x-5">
+            {/* Search Icon */}
+            <div className="flex flex-col items-center">
+              <Search 
+                size={24}
+                className="cursor-pointer hover:scale-110 transition-transform search-icon"
+                onClick={toggleSearch}
+              />
+              <span className="hidden sm:block font-forumNormal font-bold text-xs text-gray-600">Search</span>
+            </div>
+            
+            <Link to="/wish-list">
+              <div className="flex flex-col items-center">
+                <Heart 
+                  size={24} 
+                  className="cursor-pointer hover:scale-110 transition-transform"
+                />
+                <span className="hidden sm:block font-forumNormal font-bold text-xs text-gray-600">Wishlist</span>
+              </div>
+            </Link>
 
-  {/* Cart Icon - visible on all screens */}
-  <div className="relative">
-    <div className="flex flex-col items-center">
-      <ShoppingCart
-        size={24}
-        onClick={toggleCart}
-        className="cursor-pointer hover:scale-110 transition-transform"
-      />
-      <span className="hidden sm:block font-forumNormal font-bold text-xs text-gray-600">Cart</span>
-      {cartItems.length > 0 && (
-        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-          {cartItems.length}
-        </span>
-      )}
-    </div>
-  </div>
-</div>
+            <div className="relative">
+              <div className="flex flex-col items-center">
+                <ShoppingCart
+                  size={24}
+                  onClick={toggleCart}
+                  className="cursor-pointer hover:scale-110 transition-transform"
+                />
+                <span className="hidden sm:block font-forumNormal font-bold text-xs text-gray-600">Cart</span>
+                {cartItems.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {cartItems.length}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
       {/* Search Bar - Animated with updated design */}
