@@ -10,7 +10,8 @@ const AddProduct = () => {
     price: 0,
     stock: 0,
     size: [],
-    color: [], // Keep as array
+    color: [], 
+    tags: [],
     images: [],
   });
 
@@ -108,6 +109,7 @@ const AddProduct = () => {
           stock: 0,
           size: [],
           color: [],
+          tags: [], 
           images: [],
         });
       } else {
@@ -263,7 +265,7 @@ const AddProduct = () => {
           <div>
             <label className="block text-sm font-semibold mb-2">Colors</label>
             <div className="flex flex-wrap gap-4">
-              {["Purple", "Orange", "Yellow", "Pink", "Red", "Blue", "Green", "Black", "Lavender", "White"].map((color) => (
+              {["kiwi-green", "royal-blue", "red", "yellow", "navy-blue", "black", "white"].map((color) => (
                 <label key={color} className="inline-flex items-center">
                   <input
                     type="checkbox"
@@ -281,6 +283,32 @@ const AddProduct = () => {
               Selected colors: {Array.isArray(formData.color) ? formData.color.join(', ') : 'None'}
             </p>
           </div>
+
+
+              {/* Tags - New Section */}
+              <div>
+            <label className="block text-sm font-semibold mb-2">Tags</label>
+            <div className="flex flex-wrap gap-4">
+              {["doraemon", "marvel", "dc", "adventure", "trending-talks", "spider-man", "minions", "typography"].map((tag) => (
+                <label key={tag} className="inline-flex items-center">
+                  <input
+                    type="checkbox"
+                    name="tags"
+                    value={tag}
+                    checked={Array.isArray(formData.tags) && formData.tags.includes(tag)}
+                    onChange={handleChange}
+                    className="form-checkbox"
+                  />
+                  <span className="ml-2">{tag}</span>
+                </label>
+              ))}
+            </div>
+            <p className="text-sm text-gray-500 mt-2">
+              Selected tags: {Array.isArray(formData.tags) ? formData.tags.join(', ') : 'None'}
+            </p>
+          </div>
+
+
 
           {/* Images */}
           <div>

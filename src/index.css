@@ -5,6 +5,16 @@
 
 
 
+.swiper-pagination-bullet {
+  background-color: #4B5563 !important; /* Dark gray */
+  opacity: 0.6;
+}
+
+.swiper-pagination-bullet-active {
+  background-color: #1F2937 !important; /* Darker gray */
+  opacity: 1;
+}
+
 
 
 

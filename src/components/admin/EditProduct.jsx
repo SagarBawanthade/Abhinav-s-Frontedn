@@ -18,7 +18,8 @@ const EditProduct = () => {
     price: 0,
     stock: 0,
     size: [],
-    color: [], // Keep as array for UI handling
+    color: [], 
+    tags: [],
     images: [],
   });
 
@@ -39,11 +40,17 @@ const EditProduct = () => {
       ? productData.color 
       : productData.color?.split(',').map(c => c.trim()) || [];
 
-        setFormData({
-          ...productData,
-          color: colorArray,
-          size: Array.isArray(productData.size) ? productData.size : []
-        });
+       // Handle tags data, ensuring it's always an array
+       const tagsArray = Array.isArray(productData.tags)
+       ? productData.tags
+       : productData.tags?.split(',').map(t => t.trim()) || [];
+     
+     setFormData({
+       ...productData,
+       color: colorArray,
+       size: Array.isArray(productData.size) ? productData.size : [],
+       tags: tagsArray
+     });
       } catch (err) {
         toast.error("Failed to fetch product details");
       }
@@ -265,7 +272,7 @@ const EditProduct = () => {
         <div>
           <label className="block text-sm font-semibold mb-2">Colors</label>
           <div className="flex flex-wrap gap-4">
-            {["Purple", "Orange", "Yellow", "Pink", "Red", "Blue", "Green", "Black", "Lavender", "White"].map((color) => (
+            {["kiwi-green", "royal-blue", "red", "yellow", "navy-blue", "black", "white"].map((color) => (
               <label key={color} className="inline-flex items-center">
                 <input
                   type="checkbox"
@@ -283,6 +290,32 @@ const EditProduct = () => {
             Selected colors: {Array.isArray(formData.color) ? formData.color.join(', ') : 'None'}
           </p>
         </div>
+
+        {/* Tags */}
+        {/* Tags Options */}
+<div>
+  <label className="block text-sm font-semibold mb-2">Tags</label>
+  <div className="flex flex-wrap gap-4">
+  {["doraemon", "marvel", "dc", "adventure", "trending-talks", "spider-man", "minions", "typography"].map((tag) => (
+  <label key={tag} className="inline-flex items-center">
+    <input
+      type="checkbox"
+      name="tags"
+      value={tag}
+      checked={Array.isArray(formData.tags) && formData.tags.includes(tag)}
+      onChange={handleChange}
+      className="form-checkbox"
+    />
+    <span className="ml-2">{tag}</span>
+  </label>
+))}
+  </div>
+  <p className="text-sm text-gray-500 mt-2">
+    Selected tags: {Array.isArray(formData.tags) ? formData.tags.join(', ') : 'None'}
+  </p>
+</div>
+
+        
 
         {/* Images */}
         <div>

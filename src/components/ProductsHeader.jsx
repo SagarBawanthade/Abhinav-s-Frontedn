@@ -1,7 +1,7 @@
 import { Tag, Sparkles, ShoppingBag } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-const ProductsHeader = ({ category, filteredProducts }) => {
+const ProductsHeader = ({ category, tag, filteredProducts }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [count, setCount] = useState(0);
 
@@ -47,9 +47,15 @@ const ProductsHeader = ({ category, filteredProducts }) => {
             {/* Category Title - Always on left */}
             <div className="flex items-center group">
             <ShoppingBag className="w-5 h-5 mr-3  md:w-8 md:h-8 text-black transition-all duration-300" />
-              <h1 className="font-forumNormal text-xl md:text-4xl font-medium text-gray-800 transition-colors duration-300">
-                {category ? category.charAt(0).toUpperCase() + category.slice(1) : "All Products"}
-              </h1>
+            <h1 className="font-forumNormal text-xl md:text-4xl font-medium text-gray-800 transition-colors duration-300">
+  {tag 
+    ? tag.charAt(0).toUpperCase() + tag.slice(1) 
+    : category 
+      ? category.charAt(0).toUpperCase() + category.slice(1) 
+      : 'All Products'}
+</h1>
+
+
               <Sparkles className="w-3 h-3 text-yellow-400 ml-2 opacity-0 group-hover:opacity-100 transition-all duration-300" />
             </div>
 

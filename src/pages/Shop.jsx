@@ -12,6 +12,7 @@ const Shop = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const shopRef = useRef(null);
   const { category } = useParams();
+  const { tag } = useParams();
   const dispatch = useDispatch();
   const location = useLocation();
   const { items: products, loading } = useSelector((state) => state.products);
@@ -105,7 +106,10 @@ const Shop = () => {
       const { priceRange, selectedColors, selectedSizes } = filters;
   
       const filtered = products.filter((product) => {
+        // const matchesCategory = !category || product.category.toLowerCase() === category.toLowerCase();
         const matchesCategory = !category || product.category.toLowerCase() === category.toLowerCase();
+        const matchesTag = !tag || (product.tags && product.tags.includes(tag));
+
         const matchesPrice = product.price <= priceRange;
         const matchesColor =
           selectedColors.length === 0 ||
@@ -114,7 +118,7 @@ const Shop = () => {
           selectedSizes.length === 0 ||
           selectedSizes.some((size) => product.size?.includes(size));
   
-        return matchesCategory && matchesPrice && matchesColor && matchesSize;
+        return matchesCategory && matchesTag && matchesPrice && matchesColor && matchesSize;
       });
   
       const hoodieProducts = filtered
@@ -140,7 +144,7 @@ const Shop = () => {
     if (!category || category !== 'Holi-Special') {
       applyFilters();
     }
-  }, [filters, products, category, currentPage]);
+  }, [filters, products, category, tag, currentPage]);
 
   // Reset pagination when category changes
   useEffect(() => {
@@ -394,6 +398,7 @@ const Shop = () => {
           {/* Products Header */}
           <ProductsHeader 
             category={category} 
+            tag={tag} 
             filteredProducts={category === 'Holi-Special' ? holiSpecialProduct : filteredProducts} 
           />
 
