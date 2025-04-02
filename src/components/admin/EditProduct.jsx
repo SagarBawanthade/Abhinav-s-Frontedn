@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 
+
 const EditProduct = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
@@ -272,7 +273,7 @@ const EditProduct = () => {
         <div>
           <label className="block text-sm font-semibold mb-2">Colors</label>
           <div className="flex flex-wrap gap-4">
-            {["kiwi-green", "royal-blue", "red", "yellow", "navy-blue", "black", "white"].map((color) => (
+            {["kiwi-green", "royal-blue", "red", "yellow", "navy-blue", "black", "white","cyan","umber"].map((color) => (
               <label key={color} className="inline-flex items-center">
                 <input
                   type="checkbox"
@@ -293,27 +294,27 @@ const EditProduct = () => {
 
         {/* Tags */}
         {/* Tags Options */}
-<div>
-  <label className="block text-sm font-semibold mb-2">Tags</label>
-  <div className="flex flex-wrap gap-4">
-  {["doraemon", "marvel", "dc", "adventure", "trending-talks", "spider-man", "minions", "typography"].map((tag) => (
-  <label key={tag} className="inline-flex items-center">
-    <input
-      type="checkbox"
-      name="tags"
-      value={tag}
-      checked={Array.isArray(formData.tags) && formData.tags.includes(tag)}
-      onChange={handleChange}
-      className="form-checkbox"
-    />
-    <span className="ml-2">{tag}</span>
-  </label>
-))}
-  </div>
-  <p className="text-sm text-gray-500 mt-2">
-    Selected tags: {Array.isArray(formData.tags) ? formData.tags.join(', ') : 'None'}
-  </p>
-</div>
+        <div>
+          <label className="block text-sm font-semibold mb-2">Tags</label>
+          <div className="flex flex-wrap gap-4">
+          {["doraemon", "marvel", "dc", "adventure", "trending-talks", "spider-man", "minions", "typography","bear","stay-wild","pooh","shinchan","mickey-mouse","panda","explore","duck","goku", "i-am-groot","ride","ghost"].map((tag) => (
+          <label key={tag} className="inline-flex items-center">
+            <input
+              type="checkbox"
+              name="tags"
+              value={tag}
+              checked={Array.isArray(formData.tags) && formData.tags.includes(tag)}
+              onChange={handleChange}
+              className="form-checkbox"
+            />
+            <span className="ml-2">{tag}</span>
+          </label>
+        ))}
+          </div>
+          <p className="text-sm text-gray-500 mt-2">
+            Selected tags: {Array.isArray(formData.tags) ? formData.tags.join(', ') : 'None'}
+          </p>
+        </div>
 
         
 

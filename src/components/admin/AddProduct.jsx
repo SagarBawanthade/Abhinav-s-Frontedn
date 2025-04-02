@@ -265,7 +265,7 @@ const AddProduct = () => {
           <div>
             <label className="block text-sm font-semibold mb-2">Colors</label>
             <div className="flex flex-wrap gap-4">
-              {["kiwi-green", "royal-blue", "red", "yellow", "navy-blue", "black", "white"].map((color) => (
+              {["kiwi-green", "royal-blue", "red", "yellow", "navy-blue", "black", "white, umber, cyan"].map((color) => (
                 <label key={color} className="inline-flex items-center">
                   <input
                     type="checkbox"
@@ -289,7 +289,7 @@ const AddProduct = () => {
               <div>
             <label className="block text-sm font-semibold mb-2">Tags</label>
             <div className="flex flex-wrap gap-4">
-              {["doraemon", "marvel", "dc", "adventure", "trending-talks", "spider-man", "minions", "typography"].map((tag) => (
+              {["doraemon", "marvel", "dc", "adventure", "trending-talks", "spider-man", "minions", "typography","bear","stay-wild","pooh","shinchan","mickey-mouse","panda","explore","duck","goku", "i-am-groot","ride","ghost"].map((tag) => (
                 <label key={tag} className="inline-flex items-center">
                   <input
                     type="checkbox"

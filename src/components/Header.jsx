@@ -53,7 +53,7 @@ const handleSearchInputChange = (query) => {
       { type: 'category', name: 'Couple-Tshirts', path: '/shop/Couple-Tshirt' },
     ],
     's': [
-      { type: 'category', name: 'Shorts', path: '/shop/category/shorts' },
+      { type: 'category', name: 'Shorts', path: '/shop/Tshirt' },
       { type: 'tag', name: 'Summer', path: '/shop/tag/summer' },
     ],
   };

@@ -18,7 +18,7 @@ const ShopFilters = ({ onFiltersChange }) => {
   const [selectedColors, setSelectedColors] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
 
-  const colorOptions = ["Kiwi Green", "Royal Blue", "Red", "Yellow", "Navy Blue", "Black", "White"];
+  const colorOptions = ["Kiwi Green", "Royal Blue", "Red", "Yellow", "Navy Blue", "Black", "White","umber", "cyan"];
   const sizeOptions = [ "S", "M", "L", "XL"];
 
   const toggleFilter = (filterKey) => {
