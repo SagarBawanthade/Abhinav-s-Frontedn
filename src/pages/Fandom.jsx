@@ -40,7 +40,7 @@ const Fandom = () => {
         name: 'Spiderman',
         image: '/images/fandom-18.jpeg',
         logo: 'https://th.bing.com/th/id/OIP.85drFdpEqu_ldfAmMxjM3wHaCs?rs=1&pid=ImgDetMain',
-        link: '/shop/tag/spiderman'
+        link: '/shop/tag/spider-man'
     },
     {
         id: 4,

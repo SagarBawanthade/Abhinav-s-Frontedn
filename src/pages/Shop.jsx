@@ -376,6 +376,9 @@ const Shop = () => {
           <ShopFilters onFiltersChange={(updatedFilters) => setFilters(updatedFilters)} />
         </div>
 
+
+        
+
         {/* Overlay */}
         {drawerOpen && (
           <div
