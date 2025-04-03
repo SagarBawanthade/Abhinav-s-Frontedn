@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Plus, Minus, Check} from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link,useLocation  } from "react-router-dom";
+
 
 const ShopFilters = ({ onFiltersChange }) => {
 
@@ -14,11 +15,11 @@ const ShopFilters = ({ onFiltersChange }) => {
     sizeOpen: false,
   });
   const [priceRange, setPriceRange] = useState(12500);
-
+  const location = useLocation();
   const [selectedColors, setSelectedColors] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
 
-  const colorOptions = ["Kiwi Green", "Royal Blue", "Red", "Yellow", "Navy Blue", "Black", "White","umber", "cyan"];
+  const colorOptions = ["Lavender", "Beige","Kiwi Green", "Royal Blue", "Red", "Yellow", "Navy Blue", "Black", "White","umber", "cyan"];
   const sizeOptions = [ "S", "M", "L", "XL"];
 
   const toggleFilter = (filterKey) => {
@@ -31,6 +32,8 @@ const ShopFilters = ({ onFiltersChange }) => {
     setPriceRange(12500);
     setSelectedColors([]);
     setSelectedSizes([]);
+
+    window.history.replaceState({}, '', window.location.pathname);
   };
 
   const handleFiltersChange = (updatedFilters) => {
@@ -43,17 +46,95 @@ const ShopFilters = ({ onFiltersChange }) => {
     onFiltersChange({ priceRange, selectedColors, selectedSizes });
   }, [priceRange, selectedColors, selectedSizes]);
 
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    
+    const colorParam = urlParams.get('color');
+    if (colorParam) {
+      const colorValues = colorParam.split(',');
+      setSelectedColors(colorValues);
+    } else {
+      setSelectedColors([]);
+    }
+    
+    const sizeParam = urlParams.get('size');
+    if (sizeParam) {
+      const sizeValues = sizeParam.split(',');
+      setSelectedSizes(sizeValues);
+    } else {
+      setSelectedSizes([]);
+    }
+    
+    // Get price range from URL if available
+    const priceParam = urlParams.get('price');
+    if (priceParam && !isNaN(Number(priceParam))) {
+      setPriceRange(Number(priceParam));
+    }
+    
+  }, [location.search]);
+
+
+  // const handleToggleSelection = (item, type) => {
+  //   if (type === "color") {
+  //     setSelectedColors((prev) =>
+  //       prev.includes(item) ? prev.filter((c) => c !== item) : [...prev, item]
+  //     );
+    
+  //   } else if (type === "size") {
+  //     setSelectedSizes((prev) =>
+  //       prev.includes(item) ? prev.filter((s) => s !== item) : [...prev, item]
+  //     );
+     
+  //   }
+  // };
+
   const handleToggleSelection = (item, type) => {
     if (type === "color") {
-      setSelectedColors((prev) =>
-        prev.includes(item) ? prev.filter((c) => c !== item) : [...prev, item]
-      );
-    
+      setSelectedColors((prev) => {
+        const newColors = prev.includes(item) 
+          ? prev.filter((c) => c !== item) 
+          : [...prev, item];
+        
+        // Update URL when colors change
+        const urlParams = new URLSearchParams(window.location.search);
+        if (newColors.length > 0) {
+          urlParams.set('color', newColors.join(','));
+        } else {
+          urlParams.delete('color');
+        }
+        
+        // Update the URL without full navigation
+        window.history.replaceState(
+          {}, 
+          '', 
+          `${window.location.pathname}${urlParams.toString() ? `?${urlParams.toString()}` : ''}`
+        );
+        
+        return newColors;
+      });
     } else if (type === "size") {
-      setSelectedSizes((prev) =>
-        prev.includes(item) ? prev.filter((s) => s !== item) : [...prev, item]
-      );
-     
+      // Similar logic for size...
+      setSelectedSizes((prev) => {
+        const newSizes = prev.includes(item) 
+          ? prev.filter((s) => s !== item) 
+          : [...prev, item];
+        
+        // Update URL when sizes change
+        const urlParams = new URLSearchParams(window.location.search);
+        if (newSizes.length > 0) {
+          urlParams.set('size', newSizes.join(','));
+        } else {
+          urlParams.delete('size');
+        }
+        
+        window.history.replaceState(
+          {}, 
+          '', 
+          `${window.location.pathname}${urlParams.toString() ? `?${urlParams.toString()}` : ''}`
+        );
+        
+        return newSizes;
+      });
     }
   };
 
@@ -69,7 +150,7 @@ const ShopFilters = ({ onFiltersChange }) => {
             All Products
           </Link>
         </li>
-        {["Hoodies", "Oversize-Tshirt", "Tshirt", "Couple-Tshirt", "Holi-Special"].map((category) => (
+        {["Polo-Tshirts","Plain-Tshirts","Hoodies", "Oversize-Tshirt", "Tshirt", "Couple-Tshirt", "Holi-Special"].map((category) => (
   <li key={category}>
     <Link
       to={`/shop/${category}`}

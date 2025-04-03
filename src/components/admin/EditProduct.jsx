@@ -214,6 +214,8 @@ const EditProduct = () => {
             <option value="Tshirt">Tshirt</option>
             <option value="Oversize-Tshirt">Oversize-Tshirt</option>
             <option value="Couple-Tshirt">Couple Tshirt</option>
+            <option value="Plain-Tshirt">Plain Tshirt</option>
+            <option value="Polo-Tshirt">Polo Tshirt</option>
           </select>
         </div>
 
@@ -273,7 +275,7 @@ const EditProduct = () => {
         <div>
           <label className="block text-sm font-semibold mb-2">Colors</label>
           <div className="flex flex-wrap gap-4">
-            {["kiwi-green", "royal-blue", "red", "yellow", "navy-blue", "black", "white","cyan","umber"].map((color) => (
+            {["lavender", "beige","kiwi-green", "royal-blue", "red", "yellow", "navy-blue", "black", "white","cyan","umber"].map((color) => (
               <label key={color} className="inline-flex items-center">
                 <input
                   type="checkbox"
@@ -297,7 +299,7 @@ const EditProduct = () => {
         <div>
           <label className="block text-sm font-semibold mb-2">Tags</label>
           <div className="flex flex-wrap gap-4">
-          {["doraemon", "marvel", "dc", "adventure", "trending-talks", "spider-man", "pikachu","minions", "typography","bear","stay-wild","pooh","shinchan","mickey-mouse","panda","explore","duck","goku", "i-am-groot","ride","ghost","snoopy"].map((tag) => (
+          {["doraemon", "marvel", "dc", "adventure", "trending-talks", "spider-man", "pikachu","minions", "typography","bear","stay-wild","pooh","shinchan","mickey-mouse","panda","explore","duck","goku", "i-am-groot","ride","ghost","snoopy","tom-&-Jerry"].map((tag) => (
           <label key={tag} className="inline-flex items-center">
             <input
               type="checkbox"

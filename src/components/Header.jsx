@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import { fetchCartItems, removeFromLocalCart, removeItemFromCart } from '../feature/cartSlice';
 import { persistor } from '../utils/store';
 import HeaderSidebar from './HeaderSidebar';
+import SearchComponent from './SearchComponent';
 
 const Header = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -264,32 +265,28 @@ const handleSearch = (e) => {
 
           {/* Center Logo */}
           <div className="flex-1 text-center">
-            <Link to="/" className="text-xl md:text-2xl font-semibold font-forumNormal">
+            <a href="/" className="text-xl md:text-2xl font-semibold font-forumNormal">
               Abhinav's Best of World
-            </Link>
+            </a>
           </div>
 
           {/* Right Section */}
-          <div className="flex items-center space-x-5">
+          <div className="flex items-center  gap-x-5">
             {/* Search Icon */}
-            <div className="flex flex-col items-center">
-              <Search 
-                size={24}
-                className="cursor-pointer hover:scale-110 transition-transform search-icon"
-                onClick={toggleSearch}
-              />
-              <span className="hidden sm:block font-forumNormal font-bold text-xs text-gray-600">Search</span>
-            </div>
             
-            <Link to="/wish-list">
-              <div className="flex flex-col items-center">
-                <Heart 
-                  size={24} 
-                  className="cursor-pointer hover:scale-110 transition-transform"
-                />
-                <span className="hidden sm:block font-forumNormal font-bold text-xs text-gray-600">Wishlist</span>
-              </div>
-            </Link>
+            <SearchComponent/>
+            
+            
+            <Link to="/wish-list" className="hidden sm:block">
+  <div className="flex flex-col items-center">
+    <Heart 
+      size={24} 
+      className="cursor-pointer hover:scale-110 transition-transform"
+    />
+    
+    <span className="font-forumNormal font-bold text-xs text-gray-600">Wishlist</span>
+  </div>
+</Link>
 
             <div className="relative">
               <div className="flex flex-col items-center">
@@ -307,122 +304,8 @@ const handleSearch = (e) => {
               </div>
             </div>
           </div>
-        </div>
-
-      {/* Search Bar - Animated with updated design */}
-<div
-  className={`fixed inset-0 bg-white bg-opacity-95 z-50 flex items-start justify-center transition-all duration-300 ease-in-out ${
-    searchOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-  }`}
-  style={{
-    paddingTop: "100px",
-    backdropFilter: "blur(5px)",
-  }}
->
-  <div
-    className="w-full max-w-4xl px-6 transition-transform duration-300 transform"
-    style={{
-      transform: searchOpen ? "translateY(0)" : "translateY(-20px)",
-    }}
-  >
-    <div className="relative">
-      <div className="flex items-center border-b-2 border-gray-300 pb-4">
-        <Search size={24} className="text-gray-500 mr-4" />
-        <input
-          ref={searchInputRef}
-          type="text"
-          placeholder="Search for Hoodies, tShirts and oversized..."
-          className="w-full text-xl md:text-2xl outline-none bg-transparent font-forumNormal"
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            handleSearchInputChange(e.target.value);
-          }}
-          onKeyDown={handleSearch}
-        />
-        <XMarkIcon
-          className="w-6 h-6 cursor-pointer text-gray-500 hover:text-gray-800"
-          onClick={() => setSearchOpen(false)}
-        />
-      </div>
       
-      {/* Search Recommendations */}
-      {searchRecommendations.length > 0 && (
-        <div className="mt-4 bg-white rounded-lg shadow-md overflow-hidden">
-          <div className="p-2">
-            <p className="text-sm text-gray-500 mb-2 px-3">Recommendations</p>
-            <ul>
-              {searchRecommendations.map((item, index) => (
-                <li 
-                  key={index}
-                  className="px-4 py-3 hover:bg-gray-100 cursor-pointer flex items-center"
-                  onClick={() => {
-                    // Navigate to the appropriate page
-                    navigate(item.path);
-                    setSearchOpen(false);
-                    setSearchQuery('');
-                  }}
-                >
-                  <div className="mr-2">
-                    {item.type === 'category' ? (
-                      <div className="text-blue-500 bg-blue-100 rounded-full px-2 py-1 text-xs">
-                        Category
-                      </div>
-                    ) : (
-                      <div className="text-green-500 bg-green-100 rounded-full px-2 py-1 text-xs">
-                        Tag
-                      </div>
-                    )}
-                  </div>
-                  <span className="text-gray-800">{item.name}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
         </div>
-      )}
-
-      <div className="mt-8">
-        <h3 className="text-2xl font-medium text-gray-700 mb-6 font-forumNormal">Latest</h3>
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-          {featuredItems.map((item, index) => (
-            <Link onClick={toggleSearch} 
-            to={item.path} key={index} className="flex flex-col items-center">
-              <div className="w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden mb-2">
-                <img 
-                  src={item.image} 
-                  alt={item.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="text-center">
-                <p className="text-sm font-medium">{item.name}</p>
-                <p className="text-xs text-gray-500">{item.brand}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Categories as simple text links */}
-      <div className="mt-8 hidden md:block">
-        <h3 className="text-lg font-medium text-gray-700 mb-4 font-forumNormal">Browse Categories</h3>
-        <div className="flex flex-wrap gap-4">
-          {categories.map((category, index) => (
-            <Link 
-              key={index}
-              to={category.path} 
-              className="p-3 bg-gray-100 rounded text-center hover:bg-gray-200 transition-colors" 
-              onClick={() => setSearchOpen(false)}
-            >
-              {category.name}
-            </Link>
-          ))}
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
         {/* Sidebar Component */}
         <HeaderSidebar

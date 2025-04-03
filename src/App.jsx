@@ -51,7 +51,7 @@ function App() {
             <HomePage /> {/* Render HomePage */}
             <ShopNowPage /> {/* Render ShopNowPage */}
             <HoodiesPage /> {/* Render HoodiesPage */}
-         {/* <Fandom />      Render Fandom */}
+         <Fandom />   
             <InstagramPage /> {/* Render InstagramPage */}
             <ServicesPage /> {/* Render ServicesPage */}
           </>

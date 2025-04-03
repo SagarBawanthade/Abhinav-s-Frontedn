@@ -1,132 +1,236 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Navigation ,Autoplay} from 'swiper/modules';
+import { Pagination, Autoplay } from 'swiper/modules';
 import { Link } from 'react-router-dom';
 
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/pagination';
-import 'swiper/css/navigation';
+import { useEffect, useState } from 'react';
 
 const Fandom = () => {
+
+   const [showHeading, setShowHeading] = useState(false);
+
+   useEffect(() => {
+      const timer = setTimeout(() => {
+        setShowHeading(true);
+      }, 100); // Adjust the delay as needed
+  
+      return () => clearTimeout(timer); // Cleanup the timer on unmount
+    }
+  , []);
+  
   const fandoms = [
     {
-      id: 1,
-      name: 'MARVEL',
-      image: 'https://images.bewakoof.com/t640/men-s-salsa-red-hulk-graphic-printed-oversized-t-shirt-659573-1739538134-1.jpg',
-      logo: 'https://www.tvstoreonline.com/cdn/shop/files/marvel-comics-logo.png?v=1613769576',
-      link: '/shop/tag/marvel'
+        id: 1,
+        name: 'MARVEL',
+        image: '/images/fandom-16.net',
+        logo: 'https://www.tvstoreonline.com/cdn/shop/files/marvel-comics-logo.png?v=1613769576',
+        link: '/shop/tag/marvel'
     },
     {
-      id: 2,
-      name: 'DC',
-      image: 'https://images.bewakoof.com/t640/men-s-red-the-batman-graphic-printed-oversized-t-shirt-480316-1737366167-1.jpg',
-      logo: 'https://www.tvstoreonline.com/cdn/shop/files/dc-comics-logo.png?v=1613769574',
-      link: '/shop/tag/dc'
+        id: 2,
+        name: 'DC',
+        image: '/images/fandom-17.jpeg',
+        logo: 'https://www.tvstoreonline.com/cdn/shop/files/dc-comics-logo.png?v=1613769574',
+        link: '/shop/tag/dc'
     },
     {
-      id: 3,
-      name: 'Spiderman',
-      image: 'https://images.bewakoof.com/t640/men-s-red-friendly-neighbour-graphic-printed-oversized-t-shirt-660978-1738573645-1.jpg',
-      logo: 'https://th.bing.com/th/id/OIP.85drFdpEqu_ldfAmMxjM3wHaCs?rs=1&pid=ImgDetMain',
-      link: '/shop/tag/spiderman'
+        id: 3,
+        name: 'Spiderman',
+        image: '/images/fandom-18.jpeg',
+        logo: 'https://th.bing.com/th/id/OIP.85drFdpEqu_ldfAmMxjM3wHaCs?rs=1&pid=ImgDetMain',
+        link: '/shop/tag/spiderman'
     },
     {
-      id: 4,
-      name: 'DISNEY',
-      image: 'https://images.bewakoof.com/t640/women-s-blue-mickey-and-mini-hyper-printed-oversized-t-shirt-391696-1707221665-1.jpg',
-      logo: 'https://th.bing.com/th/id/OIP.w1qKu2FXRzq_mkZkpSnfyAHaEK?w=329&h=185&c=7&r=0&o=5&dpr=1.3&pid=1.7',
-      link: '/shop/tag/disney'
+        id: 4,
+        name: 'Disney',
+        image: '/images/fandom-19.jpeg',
+        logo: 'https://th.bing.com/th/id/OIP.w1qKu2FXRzq_mkZkpSnfyAHaEK?w=329&h=185&c=7&r=0&o=5&dpr=1.3&pid=1.7',
+        link: '/shop/tag/disney'
     },
     {
-      id: 5,
-      name: 'Minions',
-      image: 'https://images.bewakoof.com/t640/women-s-blue-relax-minion-graphic-printed-boyfriend-t-shirt-648810-1737444070-1.jpg',
-      logo: 'https://cdn.ecommercedns.uk/files/4/254074/0/39786260/image.jpg',
-      link: '/shop/tag/minions'
+        id: 5,
+        name: 'Minions',
+        image: '/images/fandom-20.jpeg',
+        logo: 'https://cdn.ecommercedns.uk/files/4/254074/0/39786260/image.jpg',
+        link: '/shop/tag/minions'
     },
     {
-      id: 6,
-      name: 'Doraemon',
-      image: 'https://www.swagshirts99.com/wp-content/uploads/2020/02/4F1E4FBE-F286-4CDE-86A6-707CDCEB5EF3-356x442.jpeg',
-      logo: 'https://www.pngitem.com/pimgs/m/531-5313796_doraemon-logo-png-transparent-png.png',
-      link: '/shop/tag/doraemon'
+        id: 6,
+        name: 'Doraemon',
+        image: '/images/fandom-21.png',
+        logo: 'https://www.pngitem.com/pimgs/m/531-5313796_doraemon-logo-png-transparent-png.png',
+        link: '/shop/tag/doraemon'
     },
     {
-      id: 7,
-      name: 'Typography',
-      image: 'https://images.bewakoof.com/t640/women-s-black-friends-typography-boyfriend-t-shirt-234669-1715257520-1.jpg',
-      logo: 'https://th.bing.com/th/id/OIP.rElUO5LpqvuQDb96mBZUbQHaB_?rs=1&pid=ImgDetMain',
-      link: '/shop/tag/typography'
+        id: 7,
+        name: 'Typography',
+        image: '/images/fandom-22.png',
+        logo: 'https://th.bing.com/th/id/OIP.rElUO5LpqvuQDb96mBZUbQHaB_?rs=1&pid=ImgDetMain',
+        link: '/shop/tag/typography'
     },
     {
-      id: 8,
-      name: 'Trending Talks',
-      image: 'https://images.bewakoof.com/t640/men-s-white-chill-guy-graphic-printed-oversized-t-shirt-655005-1733216144-1.jpg',
-      logo: 'https://thumbs.dreamstime.com/b/trending-text-red-trapeze-stamp-sign-written-253130899.jpg',
-      link: '/shop/tag/trending-talks'
+        id: 8,
+        name: 'Trending Talks',
+        image: '/images/fandom-23.jpg',
+        logo: 'https://thumbs.dreamstime.com/b/trending-text-red-trapeze-stamp-sign-written-253130899.jpg',
+        link: '/shop/tag/trending-talks'
     },
     {
-      id: 9,
-      name: 'Aventure',
-      image: 'https://images.bewakoof.com/t640/men-s-red-moon-rider-graphic-printed-t-shirt-475032-1737724095-1.jpg',
-      logo: 'https://see.fontimg.com/api/renderfont4/YGZ2/eyJ3IjoxMDAwLCJoIjo4MCwiZnMiOjgwLCJyIjoiZnMiLCJmZ2MiOiIjMDAwMDAwIiwiYmdjIjoiI0ZGRkZGRiIsInQiOm51bGwsImdpZCI6bnVsbH0/QWR2ZW50dXJl/adventure.png',
-      link: '/shop/tag/adventure'
+        id: 9,
+        name: 'Adventure',
+        image: '/images/fandom-1.jpg',
+        logo: 'https://see.fontimg.com/api/renderfont4/YGZ2/eyJ3IjoxMDAwLCJoIjo4MCwiZnMiOjgwLCJyIjoiZnMiLCJmZ2MiOiIjMDAwMDAwIiwiYmdjIjoiI0ZGRkZGRiIsInQiOm51bGwsImdpZCI6bnVsbH0/QWR2ZW50dXJl/adventure.png',
+        link: '/shop/tag/adventure'
     },
-     ];
+    {
+        id: 10,
+        name: 'Pikachu',
+        image: '/images/fandom-2.jpg',
+        logo: 'https://logos-world.net/wp-content/uploads/2020/05/Pokemon-Logo.png',
+        link: '/shop/tag/pikachu'
+    },
+    {
+        id: 11,
+        name: 'Bear',
+        image: '/images/fandom-14.jpg',
+        logo: 'https://example.com/bear-logo.png',
+        link: '/shop/tag/bear'
+    },
+    {
+        id: 12,
+        name: 'Stay Wild',
+        image: '/images/fandom-13.jpg',
+        logo: 'https://example.com/stay-wild-logo.png',
+        link: '/shop/tag/stay-wild'
+    },
+    {
+        id: 13,
+        name: 'Pooh',
+        image: '/images/fandom-12.jpg',
+        logo: 'https://example.com/pooh-logo.png',
+        link: '/shop/tag/pooh'
+    },
+    {
+        id: 14,
+        name: 'Shinchan',
+        image: '/images/fandom-11.jpg',
+        logo: 'https://example.com/shinchan-logo.png',
+        link: '/shop/tag/shinchan'
+    },
+    {
+        id: 15,
+        name: 'Mickey Mouse',
+        image: '/images/fandom-10.jpg',
+        logo: 'https://example.com/mickey-mouse-logo.png',
+        link: '/shop/tag/mickey-mouse'
+    },
+    {
+        id: 16,
+        name: 'Panda',
+        image: '/images/fandom-9.jpg',
+        logo: 'https://example.com/panda-logo.png',
+        link: '/shop/tag/panda'
+    },
+    {
+        id: 17,
+        name: 'Explore',
+        image: '/images/fandom-15.jpg',
+        logo: 'https://example.com/explore-logo.png',
+        link: '/shop/tag/explore'
+    },
+    {
+        id: 18,
+        name: 'Duck',
+        image: '/images/fandom-7.jpg',
+        logo: 'https://example.com/duck-logo.png',
+        link: '/shop/tag/duck'
+    },
+    {
+        id: 19,
+        name: 'Goku',
+        image: '/images/fandom-6.jpg',
+        logo: 'https://example.com/goku-logo.png',
+        link: '/shop/tag/goku'
+    },
+    {
+        id: 20,
+        name: 'I am Groot',
+        image: '/images/fandom-5.jpg',
+        logo: 'https://example.com/i-am-groot-logo.png',
+        link: '/shop/tag/i-am-groot'
+    },
+    {
+        id: 21,
+        name: 'Ride',
+        image: '/images/fandom-4.jpg',
+        logo: 'https://example.com/ride-logo.png',
+        link: '/shop/tag/ride'
+    },
+    {
+        id: 22,
+        name: 'Ghost',
+        image: '/images/fandom-3.jpg',
+        logo: 'https://example.com/ghost-logo.png',
+        link: '/shop/tag/ghost'
+    },
+    {
+        id: 23,
+        name: 'Tom & Jerry',
+        image: '/images/fandom-1.jpg',
+        logo: 'https://example.com/tom-and-jerry-logo.png',
+        link: '/shop/tag/tom-and-jerry'
+    }
+];
 
   return (
-    <div className="w-full py-12 px-4 md:px-8 lg:px-16 bg-white">
-      
-      <h2 className="text-3xl md:text-4xl font-semibold text-center font-forumNormal mb-8">Shop by Fandom</h2>
-      
-      <div className="relative">
+    <div className="forum-regular bg-headerBackGround py-10">
+    {/* Heading Section */}
+    <div className="text-center mt-10 mb-10">
+      <h1
+        className={`text-7xl text-left ml-4 text-gray-800 transition-all duration-1000 ease-out transform ${
+          showHeading ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+        }`}
+      >
+       Fandoms
+      </h1>
+    </div>
+  
+    <hr className="border-t mt-5 mb-10 border-black w-full" />
+  
+  
+
+  
+      <div className="max-w-6xl mx-auto">
       <Swiper
-  slidesPerView={1}
+  slidesPerView={2}
   loop={true}
   spaceBetween={20}
-  pagination={{
-    clickable: true,
-   
-  }}
-  // navigation={true}
+        className="sm:block lg:hidden mySwiper"
   breakpoints={{
-    640: {
-      slidesPerView: 2,
-      spaceBetween: 20,
-    },
-    1024: {
-      slidesPerView: 3.3,
-      spaceBetween: 30,
-    },
+    640: { slidesPerView: 2 },
+    1024: { slidesPerView: 3 }
   }}
   autoplay={{
     delay: 5000,
     disableOnInteraction: false,
   }}
   
-  modules={[Pagination, Navigation, Autoplay]} // Add Autoplay here
-  className="mySwiper"
->
+  modules={[Pagination, Autoplay]} >
           {fandoms.map((fandom) => (
             <SwiperSlide key={fandom.id}>
               <Link to={fandom.link} className="block">
                 <div className="flex flex-col items-center">
-                  {/* Fandom Image */}
-                  <div className="rounded-3xl overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 aspect-square w-full">
+                  <div className="relative rounded-lg overflow-hidden shadow-sm aspect-square w-full">
                     <img 
                       src={fandom.image} 
                       alt={`${fandom.name} merchandise`} 
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                     />
-                  </div>
-                  
-                  {/* Logo below the image */}
-                  <div className="mt-6 w-32 md:w-40">
-                    <img 
-                      src={fandom.logo} 
-                      alt={`${fandom.name} logo`} 
-                      className="w-full h-auto"
-                    />
+                    <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent py-3 px-4">
+                      <p className="text-white font-forumNormal font-medium text-center">{fandom.name}</p>
+                    </div>
                   </div>
                 </div>
               </Link>
@@ -135,29 +239,25 @@ const Fandom = () => {
         </Swiper>
       </div>
 
-      {/* Custom pagination styling */}
       <style jsx>{`
-  :global(.swiper-pagination) {
-    position: relative;
-    margin-top: 2rem;
-  }
-  :global(.swiper-pagination-bullet) {
-    width: 10px;
-    height: 10px;
-    margin: 0 5px;
-    background: #4B5563 !important; /* Dark gray */
-    opacity: 0.6;
-  }
-  :global(.swiper-pagination-bullet-active) {
-    background: #1F2937 !important; /* Darker gray */
-    opacity: 1;
-  }
-  :global(.swiper-button-next),
-  :global(.swiper-button-prev) {
-    color: #4B5563;
-  }
-`}</style>
+        :global(.swiper-pagination) {
+          position: relative;
+          margin-top: 2rem;
+        }
+        :global(.swiper-pagination-bullet) {
+          width: 8px;
+          height: 8px;
+          margin: 0 4px;
+          background: #CBD5E1;
+          opacity: 0.7;
+        }
+        :global(.swiper-pagination-bullet-active) {
+          background: #64748B;
+          opacity: 1;
+        }
+      `}</style>
     </div>
+   
   );
 };
 
