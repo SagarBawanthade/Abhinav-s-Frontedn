@@ -1,24 +1,32 @@
+import { useEffect, useState, useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Autoplay } from 'swiper/modules';
-import { Link } from 'react-router-dom';
+import { Pagination, Navigation } from 'swiper/modules';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/pagination';
-import { useEffect, useState } from 'react';
+import 'swiper/css/navigation';
 
 const Fandom = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const swiperRef = useRef(null);
+  const sectionRef = useRef(null);
+  const [initialSlide, setInitialSlide] = useState(0);
+  const [swiperInitialized, setSwiperInitialized] = useState(false);
+  const [isReturning, setIsReturning] = useState(false);
 
-   const [showHeading, setShowHeading] = useState(false);
-
-   useEffect(() => {
-      const timer = setTimeout(() => {
-        setShowHeading(true);
-      }, 100); // Adjust the delay as needed
-  
-      return () => clearTimeout(timer); // Cleanup the timer on unmount
-    }
-  , []);
+  const [showHeading, setShowHeading] = useState(false);
+ 
+    useEffect(() => {
+       const timer = setTimeout(() => {
+         setShowHeading(true);
+       }, 100); // Adjust the delay as needed
+   
+       return () => clearTimeout(timer); // Cleanup the timer on unmount
+     }
+   , []);
   
   const fandoms = [
     {
@@ -41,13 +49,6 @@ const Fandom = () => {
         image: '/images/fandom-18.jpeg',
         logo: 'https://th.bing.com/th/id/OIP.85drFdpEqu_ldfAmMxjM3wHaCs?rs=1&pid=ImgDetMain',
         link: '/shop/tag/spider-man'
-    },
-    {
-        id: 4,
-        name: 'Disney',
-        image: '/images/fandom-19.jpeg',
-        logo: 'https://th.bing.com/th/id/OIP.w1qKu2FXRzq_mkZkpSnfyAHaEK?w=329&h=185&c=7&r=0&o=5&dpr=1.3&pid=1.7',
-        link: '/shop/tag/disney'
     },
     {
         id: 5,
@@ -182,7 +183,213 @@ const Fandom = () => {
         logo: 'https://example.com/tom-and-jerry-logo.png',
         link: '/shop/tag/tom-and-jerry'
     }
-];
+  ];
+
+  // Function to find the index of a fandom by its tag from the URL
+  const findFandomIndexByTag = (tag) => {
+    if (!tag) return 0;
+    
+    const cleanTag = tag.replace("/shop/tag/", "");
+    const fandomIndex = fandoms.findIndex(fandom => 
+      fandom.link.includes(cleanTag)
+    );
+    return fandomIndex !== -1 ? fandomIndex : 0;
+  };
+
+  // Save exact position information when navigating away
+  useEffect(() => {
+    const saveFandomPosition = () => {
+      if (sectionRef.current) {
+        // Save more detailed position information
+        const rect = sectionRef.current.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Calculate the exact position of the section relative to the page
+        const absoluteTop = rect.top + scrollTop;
+        const sectionHeight = rect.height;
+        
+        // Store comprehensive position data
+        const positionData = {
+          top: absoluteTop,
+          height: sectionHeight,
+          // Center point of the section for more accurate restoration
+          center: absoluteTop + (sectionHeight / 2),
+          // How far the section is from the viewport top (for viewport-relative positioning)
+          offset: rect.top,
+          timestamp: Date.now()
+        };
+        
+        localStorage.setItem('fandomPositionData', JSON.stringify(positionData));
+      }
+      
+      // Also save active slide index
+      if (swiperRef.current && swiperRef.current.swiper) {
+        localStorage.setItem('activeFandomSlide', swiperRef.current.swiper.activeIndex.toString());
+      }
+    };
+
+    // Listen for navigation events
+    const handleBeforeUnload = () => {
+      saveFandomPosition();
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
+  // Save position when clicking fandom links
+  const saveCurrentPosition = () => {
+    if (sectionRef.current) {
+      // Get the section's position relative to viewport
+      const rect = sectionRef.current.getBoundingClientRect();
+      // Get current scroll position
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      
+      // Save absolute position of the section in the page
+      localStorage.setItem('fandomSectionTop', (rect.top + scrollTop).toString());
+      // Save viewport-relative position as percentage of viewport height
+      localStorage.setItem('fandomSectionViewportOffset', (rect.top / window.innerHeight).toString());
+    }
+  };
+
+  // Check if user is returning from a fandom page
+  useEffect(() => {
+    const checkIfReturning = () => {
+      const referrer = document.referrer;
+      const isFromFandom = referrer && 
+                           (referrer.includes('/shop/tag/') || 
+                            location.state?.fromFandom);
+                            
+      setIsReturning(isFromFandom);
+      
+      // If returning, prepare for restoration
+      if (isFromFandom) {
+        const lastVisitedFandom = localStorage.getItem('lastVisitedFandom');
+        if (lastVisitedFandom) {
+          const index = findFandomIndexByTag(lastVisitedFandom);
+          setInitialSlide(index);
+        }
+      }
+    };
+    
+    checkIfReturning();
+  }, [location]);
+
+  // Main position restoration effect
+  useEffect(() => {
+    if (!isReturning) return;
+    
+    // Multi-phase restoration for reliability
+    const restorePosition = () => {
+      // Get the position data
+      const positionData = localStorage.getItem('fandomPositionData');
+      const activeFandomSlide = localStorage.getItem('activeFandomSlide');
+      
+      // First restore the slider position
+      if (activeFandomSlide && swiperRef.current?.swiper) {
+        const slideIndex = parseInt(activeFandomSlide);
+        swiperRef.current.swiper.slideTo(slideIndex, 0, false);
+      }
+      
+      // Now handle scroll position restoration
+      if (positionData) {
+        try {
+          const position = JSON.parse(positionData);
+          
+          // Multi-phase scroll restoration for reliability
+          // First attempt - immediate restoration
+          scrollToSection(position.top - 100); // Slight offset for better visibility
+          
+          // Second attempt - after small delay to let page render
+          setTimeout(() => {
+            scrollToSection(position.top - 100);
+          }, 50);
+          
+          // Third attempt - after longer delay for full page load
+          setTimeout(() => {
+            scrollToSection(position.top - 100, 'smooth');
+            
+            // Final positioning fine-tune to center the section
+            setTimeout(() => {
+              if (sectionRef.current) {
+                sectionRef.current.scrollIntoView({ 
+                  behavior: 'smooth', 
+                  block: 'center'
+                });
+              }
+            }, 200);
+          }, 300);
+        } catch (error) {
+          console.error("Error restoring position:", error);
+        }
+      }
+    };
+    
+    // Helper function to scroll to a position
+    const scrollToSection = (position, behavior = 'auto') => {
+      window.scrollTo({
+        top: position,
+        behavior: behavior
+      });
+    };
+    
+    if (swiperInitialized) {
+      restorePosition();
+    }
+  }, [isReturning, swiperInitialized]);
+
+  // Handle swiper initialization
+  const handleSwiperInit = () => {
+    setSwiperInitialized(true);
+    
+    // Additional check for returning from fandom page
+    const lastVisitedFandom = localStorage.getItem('lastVisitedFandom');
+    const activeFandomSlide = localStorage.getItem('activeFandomSlide');
+    
+    if (lastVisitedFandom && activeFandomSlide && swiperRef.current?.swiper) {
+      const slideIndex = parseInt(activeFandomSlide);
+      setTimeout(() => {
+        swiperRef.current.swiper.slideTo(slideIndex, 0, false);
+      }, 100);
+    }
+  };
+
+  // Custom Link component with enhanced position saving
+  const FandomLink = ({ to, className, children, fandom }) => {
+    const handleClick = (e) => {
+      e.preventDefault();
+      
+      // Save the fandom route
+      localStorage.setItem('lastVisitedFandom', to);
+      
+      // Save detailed position information
+      saveCurrentPosition();
+      
+      // Save slider position
+      if (swiperRef.current?.swiper) {
+        localStorage.setItem('activeFandomSlide', swiperRef.current.swiper.activeIndex.toString());
+      }
+      
+      // Navigate programmatically with state
+      navigate(to, { state: { fromFandom: true } });
+    };
+
+    return (
+      <a href={to} onClick={handleClick} className={className}>
+        {children}
+      </a>
+    );
+  };
+
+  // Add an ID to the section for direct navigation
+  useEffect(() => {
+    if (sectionRef.current) {
+      sectionRef.current.id = "shop-by-fandom";
+    }
+  }, []);
 
   return (
     <div className="forum-regular bg-headerBackGround py-10">
@@ -202,62 +409,88 @@ const Fandom = () => {
   
 
   
-      <div className="max-w-6xl mx-auto">
-      <Swiper
-  slidesPerView={2}
-  loop={true}
-  spaceBetween={20}
-        className="sm:block lg:hidden mySwiper"
-  breakpoints={{
-    640: { slidesPerView: 2 },
-    1024: { slidesPerView: 3 }
-  }}
-  autoplay={{
-    delay: 5000,
-    disableOnInteraction: false,
-  }}
-  
-  modules={[Pagination, Autoplay]} >
+      <div className="max-w-6xl mx-auto p-2">
+        <Swiper
+          ref={swiperRef}
+          slidesPerView={2}
+          spaceBetween={20}
+          initialSlide={initialSlide}
+          pagination={{
+            clickable: true,
+            bulletClass: 'swiper-pagination-bullet',
+            bulletActiveClass: 'swiper-pagination-bullet-active',
+            dynamicBullets: true,
+            dynamicMainBullets: 5,
+          }}
+          breakpoints={{
+            640: {
+              slidesPerView: 2,
+              spaceBetween: 20,
+            },
+            1024: {
+              slidesPerView: 3.3,
+              spaceBetween: 30,
+            },
+          }}
+          modules={[Pagination, Navigation]}
+          className="mySwiper"
+          onInit={handleSwiperInit}
+          onSlideChange={(swiper) => {
+            localStorage.setItem('activeFandomSlide', swiper.activeIndex.toString());
+          }}
+        >
           {fandoms.map((fandom) => (
             <SwiperSlide key={fandom.id}>
-              <Link to={fandom.link} className="block">
+              <FandomLink to={fandom.link} className="block" fandom={fandom}>
                 <div className="flex flex-col items-center">
-                  <div className="relative rounded-lg overflow-hidden shadow-sm aspect-square w-full">
+                  {/* Fandom Image */}
+                  <div className="rounded-xl overflow-hidden shadow-lg transition-transform duration-300 hover:scale-105 aspect-square w-full relative">
                     <img 
                       src={fandom.image} 
                       alt={`${fandom.name} merchandise`} 
-                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                      className="w-full h-full object-cover"
                     />
-                    <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent py-3 px-4">
-                      <p className="text-white font-forumNormal font-medium text-center">{fandom.name}</p>
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                      <p className="text-white font-semibold text-lg">{fandom.name}</p>
+                      <p className="text-white/80 text-sm flex items-center">
+                        Explore Collection
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
+                          <path d="M5 12h14m-7-7l7 7-7 7" />
+                        </svg>
+                      </p>
                     </div>
                   </div>
                 </div>
-              </Link>
+              </FandomLink>
             </SwiperSlide>
           ))}
         </Swiper>
       </div>
 
-      <style jsx>{`
-        :global(.swiper-pagination) {
-          position: relative;
-          margin-top: 2rem;
-        }
-        :global(.swiper-pagination-bullet) {
-          width: 8px;
-          height: 8px;
-          margin: 0 4px;
-          background: #CBD5E1;
-          opacity: 0.7;
-        }
-        :global(.swiper-pagination-bullet-active) {
-          background: #64748B;
-          opacity: 1;
-        }
-      `}</style>
+      {/* Custom pagination styling */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .swiper-pagination {
+            position: relative;
+            margin-top: 2rem;
+          }
+          .swiper-pagination-bullet {
+            width: 10px;
+            height: 10px;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+          }
+          .swiper-pagination-bullet-active {
+            background: #3e3232 !important;
+            transform: scale(1.2);
+          }
+          .swiper-button-next,
+          .swiper-button-prev {
+            color: #3e3232;
+          }
+        `
+      }} />
     </div>
-   
   );
 };
 

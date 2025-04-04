@@ -220,12 +220,13 @@ const Shop = () => {
   // Function to render the product card (reused for both normal and Holi-Special)
   const renderProductCard = (product) => (
     <div key={product._id} className="group relative bg-headerBackGround rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
-      <div className="relative">
-        <Link 
+       <Link 
           to={`/product-details/${product._id}`} 
           onClick={() => handleProductClick(product._id)}
           state={{ fromProduct: false, fromShop: true, fromCategory: category ? `/shop/${category}` : '/shop' }}
         >
+      <div className="relative">
+       
           <div className="aspect-[5/5] overflow-hidden rounded-t-xl relative">
             <img
               src={product.images[0]}
@@ -260,7 +261,7 @@ const Shop = () => {
               </div>
             )} */}
           </div>
-        </Link>
+       
 
         <button 
           onClick={() => toggleLike(product)}
@@ -272,7 +273,9 @@ const Shop = () => {
             } transition-colors`}
           />
         </button>
+        
       </div>
+      
 
       <div className="p-2">
         <Link to={`/product-details/${product._id}`}>
@@ -315,6 +318,7 @@ const Shop = () => {
           </Link>
         </div>
       </div>
+      </Link>
     </div>
   );
 
@@ -369,7 +373,7 @@ const Shop = () => {
       >
         {/* Sidebar */}
         <div
-          className={`fixed z-50 top-0 left-0 w-72 h-full bg-headerBackGround p-6 transition-transform duration-200 transform ${
+          className={`fixed z-50 md:z-30 top-0 left-0 w-72 h-full bg-headerBackGround p-6 transition-transform duration-200 transform ${
             drawerOpen ? 'translate-x-0' : '-translate-x-full'
           } md:translate-x-0 md:relative md:block`}
         >
