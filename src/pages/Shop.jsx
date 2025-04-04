@@ -7,6 +7,8 @@ import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
 import ProductsHeader from '../components/ProductsHeader';
 import { fetchProducts } from '../feature/productSlice';
 import PromoBadge from '../components/PromoBadge';
+import {  AnimatePresence } from 'framer-motion';
+import PromotionalOffer from '../components/PromotionalOffer';
 
 const Shop = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -20,9 +22,7 @@ const Shop = () => {
   const prevCategory = useRef(category);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [contentOpacity, setContentOpacity] = useState(0);
-  const [holiSpecialProduct, setHoliSpecialProduct] = useState([]);
-  const [loadingHoliProduct, setLoadingHoliProduct] = useState(false);
-  
+   const [offerVisible, setOfferVisible] = useState(true);
   // Pagination state
   const [visibleProducts, setVisibleProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(() => {
@@ -45,51 +45,6 @@ const Shop = () => {
   }, []); 
 
   useEffect(() => {
-    if (category === 'Holi-Special') {
-      const fetchHoliSpecialProducts = async () => {
-        setLoadingHoliProduct(true);
-        try {
-          const response = await fetch('https://backend.abhinavsofficial.com/api/product/getproducts');
-          const data = await response.json();
-          
-          console.log('Total products fetched:', data.length);
-          
-          if (data && data.length > 0) {
-            // Find the index of the specific product
-            const targetIndex = data.findIndex(product => product._id === '67ce9635db546172156f4a8c');
-            console.log('Target product index:', targetIndex);
-            
-            if (targetIndex !== -1) {
-              // Get exactly 8 products after the specified product ID
-              const newerProducts = data.slice(targetIndex + 1, targetIndex + 9);
-              console.log('Selected products count:', newerProducts.length);
-              console.log('Selected products:', newerProducts.map(p => p._id));
-              setHoliSpecialProduct(newerProducts);
-            } else {
-              // If the specific product is not found, use exactly 8 products as fallback
-              console.warn('Target product ID not found, using last 8 products as fallback');
-              const lastProducts = data.slice(-8);
-              console.log('Fallback products count:', lastProducts.length);
-              setHoliSpecialProduct(lastProducts);
-            }
-          } else {
-            console.log('No products data received');
-          }
-        } catch (error) {
-          console.error('Error fetching Holi-Special products:', error);
-        } finally {
-          setLoadingHoliProduct(false);
-        }
-      };
-      
-      fetchHoliSpecialProducts();
-    } else {
-      // Reset Holi-Special products when navigating to other categories
-      setHoliSpecialProduct([]);
-    }
-  }, [category]);
-
-  useEffect(() => {
     if (products.length === 0) {
       dispatch(fetchProducts());
     }
@@ -106,7 +61,6 @@ const Shop = () => {
       const { priceRange, selectedColors, selectedSizes } = filters;
   
       const filtered = products.filter((product) => {
-        // const matchesCategory = !category || product.category.toLowerCase() === category.toLowerCase();
         const matchesCategory = !category || product.category.toLowerCase() === category.toLowerCase();
         const matchesTag = !tag || (product.tags && product.tags.includes(tag));
 
@@ -131,19 +85,14 @@ const Shop = () => {
       
       const sortedProducts = [...nonHoodieProducts, ...hoodieProducts];
 
-      // Don't apply regular filtering for Holi-Special as we're fetching directly
-      if (category !== 'Holi-Special') {
-        setFilteredProducts(sortedProducts);
-        
-        // Update visible products based on current page
-        const endIndex = currentPage * productsPerPage;
-        setVisibleProducts(sortedProducts.slice(0, endIndex));
-      }
+      setFilteredProducts(sortedProducts);
+      
+      // Update visible products based on current page
+      const endIndex = currentPage * productsPerPage;
+      setVisibleProducts(sortedProducts.slice(0, endIndex));
     };
   
-    if (!category || category !== 'Holi-Special') {
-      applyFilters();
-    }
+    applyFilters();
   }, [filters, products, category, tag, currentPage]);
 
   // Reset pagination when category changes
@@ -203,12 +152,12 @@ const Shop = () => {
       setIsTransitioning(false);
     };
 
-    if (!loading && !loadingHoliProduct) {
+    if (!loading) {
       handleScrollPosition();
     }
     
     prevCategory.current = category;
-  }, [location.state, category, loading, loadingHoliProduct]);
+  }, [location.state, category, loading]);
 
   const handleProductClick = (productId) => {
     if (shopRef.current) {
@@ -217,7 +166,11 @@ const Shop = () => {
     }
   };
 
-  // Function to render the product card (reused for both normal and Holi-Special)
+  const handleCloseOffer = () => {
+    setOfferVisible(false);
+  };
+
+  // Function to render the product card
   const renderProductCard = (product) => (
     <div key={product._id} className="group relative bg-headerBackGround rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
        <Link 
@@ -254,17 +207,15 @@ const Shop = () => {
                 </div>
               </div>
             )}
-
-            {/* {product.category === "Tshirt" && product.price === 599 && (
-              <div className="absolute bottom-0 left-0 right-0 bg-green-500 font-bold text-xs text-white text-center font-forumNormal">
-                BUY 2 AT ₹699
-              </div>
-            )} */}
           </div>
        
 
         <button 
-          onClick={() => toggleLike(product)}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleLike(product);
+          }}
           className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-gray-100 transition-colors duration-300 transform hover:scale-110"
         >
           <Heart
@@ -278,11 +229,9 @@ const Shop = () => {
       
 
       <div className="p-2">
-        <Link to={`/product-details/${product._id}`}>
           <h3 className="font-forumNormal text-left text-sm md:text-lg text-gray-900 mb-1 truncate group-hover:text-black">
             {product.name}
           </h3>
-        </Link>
 
         <div className="flex items-center space-x-2 mb-3">
           <span className="text-lg md:text-xl font-bold font-forumNormal text-gray-900">
@@ -307,15 +256,12 @@ const Shop = () => {
 
         <div className="flex items-center justify-between">
           <PromoBadge product={product} />
-          <Link 
-            to={`/product-details/${product._id}`}
-            className="hidden lg:block"
-          >
+          <div className="hidden lg:block">
             <button className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg bg-gray-900 text-white hover:bg-gray-800 transition-colors">
               <ShoppingCart className="w-4 h-4 mr-2" />
               Add to Cart
             </button>
-          </Link>
+          </div>
         </div>
       </div>
       </Link>
@@ -324,14 +270,12 @@ const Shop = () => {
 
   return (
     <>
-      {/* <div className="w-full bg-[#E6FF87]">
-        <Link 
-          to="/shop/Tshirt" 
-          className="block w-full h px-4 py-3 sm:px-6 md:px-8 text-center text-black sm:text-xl md:text-xl lg:text-2xl font-bold hover:-translate-y-0.5 transition duration-200 cursor-pointer"
-        >
-          <p className="m-0 font-bold forum-regular">PREMIUM TSHIRT Body Fit (BUY ANY 2 @₹699)</p>
-        </Link>
-      </div> */}
+<AnimatePresence>
+        {offerVisible && <PromotionalOffer onClose={handleCloseOffer} />}
+      </AnimatePresence>
+    
+        
+
 
       {/* Navigation Bar */}
       <div className="relative">
@@ -351,7 +295,7 @@ const Shop = () => {
       </div>
 
       {/* Loading Spinner */}
-      {(loading || loadingHoliProduct || isTransitioning) && (
+      {(loading || isTransitioning) && (
         <div className="fixed inset-0 flex items-center justify-center bg-white/80 backdrop-blur-sm z-50 transition-all duration-300">
           <div className="flex flex-col items-center space-y-4">
             <div className="w-8 h-8 border-2 border-gray-200 border-t-gray-900 rounded-full animate-spin" />
@@ -380,9 +324,6 @@ const Shop = () => {
           <ShopFilters onFiltersChange={(updatedFilters) => setFilters(updatedFilters)} />
         </div>
 
-
-        
-
         {/* Overlay */}
         {drawerOpen && (
           <div
@@ -393,11 +334,11 @@ const Shop = () => {
 
         {/* Products Section */}
         <div className="bg-headerBackGround w-full px-4 md:px-6 py-8">
-          {/* Holi-Special Banner */}
+          {/* Show special banner only for Holi-Special category */}
           {category === 'Holi-Special' && (
             <div className="mb-6 p-4 bg-purple-100 text-purple-800 rounded-lg border border-purple-300">
               <p className="font-forumNormal text-center">
-                Showing our latest Holi-Special item! Get your colorful festival wear now.
+                Showing our latest Holi-Special collection! Get your colorful festival wear now.
               </p>
             </div>
           )}
@@ -406,7 +347,7 @@ const Shop = () => {
           <ProductsHeader 
             category={category} 
             tag={tag} 
-            filteredProducts={category === 'Holi-Special' ? holiSpecialProduct : filteredProducts} 
+            filteredProducts={filteredProducts} 
           />
 
           {/* Products Grid */}
@@ -418,33 +359,17 @@ const Shop = () => {
               transform: `translateY(${contentOpacity === 0 ? '10px' : '0'})`,
             }}
           > 
-            {/* For Holi-Special category, show only the special product */}
-            {category === 'Holi-Special' ? (
-              loadingHoliProduct ? (
-                <p className="col-span-full text-center text-lg text-gray-500 py-12">
-                  Loading Holi-Special products...
-                </p>
-              ) : holiSpecialProduct && holiSpecialProduct.length > 0 ? (
-                holiSpecialProduct.map(product => renderProductCard(product))
-              ) : (
-                <p className="col-span-full text-center text-lg text-gray-500 py-12">
-                  No Holi-Special products found!
-                </p>
-              )
+            {visibleProducts.length > 0 ? (
+              visibleProducts.map(product => renderProductCard(product))
             ) : (
-              // For other categories, show filtered products
-              visibleProducts.length > 0 ? (
-                visibleProducts.map(product => renderProductCard(product))
-              ) : (
-                <p className="col-span-full text-center text-lg text-gray-500 py-12">
-                  {loading ? 'Loading Products...' : 'No products found!'}      
-                </p>
-              )
+              <p className="col-span-full text-center text-lg text-gray-500 py-12">
+                {loading ? 'Loading Products...' : 'No products found!'}      
+              </p>
             )}
           </div>
 
-          {/* Show More Button - Only for non-Holi-Special categories */}
-          {category !== 'Holi-Special' && filteredProducts.length > visibleProducts.length && (
+          {/* Show More Button */}
+          {filteredProducts.length > visibleProducts.length && (
             <div className="flex justify-center">
               <button
                 onClick={handleShowMore}

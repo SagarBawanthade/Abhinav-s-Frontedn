@@ -150,7 +150,7 @@ const ShopFilters = ({ onFiltersChange }) => {
             All Products
           </Link>
         </li>
-        {["Plain-tshirt ","Hoodies", "Oversize-Tshirt", "Tshirt", "Couple-Tshirt", "Holi-Special"].map((category) => (
+        {["Solid Color T-Shirt & Oversized","Hoodies", "Oversize-Tshirt", "Tshirt", "Couple-Tshirt", "Holi-Special"].map((category) => (
   <li key={category}>
     <Link
       to={`/shop/${category}`}

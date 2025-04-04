@@ -63,7 +63,7 @@ const SearchComponent = () => {
   // Sample featured items
   const featuredItems = [
     { name: "Marvel", brand: "Collection", path: "/shop/tag/marvel", image: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/f495772e-665f-4515-954a-0a893df7a1a8_WhatsApp%20Image%202025-02-12%20at%203.53.09%20PM%20%287%29.jpeg" },
-    { name: "Plain T-shirts", brand: "Plain Tshirts", path: "/shop/plain-tshirt", image: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/ea08474e-fe47-471c-a3f9-040aea4cf53d_K3.jpeg" },
+    { name: "Solid Color T-Shirt & Oversized", brand: "Solid Color T-Shirt & Oversized", path: "/shop/Solid Color T-Shirt & Oversized", image: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/ea08474e-fe47-471c-a3f9-040aea4cf53d_K3.jpeg" },
     { name: "Polo T-Shirts", brand: "Polo Collection", path: "/shop/plain-tshirt", image: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/WhatsApp+Image+2025-04-03+at+13.16.46_3411ff1e.jpg" },
     { name: "Couple T-Shirts", brand: "Valentine's", path: "/shop/Couple-Tshirt", image: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/1cf70a61-eb1c-48df-aa6e-06ce26403002_WhatsApp%20Image%202025-02-28%20at%202.41.51%20PM%20%281%29.jpeg" },
     { name: "Typography", brand: "Typography", path: "/shop/tag/typography", image: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/c956fb07-028d-4bf4-9b23-04c9857b2931_WhatsApp%20Image%202025-04-01%20at%208.19.23%20PM%20%281%29.jpeg" },

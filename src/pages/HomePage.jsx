@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation } from 'swiper/modules';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import PromotionalOffer from '../components/PromotionalOffer';
 
 
 // Import Swiper styles
@@ -10,6 +12,7 @@ import 'swiper/css/navigation';
 
 const HomepageCarousel = () => {
   const [loadedImages, setLoadedImages] = useState({});
+  const [offerVisible, setOfferVisible] = useState(true);
 
   const products = [
   
@@ -35,17 +38,17 @@ const HomepageCarousel = () => {
     }));
   };
 
+  const handleCloseOffer = () => {
+    setOfferVisible(false);
+  };
+
   return (
     <> 
+
+<AnimatePresence>
+        {offerVisible && <PromotionalOffer onClose={handleCloseOffer} />}
+      </AnimatePresence>
     
-    {/* <div className="w-full  bg-[#E6FF87]">
-    <Link 
-      to="/shop/Tshirt" 
-      className="block w-full h px-4 py-3 sm:px-6 md:px-8 text-center text-black text-md md:text-xl lg:text-2xl font-bold hover:-translate-y-0.5 transition duration-200 cursor-pointer"
-    >
-      <p className="m-0 font-bold forum-regular">PREMIUM TSHIRT Body Fit (BUY ANY 2 @₹699)</p>
-    </Link>
-  </div> */}
    
     <Swiper
       modules={[Autoplay, Navigation]}

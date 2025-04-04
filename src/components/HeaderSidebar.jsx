@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { 
   User, LogOut, LogIn, Package, UserPen, 
-  Heart, Home, Gift, Shirt,
-  Truck, BadgePercent, ShieldAlert, Users
+  Heart, Home, Gift, 
+  Truck, BadgePercent, ShieldAlert,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -118,14 +118,15 @@ const HeaderSidebar = ({ isOpen, onClose, isLoggedIn, handleLogout }) => {
     {[
       { 
         img: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/ea08474e-fe47-471c-a3f9-040aea4cf53d_K3.jpeg", 
-        label: 'Plain-Tshirts', 
-        to: '/shop/plain-tshirt' 
+        label: 'Solid Color T-Shirt & Oversized', 
+        to: '/shop/Solid Color T-Shirt & Oversized' 
       },
       { 
-        img: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/26bdc010-eeb7-448b-9adf-a466a614143c_WhatsApp%20Image%202025-02-12%20at%203.53.09%20PM%20%282%29.jpeg", 
-        label: 'Hoodies', 
-        to: '/shop/hoodies' 
+        img: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/3a290076-1db2-428c-b055-d73846be213c_WhatsApp%20Image%202025-03-10%20at%2012.57.31%20PM%20%2821%29.jpeg", 
+        label: 'Holi-Special', 
+        to: '/shop/Holi-Special' 
       },
+     
       { 
         img: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/6afaae3e-165f-4346-ab5b-f39a86eb2ff9_WhatsApp%20Image%202025-03-24%20at%201.57.18%20PM%20%289%29.jpeg", 
         label: 'T-Shirts', 
@@ -141,11 +142,12 @@ const HeaderSidebar = ({ isOpen, onClose, isLoggedIn, handleLogout }) => {
         label: 'Oversize T-Shirts', 
         to: '/shop/Oversize-Tshirt' 
       },
+      
       { 
-        img: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/3a290076-1db2-428c-b055-d73846be213c_WhatsApp%20Image%202025-03-10%20at%2012.57.31%20PM%20%2821%29.jpeg", 
-        label: 'Holi-Special', 
-        to: '/shop/Holi-Special' 
-      }
+        img: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/26bdc010-eeb7-448b-9adf-a466a614143c_WhatsApp%20Image%202025-02-12%20at%203.53.09%20PM%20%282%29.jpeg", 
+        label: 'Hoodies', 
+        to: '/shop/hoodies' 
+      },
     ].map((item, index) => (
       <Link 
         key={index} 

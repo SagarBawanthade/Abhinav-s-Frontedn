@@ -573,11 +573,12 @@ function ProductDetails() {
   </div>
 </button>
     </div>
-{/* 
-    {product.category === "Tshirt" && <SpecialOffer />} */}
 
 
-    
+     <SpecialOffer />
+
+
+
 
              {/* Product Details Dropdown */}
       <div className="mt-4">

@@ -186,8 +186,9 @@ const AddProduct = () => {
               <option value="Tshirt">Tshirt</option>
               <option value="Oversize-Tshirt">Oversize-Tshirt</option>
               <option value="Couple-Tshirt">Couple Tshirt</option>
-              <option value="Plain-Tshirt">Plain Tshirt</option>
+              <option value="Solid Color T-Shirt & Oversized">Solid Color T-Shirt & Oversized</option>
               <option value="Polo-Tshirt">Polo Tshirt</option>
+              <option value="Holi-Special">Holi-Special</option>
             </select>
           </div>
 

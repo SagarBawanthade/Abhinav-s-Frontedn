@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Navigation } from 'swiper/modules';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Pagination, Navigation, Autoplay } from 'swiper/modules';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -81,7 +81,7 @@ const Fandom = () => {
     {
         id: 9,
         name: 'Adventure',
-        image: '/images/fandom-1.jpg',
+        image: '/images/fandom-25.jpg',
         logo: 'https://see.fontimg.com/api/renderfont4/YGZ2/eyJ3IjoxMDAwLCJoIjo4MCwiZnMiOjgwLCJyIjoiZnMiLCJmZ2MiOiIjMDAwMDAwIiwiYmdjIjoiI0ZGRkZGRiIsInQiOm51bGwsImdpZCI6bnVsbH0/QWR2ZW50dXJl/adventure.png',
         link: '/shop/tag/adventure'
     },
@@ -181,7 +181,7 @@ const Fandom = () => {
         name: 'Tom & Jerry',
         image: '/images/fandom-1.jpg',
         logo: 'https://example.com/tom-and-jerry-logo.png',
-        link: '/shop/tag/tom-and-jerry'
+        link: '/shop/tag/tom-&-Jerry'
     },
     {
       id: 24,
@@ -422,6 +422,10 @@ const Fandom = () => {
           slidesPerView={2}
           spaceBetween={20}
           initialSlide={initialSlide}
+          autoplay={{
+            delay: 3500,
+            disableOnInteraction: false,
+          }}
           pagination={{
             clickable: true,
             bulletClass: 'swiper-pagination-bullet',
@@ -440,7 +444,7 @@ const Fandom = () => {
               spaceBetween: 30,
             },
           }}
-          modules={[Pagination, Navigation]}
+          modules={[Pagination,Autoplay, Navigation]}
           className="mySwiper"
           onInit={handleSwiperInit}
           onSlideChange={(swiper) => {

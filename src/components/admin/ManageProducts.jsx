@@ -60,7 +60,7 @@ const ManageProducts = () => {
     );
   }
 
-  const categories = ["Hoodies", "Tshirt", "Oversize-Tshirt", "Couple-Tshirt"];
+  const categories = ["Hoodies", "Tshirt", "Oversize-Tshirt", "Couple-Tshirt","Solid Color T-Shirt & Oversized","Holi-Special","Polo-Tshirt"];
   const categorizedProducts = categories.reduce((acc, category) => {
     acc[category] = products.filter((product) => product.category === category);
     return acc;
