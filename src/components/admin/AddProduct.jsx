@@ -291,7 +291,7 @@ const AddProduct = () => {
               <div>
             <label className="block text-sm font-semibold mb-2">Tags</label>
             <div className="flex flex-wrap gap-4">
-              {["doraemon", "pikachu","marvel", "dc", "adventure", "trending-talks", "spider-man", "minions", "typography","bear","stay-wild","pooh","shinchan","mickey-mouse","panda","explore","duck","goku", "i-am-groot","ride","ghost","snoopy","tom-&-Jerry"].map((tag) => (
+              {["doraemon", "pikachu","marvel", "dc", "adventure", "trending-talks", "spider-man", "minions","friends", "typography","bear","stay-wild","pooh","shinchan","mickey-mouse","panda","explore","duck","goku", "i-am-groot","ride","ghost","snoopy","tom-&-Jerry"].map((tag) => (
                 <label key={tag} className="inline-flex items-center">
                   <input
                     type="checkbox"

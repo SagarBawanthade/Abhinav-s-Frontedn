@@ -299,7 +299,7 @@ const EditProduct = () => {
         <div>
           <label className="block text-sm font-semibold mb-2">Tags</label>
           <div className="flex flex-wrap gap-4">
-          {["doraemon", "marvel", "dc", "adventure", "trending-talks", "spider-man", "pikachu","minions", "typography","bear","stay-wild","pooh","shinchan","mickey-mouse","panda","explore","duck","goku", "i-am-groot","ride","ghost","snoopy","tom-&-Jerry"].map((tag) => (
+          {["doraemon", "marvel", "dc", "adventure","friends", "trending-talks", "spider-man", "pikachu","minions", "typography","bear","stay-wild","pooh","shinchan","mickey-mouse","panda","explore","duck","goku", "i-am-groot","ride","ghost","snoopy","tom-&-Jerry"].map((tag) => (
           <label key={tag} className="inline-flex items-center">
             <input
               type="checkbox"

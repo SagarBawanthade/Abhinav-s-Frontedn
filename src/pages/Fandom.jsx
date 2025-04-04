@@ -182,7 +182,14 @@ const Fandom = () => {
         image: '/images/fandom-1.jpg',
         logo: 'https://example.com/tom-and-jerry-logo.png',
         link: '/shop/tag/tom-and-jerry'
-    }
+    },
+    {
+      id: 24,
+      name: 'Friends',
+      image: '/images/fandom-24.jpg',
+      logo: 'https://example.com/tom-and-jerry-logo.png',
+      link: '/shop/tag/friends'
+  }
   ];
 
   // Function to find the index of a fandom by its tag from the URL
@@ -422,6 +429,7 @@ const Fandom = () => {
             dynamicBullets: true,
             dynamicMainBullets: 5,
           }}
+          loop={true}
           breakpoints={{
             640: {
               slidesPerView: 2,
