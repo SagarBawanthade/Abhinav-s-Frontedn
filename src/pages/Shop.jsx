@@ -187,26 +187,26 @@ const Shop = () => {
               className="h-full w-full object-cover object-center transform group-hover:scale-110 transition-transform duration-500"
             />
 
-            {product.category && (
-              <div className="absolute top-0 left-0 w-24 h-24 overflow-hidden">
-                <div className={`
-                  bg-[#0C3937]
-                  text-white shadow-lg text-xs
-                  absolute font-semibold top-0 left-0 transform -rotate-45 translate-y-4 -translate-x-14 w-40 text-center md:py-1 md:text-md
-                `}>
-                  <div className="flex items-center justify-center sm:line-height-[normal] sm:text-base" style={{ lineHeight: "12px", fontSize: "10px" }}>
-                    <span>
-                      {product.category === "Oversize-Tshirt" ? "60%" : 
-                        product.category === "Tshirt" ? "50%" : 
-                        product.category === "Hoodies" ? "30%" : 
-                        product.category === "Holi-Special" ? "45%" :
-                        product.category === "Couple-Tshirt" ? "40%" : "SALE"}
-                      <span className="ml-0.5">OFF</span>
-                    </span>
+              {product.category && (
+                <div className="absolute top-0 left-0 w-24 h-24 overflow-hidden">
+                  <div className={`
+                    bg-[#0C3937]
+                    text-white shadow-lg text-xs
+                    absolute font-semibold top-0 left-0 transform -rotate-45 translate-y-4 -translate-x-14 w-40 text-center md:py-1 md:text-md
+                  `}>
+                    <div className="flex items-center justify-center sm:line-height-[normal] sm:text-xs" style={{ lineHeight: "12px", fontSize: "9px" }}>
+                      <span>
+                        {product.category === "Oversize-Tshirt" ? "Buy 2 ₹999" : 
+                          product.category === "Tshirt" ? "Buy 3 ₹999" : 
+                          product.category === "Hoodies" ? "30% OFF" : 
+                          product.category === "Holi-Special" ? "45% OFF" :
+                          product.category === "Couple-Tshirt" ? "40% OFF" : "SALE"}
+                  
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
           </div>
        
 

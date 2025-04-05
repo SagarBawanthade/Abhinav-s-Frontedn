@@ -116,37 +116,39 @@ const HeaderSidebar = ({ isOpen, onClose, isLoggedIn, handleLogout }) => {
   </h3>
   <ul className="space-y-1">
     {[
+        { 
+          img: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/6afaae3e-165f-4346-ab5b-f39a86eb2ff9_WhatsApp%20Image%202025-03-24%20at%201.57.18%20PM%20%289%29.jpeg", 
+          label: 'T-Shirts', 
+          to: '/shop/Tshirt' 
+        },
       { 
         img: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/ea08474e-fe47-471c-a3f9-040aea4cf53d_K3.jpeg", 
         label: 'Solid Color T-Shirt & Oversized', 
         to: '/shop/Solid Color T-Shirt & Oversized' 
       },
       { 
-        img: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/3a290076-1db2-428c-b055-d73846be213c_WhatsApp%20Image%202025-03-10%20at%2012.57.31%20PM%20%2821%29.jpeg", 
-        label: 'Holi-Special', 
-        to: '/shop/Holi-Special' 
+        img: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/d8528151-fd26-40c3-9aab-10398aeb2eb5_WhatsApp%20Image%202025-04-01%20at%208.30.40%20PM.jpeg", 
+        label: 'Oversize T-Shirts', 
+        to: '/shop/Oversize-Tshirt' 
       },
      
-      { 
-        img: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/6afaae3e-165f-4346-ab5b-f39a86eb2ff9_WhatsApp%20Image%202025-03-24%20at%201.57.18%20PM%20%289%29.jpeg", 
-        label: 'T-Shirts', 
-        to: '/shop/Tshirt' 
-      },
+    
       { 
         img: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/1cf70a61-eb1c-48df-aa6e-06ce26403002_WhatsApp%20Image%202025-02-28%20at%202.41.51%20PM%20%281%29.jpeg", 
         label: 'Couple T-Shirts', 
         to: '/shop/Couple-Tshirt' 
       },
-      { 
-        img: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/d8528151-fd26-40c3-9aab-10398aeb2eb5_WhatsApp%20Image%202025-04-01%20at%208.30.40%20PM.jpeg", 
-        label: 'Oversize T-Shirts', 
-        to: '/shop/Oversize-Tshirt' 
-      },
+    
       
       { 
         img: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/26bdc010-eeb7-448b-9adf-a466a614143c_WhatsApp%20Image%202025-02-12%20at%203.53.09%20PM%20%282%29.jpeg", 
         label: 'Hoodies', 
         to: '/shop/hoodies' 
+      },
+      { 
+        img: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/3a290076-1db2-428c-b055-d73846be213c_WhatsApp%20Image%202025-03-10%20at%2012.57.31%20PM%20%2821%29.jpeg", 
+        label: 'Holi-Special', 
+        to: '/shop/Holi-Special' 
       },
     ].map((item, index) => (
       <Link 
