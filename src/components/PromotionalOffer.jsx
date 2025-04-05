@@ -55,9 +55,15 @@ const PromotionalOffer = ({ onClose }) => {
           </div>
           
           <div className="flex flex-col sm:flex-row items-center">
-            <div className="font-semibold text-base sm:text-xl mb-2 sm:mb-0 sm:mr-4 text-center">
-              <span className="hidden sm:inline">|</span> T-SHIRTS: BUY ANY 3 @ ₹999 <span className="hidden sm:inline">|</span> OVERSIZED: BUY ANY 2 @ ₹999 <span className="hidden sm:inline">|</span>
-            </div>
+          <div className="font-semibold text-base sm:text-xl mb-2 sm:mb-0 sm:mr-4 text-center flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
+  <div className="sm:inline">
+    <span className="hidden sm:inline">|</span> T-SHIRTS: BUY ANY 3 @ ₹999 <span className="hidden sm:inline">|</span>
+  </div>
+  <div className="sm:inline">
+    <span className="hidden sm:inline">|</span> OVERSIZED: BUY ANY 2 @ ₹999 <span className="hidden sm:inline">|</span>
+  </div>
+</div>
+
 {/*             
             <div className="flex items-center space-x-1 text-yellow-200">
               <Clock className="w-4 h-4" />
@@ -67,13 +73,13 @@ const PromotionalOffer = ({ onClose }) => {
             </div> */}
           </div>
           
-          <button 
+          {/* <button 
             className="absolute top-1 right-2 text-white opacity-70 hover:opacity-100"
             onClick={onClose}
             aria-label="Close offer"
           >
             ×
-          </button>
+          </button> */}
         </div>
       </motion.div>
 
