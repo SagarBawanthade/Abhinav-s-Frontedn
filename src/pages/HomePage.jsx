@@ -44,10 +44,10 @@ const HomepageCarousel = () => {
 
   return (
     <> 
-
+{/* 
 <AnimatePresence>
         {offerVisible && <PromotionalOffer onClose={handleCloseOffer} />}
-      </AnimatePresence>
+      </AnimatePresence> */}
     
    
     <Swiper
