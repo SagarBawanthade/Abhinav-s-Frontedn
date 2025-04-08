@@ -84,7 +84,7 @@ const SpecialOffer = () => {
       <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-sm text-white p-3 rounded-lg text-center relative overflow-hidden">
         <div className="animate-marquee whitespace-nowrap">
           {categories.includes("Tshirt") && (
-            <span className="inline-block">⚡ 3 T-Shirts @ ₹999</span>
+            <span className="inline-block">⚡ 2 T-Shirts @ ₹899</span>
           )}
           {categories.includes("Oversize-Tshirt") && (
             <span className="inline-block ">⚡ 2 Oversized T-Shirts @ ₹999</span>

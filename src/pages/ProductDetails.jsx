@@ -20,6 +20,7 @@ import 'swiper/css/thumbs';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
 import MoreProducts1 from "../components/MoreProducts1";
+import SpecialOffer from "../components/SpecialOffer";
 
 
 function ProductDetails() {
@@ -574,8 +575,8 @@ function ProductDetails() {
 </button>
     </div>
 
-{/* 
-     <SpecialOffer /> */}
+
+     <SpecialOffer /> 
 
 
 
