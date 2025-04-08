@@ -64,10 +64,10 @@ const calculateSpecialPricing = (cartItems) => {
     let remainingTshirtsToDiscount = tshirtSets * 2;
     let totalRegularPrice = 0;
     
-    // Calculate what the total would be without discount
-    regularTshirts.forEach(item => {
-      totalRegularPrice += item.price * item.quantity;
-    });
+//     // Calculate what the total would be without discount
+//     regularTshirts.forEach(item => {
+//       totalRegularPrice += item.price * item.quantity;
+//     });
     
     // Price for sets of 3 at special price
     const specialPrice = 899 * tshirtSets;
@@ -76,33 +76,33 @@ const calculateSpecialPricing = (cartItems) => {
     tshirtDiscount = totalRegularPrice - specialPrice;
   }
 
-  // Calculate special pricing for oversized t-shirts
-  let oversizedDiscount = 0;
-  if (oversizedTshirtCount >= 2) {
-    const oversizedPairs = Math.floor(oversizedTshirtCount / 2);
-    const oversizedTshirts = cartItems.filter(item => 
-      item.category === 'Oversize-Tshirt' || (item.product && item.product.category === 'Oversize-Tshirt')
-    ).sort((a, b) => a.price - b.price);
+//   // Calculate special pricing for oversized t-shirts
+//   let oversizedDiscount = 0;
+//   if (oversizedTshirtCount >= 2) {
+//     const oversizedPairs = Math.floor(oversizedTshirtCount / 2);
+//     const oversizedTshirts = cartItems.filter(item => 
+//       item.category === 'Oversize-Tshirt' || (item.product && item.product.category === 'Oversize-Tshirt')
+//     ).sort((a, b) => a.price - b.price);
     
-    let totalOversizedPrice = 0;
+//     let totalOversizedPrice = 0;
     
-    // Calculate what the total would be without discount
-    oversizedTshirts.forEach(item => {
-      totalOversizedPrice += item.price * item.quantity;
-    });
+//     // Calculate what the total would be without discount
+//     oversizedTshirts.forEach(item => {
+//       totalOversizedPrice += item.price * item.quantity;
+//     });
     
-    // Price for pairs at special price
-    const specialOversizedPrice = 999 * oversizedPairs;
+//     // Price for pairs at special price
+//     const specialOversizedPrice = 999 * oversizedPairs;
     
-    // Calculate discount
-    oversizedDiscount = totalOversizedPrice - specialOversizedPrice;
-  }
+//     // Calculate discount
+//     oversizedDiscount = totalOversizedPrice - specialOversizedPrice;
+//   }
 
-  return {
-    regularTshirtDiscount: tshirtDiscount > 0 ? tshirtDiscount : 0,
-    oversizedTshirtDiscount: oversizedDiscount > 0 ? oversizedDiscount : 0
-  };
-};
+//   return {
+//     regularTshirtDiscount: tshirtDiscount > 0 ? tshirtDiscount : 0,
+//     oversizedTshirtDiscount: oversizedDiscount > 0 ? oversizedDiscount : 0
+//   };
+// };
 
 const CheckoutPage = () => {
 
@@ -128,11 +128,11 @@ const CheckoutPage = () => {
   const deliveryCharges = 0;
 
 
-  // const totalCartPrice = cartItems.reduce((acc, product) => {
-  // const productTotal = product.quantity * product.price;
-  // const additionalCost = product.giftWrapping ? product.quantity * 30 : 0;
-  // return acc + productTotal + additionalCost + deliveryCharges;
-  // }, 0);
+  const totalCartPrice = cartItems.reduce((acc, product) => {
+    const productTotal = product.quantity * product.price;
+    const additionalCost = product.giftWrapping ? product.quantity * 30 : 0;
+    return acc + productTotal + additionalCost + deliveryCharges;
+    }, 0);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -174,7 +174,7 @@ const CheckoutPage = () => {
       return;
     }
   
-    const amount = (calculateTotalPrice());
+     const amount = calculateTotalPrice();
     // Prepare order data
     const orderData = {
       user: { email: formData.email, id: userId },
@@ -345,29 +345,29 @@ const calculateProductPrice = (product) => {
 
 
 // Calculate total cart price with special offer
-// const calculateTotalPrice = () => {
-//   // Regular price calculation for all items
-//   return cartItems.reduce((total, item) => {
-//     return total + calculateProductPrice(item);
-//   }, 0);
-// };
-
-
 const calculateTotalPrice = () => {
-  // Calculate subtotal before discounts
-  const subtotalBeforeDiscount = cartItems.reduce((acc, product) => {
-    const productTotal = product.quantity * product.price;
-    const additionalCost = product.giftWrapping ? product.quantity * 30 : 0;
-    return acc + productTotal + additionalCost;
+  // Regular price calculation for all items
+  return cartItems.reduce((total, item) => {
+    return total + calculateProductPrice(item);
   }, 0);
-
-  // Apply special offers
-  const specialPricing = calculateSpecialPricing(cartItems);
-  const totalDiscount = specialPricing.regularTshirtDiscount + specialPricing.oversizedTshirtDiscount;
-
-  // Return final price after discounts
-  return subtotalBeforeDiscount - totalDiscount + deliveryCharges;
 };
+
+
+// const calculateTotalPrice = () => {
+//   // Calculate subtotal before discounts
+//   const subtotalBeforeDiscount = cartItems.reduce((acc, product) => {
+//     const productTotal = product.quantity * product.price;
+//     const additionalCost = product.giftWrapping ? product.quantity * 30 : 0;
+//     return acc + productTotal + additionalCost;
+//   }, 0);
+
+//   // Apply special offers
+//   const specialPricing = calculateSpecialPricing(cartItems);
+//   const totalDiscount = specialPricing.regularTshirtDiscount + specialPricing.oversizedTshirtDiscount;
+
+//   // Return final price after discounts
+//   return subtotalBeforeDiscount - totalDiscount + deliveryCharges;
+// };
 
 
 

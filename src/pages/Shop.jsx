@@ -270,9 +270,9 @@ const Shop = () => {
 
   return (
     <>
-<AnimatePresence>
+{/* <AnimatePresence>
         {offerVisible && <PromotionalOffer onClose={handleCloseOffer} />}
-      </AnimatePresence>
+      </AnimatePresence> */}
     
         
 
