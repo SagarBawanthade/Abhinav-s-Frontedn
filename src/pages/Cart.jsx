@@ -49,16 +49,16 @@ const Cart = () => {
     }
   };
 
-  // // Function to apply special pricing logic
-  // const calculateSpecialPricing = () => {
-  //   // Count regular and oversized t-shirts
-  //   const tshirtCount = cartItems.reduce((count, item) => {
-  //     // Check if the item is a regular t-shirt (modify this condition based on your product categorization)
-  //     if (item.category === 'Tshirt' || item.product?.category === 'Tshirt') {
-  //       return count + item.quantity;
-  //     }
-  //     return count;
-  //   }, 0);
+  // Function to apply special pricing logic
+  const calculateSpecialPricing = () => {
+    // Count regular and oversized t-shirts
+    const tshirtCount = cartItems.reduce((count, item) => {
+      // Check if the item is a regular t-shirt (modify this condition based on your product categorization)
+      if ((item.category === 'Tshirt' || item.product?.category === 'Tshirt') && item.price === 599) {
+        return count + item.quantity;
+      }
+      return count;
+    }, 0);
 
   //   const oversizedTshirtCount = cartItems.reduce((count, item) => {
   //     // Check if the item is an oversized t-shirt (modify this condition based on your product categorization)
@@ -68,26 +68,26 @@ const Cart = () => {
   //     return count;
   //   }, 0);
 
-  //   // Calculate special pricing for regular t-shirts
-  //   let tshirtDiscount = 0;
-  //   if (tshirtCount === 3) {
-  //     // Calculate how many sets of 3 regular t-shirts we have
-  //     const tshirtSets = Math.floor(tshirtCount / 3);
-  //     // For each set of 3, apply discount (assuming each t-shirt's regular price minus the special price of 999)
-  //     const regularTshirts = cartItems.filter(item => 
-  //       item.category === 'Tshirt' || item.product?.category === 'Tshirt'
-  //     ).sort((a, b) => a.price - b.price); // Sort by price to discount most expensive first
+    // Calculate special pricing for regular t-shirts
+    let tshirtDiscount = 0;
+    if (tshirtCount === 2) {
+      // Calculate how many sets of 3 regular t-shirts we have
+      const tshirtSets = Math.floor(tshirtCount / 2);
+      // For each set of 3, apply discount (assuming each t-shirt's regular price minus the special price of 999)
+      const regularTshirts = cartItems.filter(item => 
+        item.category === 'Tshirt' || item.product?.category === 'Tshirt'
+      ).sort((a, b) => a.price - b.price); // Sort by price to discount most expensive first
       
-  //     let remainingTshirtsToDiscount = tshirtSets * 3;
-  //     let totalRegularPrice = 0;
+      let remainingTshirtsToDiscount = tshirtSets * 2;
+      let totalRegularPrice = 0;
       
   //     // Calculate what the total would be without discount
   //     regularTshirts.forEach(item => {
   //       totalRegularPrice += item.price * item.quantity;
   //     });
       
-  //     // Price for sets of 3 at special price
-  //     const specialPrice = 999 * tshirtSets;
+      // Price for sets of 3 at special price
+      const specialPrice = 899 * tshirtSets;
       
   //     // Calculate discount as difference between regular price and special price
   //     tshirtDiscount = totalRegularPrice - specialPrice;
@@ -184,13 +184,13 @@ const Cart = () => {
     }
   };
 
-  // // Count t-shirts and oversized t-shirts for display
-  // const tshirtCount = cartItems.reduce((count, item) => {
-  //   if (item.category === 'Tshirt' || item.product?.category === 'Tshirt') {
-  //     return count + item.quantity;
-  //   }
-  //   return count;
-  // }, 0);
+  // Count t-shirts and oversized t-shirts for display
+  const tshirtCount = cartItems.reduce((count, item) => {
+    if ((item.category === 'Tshirt' || item.product?.category === 'Tshirt') && item.price === 599) {
+      return count + item.quantity;
+    }
+    return count;
+  }, 0);
 
   // const oversizedTshirtCount = cartItems.reduce((count, item) => {
   //   if (item.category === 'Oversize-Tshirt' || item.product?.category === 'Oversize-Tshirt') {
@@ -327,13 +327,52 @@ Color: <span className="font-forumNormal text-black">{item.color}</span>
                       <dd className="text-gray-900 dark:text-white">₹{subtotal}</dd>
                     </dl>
 
+                    {/* Show special pricing discounts if applicable */}
+                    {specialPricing.regularTshirtDiscount > 0 && (
+                      <dl className="flex items-center justify-between gap-4">
+                        <dt className="font-forumNormal text-green-600 dark:text-green-500">
+                          Special Price: 2 T-shirts for ₹899
+                        </dt>
+                        <dd className="font-forumNormal text-green-600 dark:text-green-500">
+                          -₹{specialPricing.regularTshirtDiscount}
+                        </dd>
+                      </dl>
+                    )}
+
+                    {specialPricing.oversizedTshirtDiscount > 0 && (
+                      <dl className="flex items-center justify-between gap-4">
+                        <dt className="font-forumNormal text-green-600 dark:text-green-500">
+                          Special Price: 2 Oversized T-shirts for ₹999
+                        </dt>
+                        <dd className="font-forumNormal text-green-600 dark:text-green-500">
+                          -₹{specialPricing.oversizedTshirtDiscount}
+                        </dd>
+                      </dl>
+                    )}
+
                     <dl className="flex items-center justify-between gap-4">
                        <dt className="font-forumNormal text-gray-500 dark:text-gray-400 mb-6">Delivery</dt>
                        <dd className="font-forumNormal text-green-600">-₹FREE</dd>
                       
                      </dl>
 
-                    
+                    {/* Display promotional information */}
+{tshirtCount === 2 && (
+  <p className="font-forumNormal text-amber-600 dark:text-amber-500">
+    You have 2 t-shirts eligible for the ₹899 offer!
+  </p>
+)}
+{tshirtCount > 0 && tshirtCount < 2 && (
+  <p className="font-forumNormal text-amber-600 dark:text-amber-500">
+    Add {2 - tshirtCount} more t-shirt{tshirtCount === 1 ? '' : 's'} to get 2 for ₹899!
+  </p>
+)}
+
+                    {oversizedTshirtCount > 0 && oversizedTshirtCount < 2 && (
+                      <p className="font-forumNormal text-amber-600 dark:text-amber-500">
+                        Add 1 more oversized t-shirt to get 2 for ₹999!
+                      </p>
+                    )}
 
                     <p className="font-forumNormal underline text-green-600 dark:text-green-600">Maharashtra, India</p>
                   </div>

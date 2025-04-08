@@ -36,44 +36,45 @@ const InputField = ({ icon: Icon, ...props }) => (
   </div>
 );
 
-// // Add this function before the CheckoutPage component
-// const calculateSpecialPricing = (cartItems) => {
-//   // Count regular and oversized t-shirts
-//   const tshirtCount = cartItems.reduce((count, item) => {
-//     if (item.category === 'Tshirt' || (item.product && item.product.category === 'Tshirt')) {
-//       return count + item.quantity;
-//     }
-//     return count;
-//   }, 0);
+// Add this function before the CheckoutPage component
+const calculateSpecialPricing = (cartItems) => {
+  // Count regular and oversized t-shirts
+  const tshirtCount = cartItems.reduce((count, item) => {
+    if ((item.category === 'Tshirt' || item.product?.category === 'Tshirt') && item.price === 599) {
+      return count + item.quantity;
+    }
+    return count;
+  }, 0);
+  const oversizedTshirtCount = cartItems.reduce((count, item) => {
+    if (item.category === 'Oversize-Tshirt' || (item.product && item.product.category === 'Oversize-Tshirt')) {
+      return count + item.quantity;
+    }
+    return count;
+  }, 0);
 
-//   const oversizedTshirtCount = cartItems.reduce((count, item) => {
-//     if (item.category === 'Oversize-Tshirt' || (item.product && item.product.category === 'Oversize-Tshirt')) {
-//       return count + item.quantity;
-//     }
-//     return count;
-//   }, 0);
-
-//   // Calculate special pricing for regular t-shirts
-//   let tshirtDiscount = 0;
-//   if (tshirtCount >= 3) {
-//     const tshirtSets = Math.floor(tshirtCount / 3);
-//     const regularTshirts = cartItems.filter(item => 
-//       item.category === 'Tshirt' || (item.product && item.product.category === 'Tshirt')
-//     ).sort((a, b) => a.price - b.price);
+  let tshirtDiscount = 0;
+  if (tshirtCount === 2) {
+    // Calculate how many sets of 3 regular t-shirts we have
+    const tshirtSets = Math.floor(tshirtCount / 2);
+    // For each set of 3, apply discount (assuming each t-shirt's regular price minus the special price of 999)
+    const regularTshirts = cartItems.filter(item => 
+      item.category === 'Tshirt' || item.product?.category === 'Tshirt'
+    ).sort((a, b) => a.price - b.price); // Sort by price to discount most expensive first
     
-//     let totalRegularPrice = 0;
+    let remainingTshirtsToDiscount = tshirtSets * 2;
+    let totalRegularPrice = 0;
     
 //     // Calculate what the total would be without discount
 //     regularTshirts.forEach(item => {
 //       totalRegularPrice += item.price * item.quantity;
 //     });
     
-//     // Price for sets of 3 at special price
-//     const specialPrice = 999 * tshirtSets;
+    // Price for sets of 3 at special price
+    const specialPrice = 899 * tshirtSets;
     
-//     // Calculate discount
-//     tshirtDiscount = totalRegularPrice - specialPrice;
-//   }
+    // Calculate discount as difference between regular price and special price
+    tshirtDiscount = totalRegularPrice - specialPrice;
+  }
 
 //   // Calculate special pricing for oversized t-shirts
 //   let oversizedDiscount = 0;
@@ -464,7 +465,20 @@ if (loading) {
                   )} */}
 
 
-                  
+                   {/* Add the special offers */}
+                  {calculateSpecialPricing(cartItems).regularTshirtDiscount > 0 && (
+                    <div className="flex justify-between items-center text-green-600 bg-green-50 p-3 rounded-lg">
+                      <span>Special Offer: 2 T-shirts for ₹899</span>
+                      <span>-₹{calculateSpecialPricing(cartItems).regularTshirtDiscount}</span>
+                    </div>
+                  )}
+
+                  {calculateSpecialPricing(cartItems).oversizedTshirtDiscount > 0 && (
+                    <div className="flex justify-between items-center text-green-600 bg-green-50 p-3 rounded-lg">
+                      <span>Special Offer: 2 Oversized T-shirts for ₹999</span>
+                      <span>-₹{calculateSpecialPricing(cartItems).oversizedTshirtDiscount}</span>
+                    </div>
+                  )}
 
                   {/* Keep your existing Total section */}
                   <div className="flex justify-between items-center text-lg font-semibold pt-2">

@@ -53,7 +53,7 @@ const SpecialOffer = () => {
             <div className="flex items-center space-x-2 bg-headerBackGround p-3 rounded-md border border-gray-200 transition-transform hover:scale-102">
               <ShoppingBag className="w-5 h-5 text-green-500" />
               <p className="text-gray-700 font-medium">
-                Add any 3 T-shirts to cart for just ₹999
+                Add any 2 T-shirts to cart for just ₹899
               </p>
             </div>
           )}
