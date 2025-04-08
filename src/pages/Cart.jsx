@@ -60,86 +60,79 @@ const Cart = () => {
       return count;
     }, 0);
 
-  //   const oversizedTshirtCount = cartItems.reduce((count, item) => {
-  //     // Check if the item is an oversized t-shirt (modify this condition based on your product categorization)
-  //     if (item.category === 'Oversize-Tshirt' || item.product?.category === 'Oversize-Tshirt') {
-  //       return count + item.quantity;
-  //     }
-  //     return count;
-  //   }, 0);
+    const oversizedTshirtCount = cartItems.reduce((count, item) => {
+      // Check if the item is an oversized t-shirt (modify this condition based on your product categorization)
+      if (item.category === 'Oversize-Tshirt' || item.product?.category === 'Oversize-Tshirt') {
+        return count + item.quantity;
+      }
+      return count;
+    }, 0);
 
     // Calculate special pricing for regular t-shirts
     let tshirtDiscount = 0;
     if (tshirtCount === 2) {
-      // Calculate how many sets of 3 regular t-shirts we have
+      // Calculate how many sets of 2 regular t-shirts we have
       const tshirtSets = Math.floor(tshirtCount / 2);
-      // For each set of 3, apply discount (assuming each t-shirt's regular price minus the special price of 999)
+      // For each set of 2, apply discount
       const regularTshirts = cartItems.filter(item => 
-        item.category === 'Tshirt' || item.product?.category === 'Tshirt'
-      ).sort((a, b) => a.price - b.price); // Sort by price to discount most expensive first
+        (item.category === 'Tshirt' || item.product?.category === 'Tshirt') && item.price === 599
+      );
       
-      let remainingTshirtsToDiscount = tshirtSets * 2;
+      // Calculate total regular price
       let totalRegularPrice = 0;
+      regularTshirts.forEach(item => {
+        totalRegularPrice += item.price * item.quantity;
+      });
       
-  //     // Calculate what the total would be without discount
-  //     regularTshirts.forEach(item => {
-  //       totalRegularPrice += item.price * item.quantity;
-  //     });
-      
-      // Price for sets of 3 at special price
+      // Price for sets of 2 at special price
       const specialPrice = 899 * tshirtSets;
       
-  //     // Calculate discount as difference between regular price and special price
-  //     tshirtDiscount = totalRegularPrice - specialPrice;
-  //   }
+      // Calculate discount as difference between regular price and special price
+      tshirtDiscount = totalRegularPrice - specialPrice;
+    }
 
-  //   // Calculate special pricing for oversized t-shirts
-  //   let oversizedDiscount = 0;
-  //   if (oversizedTshirtCount === 2) {
-  //     // Calculate how many pairs of oversized t-shirts we have
-  //     const oversizedPairs = Math.floor(oversizedTshirtCount / 2);
-  //     // For each pair, apply discount
-  //     const oversizedTshirts = cartItems.filter(item => 
-  //       item.category === 'Oversize-Tshirt' || item.product?.category === 'Oversize-Tshirt'
-  //     ).sort((a, b) => a.price - b.price); // Sort by price to discount most expensive first
+    // Calculate special pricing for oversized t-shirts
+    let oversizedDiscount = 0;
+    if (oversizedTshirtCount === 2) {
+      // Calculate how many pairs of oversized t-shirts we have
+      const oversizedPairs = Math.floor(oversizedTshirtCount / 2);
+      // For each pair, apply discount
+      const oversizedTshirts = cartItems.filter(item => 
+        item.category === 'Oversize-Tshirt' || item.product?.category === 'Oversize-Tshirt'
+      );
       
-  //     let totalOversizedPrice = 0;
+      let totalOversizedPrice = 0;
       
-  //     // Calculate what the total would be without discount
-  //     oversizedTshirts.forEach(item => {
-  //       totalOversizedPrice += item.price * item.quantity;
-  //     });
+      // Calculate what the total would be without discount
+      oversizedTshirts.forEach(item => {
+        totalOversizedPrice += item.price * item.quantity;
+      });
       
-  //     // Price for pairs at special price
-  //     const specialOversizedPrice = 999 * oversizedPairs;
+      // Price for pairs at special price
+      const specialOversizedPrice = 999 * oversizedPairs;
       
-  //     // Calculate discount as difference between regular price and special price
-  //     oversizedDiscount = totalOversizedPrice - specialOversizedPrice;
-  //   }
+      // Calculate discount as difference between regular price and special price
+      oversizedDiscount = totalOversizedPrice - specialOversizedPrice;
+    }
 
-  //   return {
-  //     regularTshirtDiscount: tshirtDiscount > 0 ? tshirtDiscount : 0,
-  //     oversizedTshirtDiscount: oversizedDiscount > 0 ? oversizedDiscount : 0
-  //   };
-  // };
+    return {
+      regularTshirtDiscount: tshirtDiscount > 0 ? tshirtDiscount : 0,
+      oversizedTshirtDiscount: oversizedDiscount > 0 ? oversizedDiscount : 0
+    };
+  };
 
-  // // Apply special pricing
-  // const specialPricing = calculateSpecialPricing();
-  // const totalDiscount = specialPricing.regularTshirtDiscount + specialPricing.oversizedTshirtDiscount;
+  // Apply special pricing
+  const specialPricing = calculateSpecialPricing();
+  const totalDiscount = specialPricing.regularTshirtDiscount + specialPricing.oversizedTshirtDiscount;
 
-  const subtotal = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity + (item.giftWrapping ? 30 * item.quantity : 0), // Add 30 for gift wrapping if applicable
+  // Calculate subtotal with regular pricing
+  const subtotalBeforeDiscount = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity + (item.giftWrapping ? 30 * item.quantity : 0),
     0
   );
 
-  // // Calculate subtotal with regular pricing
-  // const subtotalBeforeDiscount = cartItems.reduce(
-  //   (acc, item) => acc + item.price * item.quantity + (item.giftWrapping ? 30 * item.quantity : 0),
-  //   0
-  // );
-
   // Apply discount
-  // const subtotal = subtotalBeforeDiscount - totalDiscount;
+  const subtotal = subtotalBeforeDiscount - totalDiscount;
   const delivery = 0;
   const total = subtotal + delivery;
 
@@ -192,12 +185,12 @@ const Cart = () => {
     return count;
   }, 0);
 
-  // const oversizedTshirtCount = cartItems.reduce((count, item) => {
-  //   if (item.category === 'Oversize-Tshirt' || item.product?.category === 'Oversize-Tshirt') {
-  //     return count + item.quantity;
-  //   }
-  //   return count;
-  // }, 0);
+  const oversizedTshirtCount = cartItems.reduce((count, item) => {
+    if (item.category === 'Oversize-Tshirt' || item.product?.category === 'Oversize-Tshirt') {
+      return count + item.quantity;
+    }
+    return count;
+  }, 0);
 
   return (
     <section ref={Cart} className="bg-headerBackGround py-8 antialiased dark:bg-gray-900 md:py-16">
@@ -357,16 +350,16 @@ Color: <span className="font-forumNormal text-black">{item.color}</span>
                      </dl>
 
                     {/* Display promotional information */}
-{tshirtCount === 2 && (
-  <p className="font-forumNormal text-amber-600 dark:text-amber-500">
-    You have 2 t-shirts eligible for the ₹899 offer!
-  </p>
-)}
-{tshirtCount > 0 && tshirtCount < 2 && (
-  <p className="font-forumNormal text-amber-600 dark:text-amber-500">
-    Add {2 - tshirtCount} more t-shirt{tshirtCount === 1 ? '' : 's'} to get 2 for ₹899!
-  </p>
-)}
+                    {tshirtCount === 2 && (
+                      <p className="font-forumNormal text-amber-600 dark:text-amber-500">
+                        You have 2 t-shirts eligible for the ₹899 offer!
+                      </p>
+                    )}
+                    {tshirtCount > 0 && tshirtCount < 2 && (
+                      <p className="font-forumNormal text-amber-600 dark:text-amber-500">
+                        Add {2 - tshirtCount} more t-shirt{tshirtCount === 1 ? '' : 's'} to get 2 for ₹899!
+                      </p>
+                    )}
 
                     {oversizedTshirtCount > 0 && oversizedTshirtCount < 2 && (
                       <p className="font-forumNormal text-amber-600 dark:text-amber-500">
