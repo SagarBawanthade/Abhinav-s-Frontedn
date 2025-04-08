@@ -197,7 +197,7 @@ const Shop = () => {
                     <div className="flex items-center justify-center sm:line-height-[normal] sm:text-xs" style={{ lineHeight: "12px", fontSize: "9px" }}>
                       <span>
                         {product.category === "Oversize-Tshirt" ? "Buy 2 ₹999" : 
-                          product.category === "Tshirt" ? "Buy 3 ₹999" : 
+                          product.category === "Tshirt" ? "Buy 2 ₹899" : 
                           product.category === "Hoodies" ? "30% OFF" : 
                           product.category === "Holi-Special" ? "45% OFF" :
                           product.category === "Couple-Tshirt" ? "40% OFF" : "SALE"}

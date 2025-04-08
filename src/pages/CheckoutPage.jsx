@@ -40,12 +40,11 @@ const InputField = ({ icon: Icon, ...props }) => (
 const calculateSpecialPricing = (cartItems) => {
   // Count regular and oversized t-shirts
   const tshirtCount = cartItems.reduce((count, item) => {
-    if (item.category === 'Tshirt' || (item.product && item.product.category === 'Tshirt')) {
+    if ((item.category === 'Tshirt' || item.product?.category === 'Tshirt') && item.price === 599) {
       return count + item.quantity;
     }
     return count;
   }, 0);
-
   const oversizedTshirtCount = cartItems.reduce((count, item) => {
     if (item.category === 'Oversize-Tshirt' || (item.product && item.product.category === 'Oversize-Tshirt')) {
       return count + item.quantity;
@@ -53,14 +52,16 @@ const calculateSpecialPricing = (cartItems) => {
     return count;
   }, 0);
 
-  // Calculate special pricing for regular t-shirts
   let tshirtDiscount = 0;
-  if (tshirtCount >= 3) {
-    const tshirtSets = Math.floor(tshirtCount / 3);
+  if (tshirtCount === 2) {
+    // Calculate how many sets of 3 regular t-shirts we have
+    const tshirtSets = Math.floor(tshirtCount / 2);
+    // For each set of 3, apply discount (assuming each t-shirt's regular price minus the special price of 999)
     const regularTshirts = cartItems.filter(item => 
-      item.category === 'Tshirt' || (item.product && item.product.category === 'Tshirt')
-    ).sort((a, b) => a.price - b.price);
+      item.category === 'Tshirt' || item.product?.category === 'Tshirt'
+    ).sort((a, b) => a.price - b.price); // Sort by price to discount most expensive first
     
+    let remainingTshirtsToDiscount = tshirtSets * 2;
     let totalRegularPrice = 0;
     
     // Calculate what the total would be without discount
@@ -69,9 +70,9 @@ const calculateSpecialPricing = (cartItems) => {
     });
     
     // Price for sets of 3 at special price
-    const specialPrice = 999 * tshirtSets;
+    const specialPrice = 899 * tshirtSets;
     
-    // Calculate discount
+    // Calculate discount as difference between regular price and special price
     tshirtDiscount = totalRegularPrice - specialPrice;
   }
 
@@ -467,7 +468,7 @@ if (loading) {
                    {/* Add the special offers */}
                   {calculateSpecialPricing(cartItems).regularTshirtDiscount > 0 && (
                     <div className="flex justify-between items-center text-green-600 bg-green-50 p-3 rounded-lg">
-                      <span>Special Offer: 3 T-shirts for ₹999</span>
+                      <span>Special Offer: 2 T-shirts for ₹899</span>
                       <span>-₹{calculateSpecialPricing(cartItems).regularTshirtDiscount}</span>
                     </div>
                   )}

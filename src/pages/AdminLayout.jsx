@@ -5,6 +5,7 @@ const AdminLayout = () => {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
+      
       <AdminSidebar />
       
       {/* Main content area - add left margin to accommodate sidebar */}
