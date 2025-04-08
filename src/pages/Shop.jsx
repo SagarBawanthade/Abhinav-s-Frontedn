@@ -171,45 +171,52 @@ const Shop = () => {
   };
 
   // Function to render the product card
-  const renderProductCard = (product) => (
-    <div key={product._id} className="group relative bg-headerBackGround rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
-       <Link 
-          to={`/product-details/${product._id}`} 
-          onClick={() => handleProductClick(product._id)}
-          state={{ fromProduct: false, fromShop: true, fromCategory: category ? `/shop/${category}` : '/shop' }}
-        >
+// Function to render the product card
+const renderProductCard = (product) => (
+  <div key={product._id} className="group relative bg-headerBackGround rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+    <Link 
+      to={`/product-details/${product._id}`} 
+      onClick={() => handleProductClick(product._id)}
+      state={{ fromProduct: false, fromShop: true, fromCategory: category ? `/shop/${category}` : '/shop' }}
+    >
       <div className="relative">
-       
-          <div className="aspect-[5/5] overflow-hidden rounded-t-xl relative">
-            <img
-              src={product.images[0]}
-              alt={product.name}
-              className="h-full w-full object-cover object-center transform group-hover:scale-110 transition-transform duration-500"
-            />
-
-              {product.category && (
-                <div className="absolute top-0 left-0 w-24 h-24 overflow-hidden">
-                  <div className={`
-                    bg-[#0C3937]
-                    text-white shadow-lg text-xs
-                    absolute font-semibold top-0 left-0 transform -rotate-45 translate-y-4 -translate-x-14 w-40 text-center md:py-1 md:text-md
-                  `}>
-                    <div className="flex items-center justify-center sm:line-height-[normal] sm:text-xs" style={{ lineHeight: "12px", fontSize: "9px" }}>
-                      <span>
-                        {product.category === "Oversize-Tshirt" ? "Buy 2 ₹999" : 
-                          product.category === "Tshirt" ? "Buy 2 ₹899" : 
-                          product.category === "Hoodies" ? "30% OFF" : 
-                          product.category === "Holi-Special" ? "45% OFF" :
-                          product.category === "Couple-Tshirt" ? "40% OFF" : "SALE"}
-                  
-                      </span>
-                    </div>
-                  </div>
+        <div className="aspect-[5/5] overflow-hidden rounded-t-xl relative">
+          <img
+            src={product.images[0]}
+            alt={product.name}
+            className="h-full w-full object-cover object-center transform group-hover:scale-110 transition-transform duration-500"
+          />
+ 
+          {/* Category badge in the corner (optional) */}
+          {product.category && (
+            <div className="absolute top-0 left-0 w-24 h-24 overflow-hidden">
+              <div className="bg-[#0C3937] text-white shadow-lg text-xs absolute font-semibold top-0 left-0 transform -rotate-45 translate-y-4 -translate-x-14 w-40 text-center md:py-1">
+                <div className="flex items-center justify-center" style={{ lineHeight: "12px", fontSize: "12px" }}>
+                  <span>
+                    {product.category === "Hoodies" ? "30%" : 
+                      product.category === "Holi-Special" ? "45%" :
+                      product.category === "Couple-Tshirt" ? "40%" : "SALE"}
+                    {/* <span className="ml-0.5">OFF</span> */}
+                  </span>
                 </div>
-              )}
-          </div>
-       
+              </div>
+            </div>
+          )}
 
+          {/* Clean rectangular offer banner at the bottom of the image */}
+          {(product.category === "Oversize-Tshirt" || product.category === "Tshirt") && (
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r bg-[#0C3937] py-1.5 px-2 text-center">
+              <div className="flex items-center justify-center">
+                <span className="text-white font-bold text-xs md:text-sm">
+                  {product.category === "Oversize-Tshirt" 
+                    ? "BUY 2 FOR ₹999" 
+                    : "BUY 2 FOR ₹899"}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+       
         <button 
           onClick={(e) => {
             e.preventDefault();
@@ -224,20 +231,18 @@ const Shop = () => {
             } transition-colors`}
           />
         </button>
-        
       </div>
       
-
       <div className="p-2">
-          <h3 className="font-forumNormal text-left text-sm md:text-lg text-gray-900 mb-1 truncate group-hover:text-black">
-            {product.name}
-          </h3>
+        <h3 className="font-forumNormal text-left text-sm md:text-lg text-gray-900 mb-1 truncate group-hover:text-black">
+          {product.name}
+        </h3>
 
         <div className="flex items-center space-x-2 mb-3">
           <span className="text-lg md:text-xl font-bold font-forumNormal text-gray-900">
             ₹{product.price}
           </span>
-          <span className="text-lg font-bold font-forumNormal text-gray-700 line-through">
+          <span className="text-sm md:text-lg font-bold font-forumNormal text-gray-700 line-through">
             ₹
             {product.price +
               (product.category === "Oversize-Tshirt"
@@ -264,15 +269,15 @@ const Shop = () => {
           </div>
         </div>
       </div>
-      </Link>
-    </div>
-  );
+    </Link>
+  </div>
+);
 
   return (
     <>
-{/* <AnimatePresence>
+<AnimatePresence>
         {offerVisible && <PromotionalOffer onClose={handleCloseOffer} />}
-      </AnimatePresence> */}
+      </AnimatePresence>
     
         
 
