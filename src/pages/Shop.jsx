@@ -216,6 +216,8 @@ const renderProductCard = (product) => (
             </div>
           )}
         </div>
+
+        
        
         <button 
           onClick={(e) => {
