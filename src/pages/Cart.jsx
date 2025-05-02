@@ -70,9 +70,9 @@ const Cart = () => {
 
     // Calculate special pricing for regular t-shirts
     let tshirtDiscount = 0;
-    if (tshirtCount === 2) {
+    if (tshirtCount === 3) {
       // Calculate how many sets of 2 regular t-shirts we have
-      const tshirtSets = Math.floor(tshirtCount / 2);
+      const tshirtSets = Math.floor(tshirtCount / 3);
       // For each set of 2, apply discount
       const regularTshirts = cartItems.filter(item => 
         (item.category === 'Tshirt' || item.product?.category === 'Tshirt') && item.price === 599
@@ -324,7 +324,7 @@ Color: <span className="font-forumNormal text-black">{item.color}</span>
                     {specialPricing.regularTshirtDiscount > 0 && (
                       <dl className="flex items-center justify-between gap-4">
                         <dt className="font-forumNormal text-green-600 dark:text-green-500">
-                          Special Price: 2 T-shirts for ₹999
+                          Special Price: 3 T-shirts for ₹999
                         </dt>
                         <dd className="font-forumNormal text-green-600 dark:text-green-500">
                           -₹{specialPricing.regularTshirtDiscount}
@@ -350,14 +350,14 @@ Color: <span className="font-forumNormal text-black">{item.color}</span>
                      </dl>
 
                     {/* Display promotional information */}
-                    {tshirtCount === 2 && (
+                    {tshirtCount === 3 && (
                       <p className="font-forumNormal text-amber-600 dark:text-amber-500">
-                        You have 2 t-shirts eligible for the ₹999 offer!
+                        You have 3 t-shirts eligible for the ₹999 offer!
                       </p>
                     )}
-                    {tshirtCount > 0 && tshirtCount < 2 && (
+                    {tshirtCount > 0 && tshirtCount < 3 && (
                       <p className="font-forumNormal text-amber-600 dark:text-amber-500">
-                        Add {2 - tshirtCount} more t-shirt{tshirtCount === 1 ? '' : 's'} to get 2 for ₹999!
+                        Add {3 - tshirtCount} more t-shirt{tshirtCount === 1 ? '' : 's'} to get 3 for ₹999!
                       </p>
                     )}
 

@@ -681,7 +681,8 @@ function ProductDetails() {
 
 
             <p>
-              The brand does accept returns, but replacements are possible subject to availability.  
+              The brand does accept returns, but replacements are possible subject to availability.
+                
               Please initiate replacements from the &#39;My Orders&#39; section in the App within 7 days of Delivery.  
               The product must be in its original condition with all tags attached.  
               Return/Exchange is available for 7 days from the date of delivery.
