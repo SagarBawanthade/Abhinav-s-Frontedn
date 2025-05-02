@@ -53,7 +53,7 @@ const SpecialOffer = () => {
             <div className="flex items-center space-x-2 bg-headerBackGround p-3 rounded-md border border-gray-200 transition-transform hover:scale-102">
               <ShoppingBag className="w-5 h-5 text-green-500" />
               <p className="text-gray-700 font-medium">
-                Add any 2 T-shirts to cart for just ₹899
+                Add any 2 T-shirts to cart for just ₹999
               </p>
             </div>
           )}
@@ -84,7 +84,7 @@ const SpecialOffer = () => {
       <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-sm text-white p-3 rounded-lg text-center relative overflow-hidden">
         <div className="animate-marquee whitespace-nowrap">
           {categories.includes("Tshirt") && (
-            <span className="inline-block">⚡ 2 T-Shirts @ ₹899</span>
+            <span className="inline-block">⚡ 2 T-Shirts @ ₹999</span>
           )}
           {categories.includes("Oversize-Tshirt") && (
             <span className="inline-block ">⚡ 2 Oversized T-Shirts @ ₹999</span>

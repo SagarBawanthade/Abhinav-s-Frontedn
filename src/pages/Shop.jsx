@@ -210,7 +210,7 @@ const renderProductCard = (product) => (
                 <span className="text-white font-bold text-xs md:text-sm">
                   {product.category === "Oversize-Tshirt" 
                     ? "BUY 2 FOR ₹999" 
-                    : "BUY 2 FOR ₹899"}
+                    : "BUY 2 FOR ₹999"}
                 </span>
               </div>
             </div>
