@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { FaTrashAlt, FaGift } from "react-icons/fa";
+import { FaTrashAlt, FaGift, FaTag } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Spinner from "../components/Spinner.jsx"; 
 import { useDispatch } from "react-redux";
 import { fetchCartItems, loadLocalStorage, removeFromLocalCart, removeItemFromCart } from "../feature/cartSlice.jsx";
 import { toast } from "react-toastify";
-
 
 const Cart = () => {
   const location = useLocation();
@@ -49,90 +48,120 @@ const Cart = () => {
     }
   };
 
-  // Function to apply special pricing logic
+  // Fixed function to apply special pricing logic
   const calculateSpecialPricing = () => {
-    // Count regular and oversized t-shirts
-    const tshirtCount = cartItems.reduce((count, item) => {
-      // Check if the item is a regular t-shirt (modify this condition based on your product categorization)
-      if ((item.category === 'Tshirt' || item.product?.category === 'Tshirt') && item.price === 599) {
-        return count + item.quantity;
-      }
-      return count;
-    }, 0);
+    // Count regular t-shirts (price = 599)
+    const regularTshirts = cartItems.filter(item => 
+      (item.category === 'Tshirt' || item.product?.category === 'Tshirt') && item.price === 599
+    );
+    
+    const tshirtCount = regularTshirts.reduce((count, item) => count + item.quantity, 0);
 
-    const oversizedTshirtCount = cartItems.reduce((count, item) => {
-      // Check if the item is an oversized t-shirt (modify this condition based on your product categorization)
-      if (item.category === 'Oversize-Tshirt' || item.product?.category === 'Oversize-Tshirt') {
-        return count + item.quantity;
-      }
-      return count;
-    }, 0);
+    // Count oversized t-shirts
+    const oversizedTshirts = cartItems.filter(item => 
+      item.category === 'Oversize-Tshirt' || item.product?.category === 'Oversize-Tshirt'
+    );
+    
+    const oversizedTshirtCount = oversizedTshirts.reduce((count, item) => count + item.quantity, 0);
 
-    // Calculate special pricing for regular t-shirts
+    // Calculate regular t-shirt pricing
     let tshirtDiscount = 0;
-    if (tshirtCount === 3) {
-      // Calculate how many sets of 2 regular t-shirts we have
-      const tshirtSets = Math.floor(tshirtCount / 3);
-      // For each set of 2, apply discount
-      const regularTshirts = cartItems.filter(item => 
-        (item.category === 'Tshirt' || item.product?.category === 'Tshirt') && item.price === 599
-      );
+    let appliedTshirtOffers = [];
+    
+    if (tshirtCount >= 2) {
+      // Strategy: Use 3-for-999 first, then 2-for-899 for remaining
+      let remainingTshirts = tshirtCount;
       
-      // Calculate total regular price
-      let totalRegularPrice = 0;
-      regularTshirts.forEach(item => {
-        totalRegularPrice += item.price * item.quantity;
-      });
+      // Apply 3-for-999 offers
+      const sets3for999 = Math.floor(remainingTshirts / 3);
+      remainingTshirts -= sets3for999 * 3;
       
-      // Price for sets of 2 at special price
-      const specialPrice = 999 * tshirtSets;
+      // Apply 2-for-899 offers for remaining t-shirts
+      const sets2for899 = Math.floor(remainingTshirts / 2);
+      remainingTshirts -= sets2for899 * 2;
       
-      // Calculate discount as difference between regular price and special price
+      // Calculate total regular price for all t-shirts
+      const totalRegularPrice = tshirtCount * 599;
+      
+      // Calculate special price
+      const specialPrice = (sets3for999 * 999) + (sets2for899 * 899) + (remainingTshirts * 599);
+      
+      // Calculate discount
       tshirtDiscount = totalRegularPrice - specialPrice;
+      
+      // Track applied offers
+      if (sets3for999 > 0) {
+        appliedTshirtOffers.push({
+          type: '3for999',
+          sets: sets3for999,
+          description: `${sets3for999} set${sets3for999 > 1 ? 's' : ''} of 3 T-shirts for ₹999`,
+          savings: sets3for999 * (3 * 599 - 999)
+        });
+      }
+      
+      if (sets2for899 > 0) {
+        appliedTshirtOffers.push({
+          type: '2for899',
+          sets: sets2for899,
+          description: `${sets2for899} set${sets2for899 > 1 ? 's' : ''} of 2 T-shirts for ₹899`,
+          savings: sets2for899 * (2 * 599 - 899)
+        });
+      }
     }
 
-    // Calculate special pricing for oversized t-shirts
+    // Calculate oversized t-shirt pricing
     let oversizedDiscount = 0;
-    if (oversizedTshirtCount === 2) {
-      // Calculate how many pairs of oversized t-shirts we have
+    let appliedOversizedOffers = [];
+    
+    if (oversizedTshirtCount >= 2) {
       const oversizedPairs = Math.floor(oversizedTshirtCount / 2);
-      // For each pair, apply discount
-      const oversizedTshirts = cartItems.filter(item => 
-        item.category === 'Oversize-Tshirt' || item.product?.category === 'Oversize-Tshirt'
-      );
+      const remainingOversized = oversizedTshirtCount % 2;
       
-      let totalOversizedPrice = 0;
-      
-      // Calculate what the total would be without discount
+      // Calculate total regular price for oversized t-shirts
+      let totalOversizedRegularPrice = 0;
       oversizedTshirts.forEach(item => {
-        totalOversizedPrice += item.price * item.quantity;
+        totalOversizedRegularPrice += item.price * item.quantity;
       });
       
-      // Price for pairs at special price
-      const specialOversizedPrice = 999 * oversizedPairs;
+      // Calculate special price for oversized
+      const oversizedRegularPricePerItem = oversizedTshirts.length > 0 ? oversizedTshirts[0].price : 0;
+      const specialOversizedPrice = (oversizedPairs * 999) + (remainingOversized * oversizedRegularPricePerItem);
       
-      // Calculate discount as difference between regular price and special price
-      oversizedDiscount = totalOversizedPrice - specialOversizedPrice;
+      // Calculate discount
+      oversizedDiscount = totalOversizedRegularPrice - specialOversizedPrice;
+      
+      if (oversizedPairs > 0) {
+        appliedOversizedOffers.push({
+          type: 'oversized2for999',
+          sets: oversizedPairs,
+          description: `${oversizedPairs} set${oversizedPairs > 1 ? 's' : ''} of 2 Oversized T-shirts for ₹999`,
+          savings: oversizedDiscount
+        });
+      }
     }
 
     return {
-      regularTshirtDiscount: tshirtDiscount > 0 ? tshirtDiscount : 0,
-      oversizedTshirtDiscount: oversizedDiscount > 0 ? oversizedDiscount : 0
+      tshirtCount,
+      oversizedTshirtCount,
+      tshirtDiscount: Math.max(0, tshirtDiscount),
+      oversizedDiscount: Math.max(0, oversizedDiscount),
+      appliedTshirtOffers,
+      appliedOversizedOffers,
+      totalDiscount: Math.max(0, tshirtDiscount) + Math.max(0, oversizedDiscount)
     };
   };
 
   // Apply special pricing
-  const specialPricing = calculateSpecialPricing();
-  const totalDiscount = specialPricing.regularTshirtDiscount + specialPricing.oversizedTshirtDiscount;
+  const pricingData = calculateSpecialPricing();
 
-  // Calculate subtotal with regular pricing
+  // Calculate subtotal with regular pricing first
   const subtotalBeforeDiscount = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity + (item.giftWrapping ? 30 * item.quantity : 0),
     0
   );
 
   // Apply discount
-  const subtotal = subtotalBeforeDiscount - totalDiscount;
+  const subtotal = subtotalBeforeDiscount - pricingData.totalDiscount;
   const delivery = 0;
   const total = subtotal + delivery;
 
@@ -177,242 +206,318 @@ const Cart = () => {
     }
   };
 
-  // Count t-shirts and oversized t-shirts for display
-  const tshirtCount = cartItems.reduce((count, item) => {
-    if ((item.category === 'Tshirt' || item.product?.category === 'Tshirt') && item.price === 599) {
-      return count + item.quantity;
+  // Generate promotional messages
+  const getPromotionalMessages = () => {
+    const messages = [];
+    const { tshirtCount, oversizedTshirtCount } = pricingData;
+    
+    // T-shirt promotional messages
+    if (tshirtCount === 1) {
+      messages.push({
+        type: 'warning',
+        icon: '🛍️',
+        text: 'Add 1 more T-shirt to get 2 for ₹899! (Save ₹299)'
+      });
+    } else if (tshirtCount === 2) {
+      messages.push({
+        type: 'success',
+        icon: '🎉',
+        text: 'Amazing! You got 2 T-shirts for ₹899. Add 1 more to get 3 for ₹999!'
+      });
+    } else if (tshirtCount > 2) {
+      const remaining = tshirtCount % 3;
+      if (remaining === 1) {
+        messages.push({
+          type: 'warning',
+          icon: '💡',
+          text: 'Add 1 more T-shirt to complete another set of 2 for ₹899!'
+        });
+      } else if (remaining === 2) {
+        messages.push({
+          type: 'warning',
+          icon: '🔥',
+          text: 'Add 1 more T-shirt to get another set of 3 for ₹999!'
+        });
+      }
     }
-    return count;
-  }, 0);
-
-  const oversizedTshirtCount = cartItems.reduce((count, item) => {
-    if (item.category === 'Oversize-Tshirt' || item.product?.category === 'Oversize-Tshirt') {
-      return count + item.quantity;
+    
+    // Oversized t-shirt promotional messages
+    if (oversizedTshirtCount === 1) {
+      messages.push({
+        type: 'warning',
+        icon: '👕',
+        text: 'Add 1 more Oversized T-shirt to get 2 for ₹999!'
+      });
+    } else if (oversizedTshirtCount > 2 && oversizedTshirtCount % 2 === 1) {
+      messages.push({
+        type: 'warning',
+        icon: '💫',
+        text: 'Add 1 more Oversized T-shirt to get another set of 2 for ₹999!'
+      });
     }
-    return count;
-  }, 0);
+    
+    return messages;
+  };
 
   return (
-    <section ref={Cart} className="bg-headerBackGround py-8 antialiased dark:bg-gray-900 md:py-16">
-      <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
-        <h2 className="font-forumNormal text-gray-900 dark:text-white text-3xl">My Cart</h2>
+    <section ref={Cart} className="bg-headerBackGround min-h-screen py-4 sm:py-8 antialiased dark:bg-gray-900">
+      <div className="mx-auto max-w-7xl px-3 sm:px-4 lg:px-6 2xl:px-0">
+        {/* Header */}
+        <div className="mb-6 sm:mb-8">
+          <h1 className="font-forumNormal text-gray-900 dark:text-white text-2xl sm:text-3xl lg:text-4xl font-bold">
+            Shopping Cart
+          </h1>
+        </div>
 
-        {/* Show spinner while loading */}
-        {loading && <Spinner />}
+        {/* Active Offers Banner */}
+        <div className="mb-6 bg-gradient-to-r from-emerald-50 via-blue-50 to-purple-50 dark:from-emerald-900/10 dark:via-blue-900/10 dark:to-purple-900/10 rounded-xl p-4 sm:p-6 border border-emerald-200 dark:border-emerald-700/50 shadow-sm">
+          <div className="flex items-center mb-4">
+            <div className="bg-emerald-100 dark:bg-emerald-900/30 rounded-full p-2 mr-3">
+              <FaTag className="text-emerald-600 dark:text-emerald-400 text-lg" />
+            </div>
+            <h2 className="font-forumNormal text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
+              🔥 Limited Time Offers
+            </h2>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 border-l-4 border-emerald-500 shadow-sm">
+              <div className="text-emerald-700 dark:text-emerald-400 font-bold text-sm sm:text-base font-forumNormal">
+                🛍️ T-SHIRTS: 2 for ₹899
+              </div>
+              <div className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-forumNormal mt-1">
+                Save ₹299 on every 2 T-shirts
+              </div>
+            </div>
+            
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 border-l-4 border-blue-500 shadow-sm">
+              <div className="text-blue-700 dark:text-blue-400 font-bold text-sm sm:text-base font-forumNormal">
+                🎉 T-SHIRTS: 3 for ₹999
+              </div>
+              <div className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-forumNormal mt-1">
+                Save ₹798 on every 3 T-shirts
+              </div>
+            </div>
+            
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 border-l-4 border-purple-500 shadow-sm sm:col-span-2 lg:col-span-1">
+              <div className="text-purple-700 dark:text-purple-400 font-bold text-sm sm:text-base font-forumNormal">
+                👕 OVERSIZED: 2 for ₹999
+              </div>
+              <div className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-forumNormal mt-1">
+                Special deal on oversized tees
+              </div>
+            </div>
+          </div>
+        </div>
 
-        {/* Show error message if loading fails */}
+        {/* Loading Spinner */}
+        {loading && (
+          <div className="flex justify-center items-center py-12">
+            <Spinner />
+          </div>
+        )}
+
+        {/* Error Display */}
         {error && console.log(error)}
 
-        {/* If cart is loaded */}
-        {!loading &&  (
-          <div className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
-            <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
-            <div className="space-y-6 font-forumNormal">
-            <div className="space-y-6 font-forumNormal">
-            {cartItems.length === 0 ? (
-                    <p className="text-center justify-center font-forumNormal mt-36 text-lg text-gray-500 dark:text-gray-300">
-                      No Products Found
-                      <Link to="/shop">
-                        <p className="text-sm hover:underline font-bold font-forumNormal">
-                          Continue Shopping &rarr;
-                        </p>
-                      </Link>
-                    </p>
-             ) : (
-    
-              cartItems.map((item) => (
-                <div
-                key={item._id}
-                  className="relative rounded-lg border border-gray-300 bg-headerBackGround p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6"
-                >
-                  <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
-                    <a href="#" className="shrink-0 md:order-1">
-                     
-                  
-          
-                    <img
-              className="h-28 w-28"
-              src={
-                Array.isArray(item.images)
-                  ? item.images[0] // Use the first image if `images` is an array
-                  : item.images || item.image // Use `images` or `image` if it's a string
-              }
-              alt={item.name}
-            />  </a>
-          
-                    <label htmlFor={`counter-input-${item._id}`} className="sr-only">
-                      Quantity:
-                    </label>
-                    <div className="flex items-center justify-between md:order-3 md:justify-end">
-                      <div className="flex items-center">
-                        <label className="font-forumNormal text-lg">Qty :</label>
-                        <input
-                          type="text"
-                          id={`counter-input-${item._id}`}
-                          className="w-10 shrink-0 text-lg font-forumNormal font-semibold border-0 bg-transparent text-center text-gray-900 focus:outline-none focus:ring-0 dark:text-white"
-                          value={item.quantity}
-                          readOnly
-                        />
-                      </div>
-                      <div className="text-end md:order-4 md:w-32">
-                        <p className="text-lg font-forumNormal font-semibold text-gray-900 dark:text-white">
-                          ₹{item.price }
-                        </p>                      </div>
+        {/* Main Content */}
+        {!loading && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+            {/* Cart Items */}
+            <div className="lg:col-span-2 ">
+              <div className="space-y-4 sm:space-y-6 ">
+                {cartItems.length === 0 ? (
+                  <div className="text-center py-16 sm:py-24">
+                    <div className="mb-6">
+                      <div className="text-6xl sm:text-8xl mb-4">🛒</div>
+                      <h3 className="font-forumNormal text-xl sm:text-2xl text-gray-500 dark:text-gray-400 mb-2">
+                        Your cart is empty
+                      </h3>
+                      <p className="font-forumNormal text-gray-400 dark:text-gray-500 text-sm sm:text-base">
+                        Discover our amazing products and start shopping!
+                      </p>
                     </div>
-                    <div className="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
-        
-        <p className="text-2xl font-forumNormal text-gray-900 hover:underline dark:text-white">
-          {item.name}
-        </p>
-    
-      <div className="text-sm text-gray-500 dark:text-gray-400">
+                    <Link to="/shop">
+                      <button className="bg-homePage hover:opacity-90 text-white font-forumNormal px-6 sm:px-8 py-3 rounded-lg transition-all duration-200 text-sm sm:text-base">
+                        Start Shopping →
+                      </button>
+                    </Link>
+                  </div>
+                ) : (
+                  cartItems.map((item) => (
+                    <div
+                      key={item._id}
+                      className="relative bg-headerBackGround dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow duration-200"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                        {/* Product Image */}
+                        <div className="flex-shrink-0 mx-auto sm:mx-0">
+                          <img
+                            className="h-24 w-24 sm:h-28 sm:w-28 object-cover rounded-lg"
+                            src={
+                              Array.isArray(item.images)
+                                ? item.images[0]
+                                : item.images || item.image
+                            }
+                            alt={item.name}
+                          />
+                        </div>
 
-      {item.color && item.color.length > 0 && (
-<p  className="text-black text-lg font-forumNormal">
-Color: <span className="font-forumNormal text-black">{item.color}</span>
-</p>
-)}
-        <p className="font-forumNormal text-black text-lg">
-          Size: <span className="font-forumNormal text-black">{item.size}</span>
-        </p>
-       
+                        {/* Product Details */}
+                        <div className="flex-1 text-center sm:text-left">
+                          <h3 className="font-forumNormal text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                            {item.name}
+                          </h3>
+                          
+                          <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                            {item.color && item.color.length > 0 && (
+                              <p className="font-forumNormal">
+                                <span className="font-medium">Color:</span> {item.color}
+                              </p>
+                            )}
+                            <p className="font-forumNormal">
+                              <span className="font-medium">Size:</span> {item.size}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Quantity and Price */}
+                        <div className="flex flex-col items-center sm:items-end gap-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-forumNormal text-sm text-gray-600 dark:text-gray-400">Qty:</span>
+                            <span className="font-forumNormal text-lg font-bold text-gray-900 dark:text-white">
+                              {item.quantity}
+                            </span>
+                          </div>
+                          <div className="text-lg sm:text-xl font-forumNormal font-bold text-gray-900 dark:text-white">
+                            ₹{item.price}
+                          </div>
+                        </div>
                       </div>
 
-                      {/* Gift Wrap Icon (conditionally render if gift wrap is true) */}
-                          {/* Gift Wrap Icon (conditionally render if gift wrap is true) */}
-             {item.giftWrapping && (
-               <div className="absolute top-2 right-2 flex items-center text-xl text-red-500">
-                 <FaGift />
-                 <span className="ml-2 text-sm text-gray-600 dark:text-gray-300">Gift Wrapped</span>
-               </div>
-             )}
-           </div>
- 
-           {/* Delete button positioned bottom-right */}
-           <button
-             type="button"
-            
- 
-             onClick={() => handleRemoveItem(isLoggedIn ? item.product._id : item.product)}
- 
-        
-             className="absolute bottom-2 right-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-500"
-           >
-             <FaTrashAlt className="text-xl" />
-           </button>
-         </div>
-       </div>
-     ))
-   )}
- </div>
- </div>
+                      {/* Gift Wrap Indicator */}
+                      {item.giftWrapping && (
+                        <div className="absolute top-3 right-3 flex items-center gap-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-2 py-1 rounded-full text-xs">
+                          <FaGift />
+                          <span className="font-forumNormal">Gift Wrapped</span>
+                        </div>
+                      )}
+
+                      {/* Remove Button */}
+                      <button
+                        onClick={() => handleRemoveItem(isLoggedIn ? item.product._id : item.product)}
+                        className="absolute bottom-3 right-3 p-2 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-all duration-200"
+                      >
+                        <FaTrashAlt className="text-lg" />
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
 
-            {/* Order Summary Section */}
-            <div className="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full">
-              <div className="space-y-4 rounded-lg border border-gray-300 bg-headerBackGround p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
-                <p className="text-3xl font-forumNormal text-gray-900 dark:text-white">Order summary</p>
+            {/* Order Summary */}
+            <div className="lg:col-span-1">
+              <div className="bg-headerBackGround dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200 dark:border-gray-700 sticky top-4">
+                <h2 className="font-forumNormal text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                  Order Summary
+                </h2>
 
-                <div className="font-avenir space-y-4">
-                  <div className="space-y-2">
-                    <dl className="flex items-center justify-between gap-4">
-                      <dt className="font-forumNormal text-gray-500 dark:text-gray-400">Subtotal</dt>
-                      <dd className="text-gray-900 dark:text-white">₹{subtotal}</dd>
-                    </dl>
-
-                    {/* Show special pricing discounts if applicable */}
-                    {specialPricing.regularTshirtDiscount > 0 && (
-                      <dl className="flex items-center justify-between gap-4">
-                        <dt className="font-forumNormal text-green-600 dark:text-green-500">
-                          Special Price: 3 T-shirts for ₹999
-                        </dt>
-                        <dd className="font-forumNormal text-green-600 dark:text-green-500">
-                          -₹{specialPricing.regularTshirtDiscount}
-                        </dd>
-                      </dl>
-                    )}
-
-                    {specialPricing.oversizedTshirtDiscount > 0 && (
-                      <dl className="flex items-center justify-between gap-4">
-                        <dt className="font-forumNormal text-green-600 dark:text-green-500">
-                          Special Price: 2 Oversized T-shirts for ₹999
-                        </dt>
-                        <dd className="font-forumNormal text-green-600 dark:text-green-500">
-                          -₹{specialPricing.oversizedTshirtDiscount}
-                        </dd>
-                      </dl>
-                    )}
-
-                    <dl className="flex items-center justify-between gap-4">
-                       <dt className="font-forumNormal text-gray-500 dark:text-gray-400 mb-6">Delivery</dt>
-                       <dd className="font-forumNormal text-green-600">-₹FREE</dd>
-                      
-                     </dl>
-
-                    {/* Display promotional information */}
-                    {tshirtCount === 3 && (
-                      <p className="font-forumNormal text-amber-600 dark:text-amber-500">
-                        You have 3 t-shirts eligible for the ₹999 offer!
-                      </p>
-                    )}
-                    {tshirtCount > 0 && tshirtCount < 3 && (
-                      <p className="font-forumNormal text-amber-600 dark:text-amber-500">
-                        Add {3 - tshirtCount} more t-shirt{tshirtCount === 1 ? '' : 's'} to get 3 for ₹999!
-                      </p>
-                    )}
-
-                    {oversizedTshirtCount > 0 && oversizedTshirtCount < 2 && (
-                      <p className="font-forumNormal text-amber-600 dark:text-amber-500">
-                        Add 1 more oversized t-shirt to get 2 for ₹999!
-                      </p>
-                    )}
-
-                    <p className="font-forumNormal underline text-green-600 dark:text-green-600">Maharashtra, India</p>
+                <div className="space-y-4">
+                  {/* Original Price */}
+                  <div className="flex justify-between items-center">
+                    <span className="font-forumNormal text-gray-600 dark:text-gray-400">Original Price</span>
+                    <span className="font-forumNormal text-gray-900 dark:text-white">₹{subtotalBeforeDiscount}</span>
                   </div>
 
-                  <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
-                    <dt className="font-forumNormal text-lg font-bold text-gray-900 dark:text-white">Total</dt>
-                    <dd className="font-forumNormal text-lg font-bold text-gray-900 dark:text-white">
-                      ₹{subtotal === 0 ? "0" : total}
-                    </dd>
-                  </dl>
-                </div>
+                  {/* Applied Offers */}
+                  {pricingData.appliedTshirtOffers.map((offer, index) => (
+                    <div key={index} className="flex justify-between items-center text-sm">
+                      <span className="font-forumNormal text-emerald-600 dark:text-emerald-400">
+                        {offer.description}
+                      </span>
+                      <span className="font-forumNormal text-emerald-600 dark:text-emerald-400 font-medium">
+                        -₹{offer.savings}
+                      </span>
+                    </div>
+                  ))}
 
-                <button
-                  onClick={handleCheckoutClick}
-                  disabled={cartItems.length === 0}
-                  className={`flex w-full text-lg items-center mt-3 rounded-lg justify-center font-forumNormal px-5 py-2.5 text-white focus:outline-none focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-800 ${
-                    cartItems.length === 0
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-homePage hover:opacity-80 dark:bg-primary-600 dark:hover:bg-primary-700"
-                  }`}
-                >
-                  Proceed to Checkout
-                </button>
+                  {pricingData.appliedOversizedOffers.map((offer, index) => (
+                    <div key={index} className="flex justify-between items-center text-sm">
+                      <span className="font-forumNormal text-emerald-600 dark:text-emerald-400">
+                        {offer.description}
+                      </span>
+                      <span className="font-forumNormal text-emerald-600 dark:text-emerald-400 font-medium">
+                        -₹{offer.savings}
+                      </span>
+                    </div>
+                  ))}
 
-                <div className="flex items-center justify-center gap-2">
-                  <span className="text-sm font-normal text-gray-500 dark:text-gray-400"> or </span>
-                  <Link
-                    to="/shop"
-                    className="inline-flex items-center gap-2 text-sm font-medium text-primary-700 underline hover:no-underline dark:text-primary-500"
-                  >
-                    Continue Shopping
-                    <svg
-                      className="h-5 w-5"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
+                  {/* Subtotal */}
+                  <div className="flex justify-between items-center border-t border-gray-200 dark:border-gray-600 pt-4">
+                    <span className="font-forumNormal text-gray-600 dark:text-gray-400">Subtotal</span>
+                    <span className="font-forumNormal font-semibold text-gray-900 dark:text-white">₹{subtotal}</span>
+                  </div>
+
+                  {/* Delivery */}
+                  <div className="flex justify-between items-center">
+                    <span className="font-forumNormal text-gray-600 dark:text-gray-400">Delivery</span>
+                    <span className="font-forumNormal text-emerald-600 dark:text-emerald-400 font-medium">FREE</span>
+                  </div>
+
+                  {/* Total */}
+                  <div className="flex justify-between items-center border-t border-gray-200 dark:border-gray-600 pt-4">
+                    <span className="font-forumNormal text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Total</span>
+                    <span className="font-forumNormal text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
+                      ₹{total}
+                    </span>
+                  </div>
+
+                  {/* Promotional Messages */}
+                  {getPromotionalMessages().map((message, index) => (
+                    <div 
+                      key={index} 
+                      className={`p-3 rounded-lg text-sm font-forumNormal border ${
+                        message.type === 'success' 
+                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-700'
+                          : 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-700'
+                      }`}
                     >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M19 12H5m14 0-4 4m4-4-4-4"
-                      />
-                    </svg>
-                  </Link>
+                      <span className="mr-2">{message.icon}</span>
+                      {message.text}
+                    </div>
+                  ))}
+
+                  {/* Checkout Button */}
+                  <button
+                    onClick={handleCheckoutClick}
+                    disabled={cartItems.length === 0}
+                    className={`w-full py-3 sm:py-4 px-6 rounded-lg font-forumNormal text-base sm:text-lg font-medium transition-all duration-200 ${
+                      cartItems.length === 0
+                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        : "bg-homePage hover:opacity-90 text-white shadow-md hover:shadow-lg"
+                    }`}
+                  >
+                    Proceed to Checkout
+                  </button>
+
+                  {/* Continue Shopping */}
+                  <div className="text-center">
+                    <Link
+                      to="/shop"
+                      className="inline-flex items-center gap-2 text-sm font-forumNormal text-homePage hover:underline"
+                    >
+                      Continue Shopping
+                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  </div>
+
+                  {/* Location */}
+                  <div className="text-center text-sm font-forumNormal text-emerald-600 dark:text-emerald-400 pt-2">
+                    📍 Maharashtra, India
+                  </div>
                 </div>
               </div>
             </div>

@@ -16,19 +16,16 @@ const HomepageCarousel = () => {
 
   const products = [
   
-    { image: '/images/13.jpg', link: '/' },
+  
     { image: '/images/rushabh.jpg', link: '/' },
-    { image: '/images/14.jpg', link: '/' },
     { image: '/images/15.jpg', link: '/' },
-    { image: '/images/2.jpg', link: '/' },
-    { image: '/images/3.jpg', link: '/' },
-    { image: '/images/4.jpg', link: '/' },
-    { image: '/images/5.jpg', link: '/' },
-    { image: '/images/6.jpg', link: '/' },
-    { image: '/images/7.jpg', link: '/' },
-    { image: '/images/8.jpg', link: '/' },
-    { image: '/images/9.jpg', link: '/' },
-    { image: '/images/10.jpg', link: '/' },
+    { image: '/images/1.jpeg', link: '/' },
+    { image: '/images/2.jpeg', link: '/' },
+    { image: '/images/3.jpeg', link: '/' },
+    { image: '/images/4.jpeg', link: '/' },
+    { image: '/images/5.jpeg', link: '/' },
+    { image: '/images/6.jpeg', link: '/' },
+  
   ];
 
   const handleImageLoad = (index) => {

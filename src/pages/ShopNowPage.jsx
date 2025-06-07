@@ -18,10 +18,10 @@ const ShopNowPage = () => {
   const backgroundY = useTransform(scrollY, [0, 500], [0, 100]);
   
   const images = [
-   
-    "/images/abhinav1.jpg",
-    "/images/vivek1.jpg",
-    "/images/12.jpg",
+    "/images/shop1.jpeg",
+    "/images/abhinav1.jpeg",
+    "/images/new1.jpeg",
+    "/images/new2.jpeg",
     // "/images/11.jpg"
   ];
 

@@ -207,10 +207,10 @@ const renderProductCard = (product) => (
           {(product.category === "Oversize-Tshirt" || product.category === "Tshirt") && (
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r bg-[#0C3937] py-1.5 px-2 text-center">
               <div className="flex items-center justify-center">
-                <span className="text-white font-bold text-xs md:text-sm">
+                <span className="text-white text-xs md:text-sm">
                   {product.category === "Oversize-Tshirt" 
                     ? "BUY 2 FOR ₹999" 
-                    : "BUY 3 FOR ₹999"}
+                    : "BUY 3 FOR ₹999  ||  BUY 2 FOR ₹899"}
                 </span>
               </div>
             </div>
