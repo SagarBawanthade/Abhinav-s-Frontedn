@@ -268,7 +268,7 @@ const AddProduct = () => {
           <div>
             <label className="block text-sm font-semibold mb-2">Colors</label>
             <div className="flex flex-wrap gap-4">
-              {["lavender", "Beige","Kiwi%20Green", "Royal%20Blue", "red", "Yellow", "Navy Blue", "Black", "white", "umber", "cyan"].map((color) => (
+              {["lavender", "Beige","kiwi-green", "royal-blue", "red", "Yellow", "Navy Blue", "Black", "white", "umber", "cyan"].map((color) => (
                 <label key={color} className="inline-flex items-center">
                   <input
                     type="checkbox"
