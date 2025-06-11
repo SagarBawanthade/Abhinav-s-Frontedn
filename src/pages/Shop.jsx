@@ -257,7 +257,7 @@ const renderProductCard = (product) => (
                 ? 1200
                 : product.category === "Holi-Special"
                 ? 1100
-                : 0)}
+                : 600 )}
           </span>
         </div>
 
