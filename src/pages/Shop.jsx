@@ -262,7 +262,7 @@ const renderProductCard = (product) => (
         </div>
 
         <div className="flex items-center justify-between">
-          <PromoBadge product={product} />
+          {/* <PromoBadge product={product} /> */}
           <div className="hidden lg:block">
             <button className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg bg-gray-900 text-white hover:bg-gray-800 transition-colors">
               <ShoppingCart className="w-4 h-4 mr-2" />

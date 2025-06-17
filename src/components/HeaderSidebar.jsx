@@ -258,12 +258,8 @@ const HeaderSidebar = ({ isOpen, onClose, isLoggedIn, handleLogout }) => {
                                       className="text-gray-600 group-hover:scale-110 transition-all duration-200" 
                                     />
                                     <>
-  {item.label === "Offers" && (
-    <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-md font-semibold mr-2">
-     SALE END
-    </span>
-  )}
-  <span className="text-gray-700 group-hover:text-gray-600 font-medium">
+ 
+  <span className="text-gray-700 group-hover:text-gray-600 font-medium opacity-50 cursor-not-allowed">
     {item.label}
   </span>
 </>
