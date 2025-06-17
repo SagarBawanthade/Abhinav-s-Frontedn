@@ -260,7 +260,7 @@ const HeaderSidebar = ({ isOpen, onClose, isLoggedIn, handleLogout }) => {
                                     <>
   {item.label === "Offers" && (
     <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-md font-semibold mr-2">
-      50% OFF
+     SALE END
     </span>
   )}
   <span className="text-gray-700 group-hover:text-gray-600 font-medium">

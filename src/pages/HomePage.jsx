@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation } from 'swiper/modules';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import PromotionalOffer from '../components/PromotionalOffer';
+// import PromotionalOffer from '../components/PromotionalOffer';
 
 
 // Import Swiper styles
@@ -17,14 +17,15 @@ const HomepageCarousel = () => {
   const products = [
   
   
-    { image: '/images/rushabh.jpg', link: '/' },
-    { image: '/images/15.jpg', link: '/' },
+   
     { image: '/images/1.jpeg', link: '/' },
-    { image: '/images/2.jpeg', link: '/' },
+    
     { image: '/images/3.jpeg', link: '/' },
-    { image: '/images/4.jpeg', link: '/' },
+     { image: '/images/4.jpeg', link: '/' },
+  
+
     { image: '/images/5.jpeg', link: '/' },
-    { image: '/images/6.jpeg', link: '/' },
+
   
   ];
 
@@ -41,10 +42,10 @@ const HomepageCarousel = () => {
 
   return (
     <> 
-
+{/* 
  <AnimatePresence>
          {offerVisible && <PromotionalOffer onClose={handleCloseOffer} />}
-      </AnimatePresence>
+      </AnimatePresence> */}
     
    
     <Swiper

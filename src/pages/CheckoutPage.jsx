@@ -36,104 +36,134 @@ const InputField = ({ icon: Icon, ...props }) => (
   </div>
 );
 
-const calculateSpecialPricing = (cartItems) => {
-  // Count regular t-shirts (price = 599)
-  const regularTshirts = cartItems.filter(item => 
-    (item.category === 'Tshirt' || item.product?.category === 'Tshirt') && item.price === 599
-  );
-  
-  const tshirtCount = regularTshirts.reduce((count, item) => count + item.quantity, 0);
 
-  // Count oversized t-shirts
+const calculateSpecialPricing = (cartItems) => {
+  // Filter and count regular t-shirts
+  const regularTshirts = cartItems.filter(item => 
+    item.category === 'Tshirt' || item.product?.category === 'Tshirt'
+  );
+  const tshirtCount = regularTshirts.reduce((count, item) => count + item.quantity, 0);
+  const tshirtTotalPrice = regularTshirts.reduce((total, item) => total + item.price * item.quantity, 0);
+
+  // Filter and count oversized t-shirts
   const oversizedTshirts = cartItems.filter(item => 
     item.category === 'Oversize-Tshirt' || item.product?.category === 'Oversize-Tshirt'
   );
-  
   const oversizedTshirtCount = oversizedTshirts.reduce((count, item) => count + item.quantity, 0);
-
-  // Calculate regular t-shirt pricing
-  let tshirtDiscount = 0;
-  let appliedTshirtOffers = [];
-  
-  if (tshirtCount >= 2) {
-    // Strategy: Use 3-for-999 first, then 2-for-899 for remaining
-    let remainingTshirts = tshirtCount;
-    
-    // Apply 3-for-999 offers
-    const sets3for999 = Math.floor(remainingTshirts / 3);
-    remainingTshirts -= sets3for999 * 3;
-    
-    // Apply 2-for-899 offers for remaining t-shirts
-    const sets2for899 = Math.floor(remainingTshirts / 2);
-    remainingTshirts -= sets2for899 * 2;
-    
-    // Calculate total regular price for all t-shirts
-    const totalRegularPrice = tshirtCount * 599;
-    
-    // Calculate special price
-    const specialPrice = (sets3for999 * 999) + (sets2for899 * 899) + (remainingTshirts * 599);
-    
-    // Calculate discount
-    tshirtDiscount = totalRegularPrice - specialPrice;
-    
-    // Track applied offers
-    if (sets3for999 > 0) {
-      appliedTshirtOffers.push({
-        type: '3for999',
-        sets: sets3for999,
-        description: `${sets3for999} set${sets3for999 > 1 ? 's' : ''} of 3 T-shirts for ₹999`,
-        savings: sets3for999 * (3 * 599 - 999)
-      });
-    }
-    
-    if (sets2for899 > 0) {
-      appliedTshirtOffers.push({
-        type: '2for899',
-        sets: sets2for899,
-        description: `${sets2for899} set${sets2for899 > 1 ? 's' : ''} of 2 T-shirts for ₹899`,
-        savings: sets2for899 * (2 * 599 - 899)
-      });
-    }
-  }
-
-  // Calculate oversized t-shirt pricing
-  let oversizedDiscount = 0;
-  let appliedOversizedOffers = [];
-  
-  if (oversizedTshirtCount >= 2) {
-    const oversizedPairs = Math.floor(oversizedTshirtCount / 2);
-    const remainingOversized = oversizedTshirtCount % 2;
-    
-    // Calculate total regular price for oversized t-shirts
-    let totalOversizedRegularPrice = 0;
-    oversizedTshirts.forEach(item => {
-      totalOversizedRegularPrice += item.price * item.quantity;
-    });
-    
-    // Calculate special price for oversized
-    const oversizedRegularPricePerItem = oversizedTshirts.length > 0 ? oversizedTshirts[0].price : 0;
-    const specialOversizedPrice = (oversizedPairs * 999) + (remainingOversized * oversizedRegularPricePerItem);
-    
-    // Calculate discount
-    oversizedDiscount = totalOversizedRegularPrice - specialOversizedPrice;
-    
-    if (oversizedPairs > 0) {
-      appliedOversizedOffers.push({
-        type: 'oversized2for999',
-        sets: oversizedPairs,
-        description: `${oversizedPairs} set${oversizedPairs > 1 ? 's' : ''} of 2 Oversized T-shirts for ₹999`,
-        savings: oversizedDiscount
-      });
-    }
-  }
+  const oversizedTotalPrice = oversizedTshirts.reduce((total, item) => total + item.price * item.quantity, 0);
 
   return {
-    regularTshirtDiscount: Math.max(0, tshirtDiscount),
-    oversizedTshirtDiscount: Math.max(0, oversizedDiscount),
-    appliedTshirtOffers,
-    appliedOversizedOffers
+    tshirtCount,
+    oversizedTshirtCount,
+    regularTshirtDiscount: 0,
+    oversizedTshirtDiscount: 0,
+    appliedTshirtOffers: [],
+    appliedOversizedOffers: [],
+    tshirtTotalPrice,
+    oversizedTotalPrice,
+    totalPrice: tshirtTotalPrice + oversizedTotalPrice
   };
 };
+
+
+// const calculateSpecialPricing = (cartItems) => {
+//   // Count regular t-shirts (price = 599)
+//   const regularTshirts = cartItems.filter(item => 
+//     (item.category === 'Tshirt' || item.product?.category === 'Tshirt') && item.price === 599
+//   );
+  
+//   const tshirtCount = regularTshirts.reduce((count, item) => count + item.quantity, 0);
+
+//   // Count oversized t-shirts
+//   const oversizedTshirts = cartItems.filter(item => 
+//     item.category === 'Oversize-Tshirt' || item.product?.category === 'Oversize-Tshirt'
+//   );
+  
+//   const oversizedTshirtCount = oversizedTshirts.reduce((count, item) => count + item.quantity, 0);
+
+//   // Calculate regular t-shirt pricing
+//   let tshirtDiscount = 0;
+//   let appliedTshirtOffers = [];
+  
+//   if (tshirtCount >= 2) {
+//     // Strategy: Use 3-for-999 first, then 2-for-899 for remaining
+//     let remainingTshirts = tshirtCount;
+    
+//     // Apply 3-for-999 offers
+//     const sets3for999 = Math.floor(remainingTshirts / 3);
+//     remainingTshirts -= sets3for999 * 3;
+    
+//     // Apply 2-for-899 offers for remaining t-shirts
+//     const sets2for899 = Math.floor(remainingTshirts / 2);
+//     remainingTshirts -= sets2for899 * 2;
+    
+//     // Calculate total regular price for all t-shirts
+//     const totalRegularPrice = tshirtCount * 599;
+    
+//     // Calculate special price
+//     const specialPrice = (sets3for999 * 999) + (sets2for899 * 899) + (remainingTshirts * 599);
+    
+//     // Calculate discount
+//     tshirtDiscount = totalRegularPrice - specialPrice;
+    
+//     // Track applied offers
+//     if (sets3for999 > 0) {
+//       appliedTshirtOffers.push({
+//         type: '3for999',
+//         sets: sets3for999,
+//         description: `${sets3for999} set${sets3for999 > 1 ? 's' : ''} of 3 T-shirts for ₹999`,
+//         savings: sets3for999 * (3 * 599 - 999)
+//       });
+//     }
+    
+//     if (sets2for899 > 0) {
+//       appliedTshirtOffers.push({
+//         type: '2for899',
+//         sets: sets2for899,
+//         description: `${sets2for899} set${sets2for899 > 1 ? 's' : ''} of 2 T-shirts for ₹899`,
+//         savings: sets2for899 * (2 * 599 - 899)
+//       });
+//     }
+//   }
+
+//   // Calculate oversized t-shirt pricing
+//   let oversizedDiscount = 0;
+//   let appliedOversizedOffers = [];
+  
+//   if (oversizedTshirtCount >= 2) {
+//     const oversizedPairs = Math.floor(oversizedTshirtCount / 2);
+//     const remainingOversized = oversizedTshirtCount % 2;
+    
+//     // Calculate total regular price for oversized t-shirts
+//     let totalOversizedRegularPrice = 0;
+//     oversizedTshirts.forEach(item => {
+//       totalOversizedRegularPrice += item.price * item.quantity;
+//     });
+    
+//     // Calculate special price for oversized
+//     const oversizedRegularPricePerItem = oversizedTshirts.length > 0 ? oversizedTshirts[0].price : 0;
+//     const specialOversizedPrice = (oversizedPairs * 999) + (remainingOversized * oversizedRegularPricePerItem);
+    
+//     // Calculate discount
+//     oversizedDiscount = totalOversizedRegularPrice - specialOversizedPrice;
+    
+//     if (oversizedPairs > 0) {
+//       appliedOversizedOffers.push({
+//         type: 'oversized2for999',
+//         sets: oversizedPairs,
+//         description: `${oversizedPairs} set${oversizedPairs > 1 ? 's' : ''} of 2 Oversized T-shirts for ₹999`,
+//         savings: oversizedDiscount
+//       });
+//     }
+//   }
+
+//   return {
+//     regularTshirtDiscount: Math.max(0, tshirtDiscount),
+//     oversizedTshirtDiscount: Math.max(0, oversizedDiscount),
+//     appliedTshirtOffers,
+//     appliedOversizedOffers
+//   };
+// };
 
 const CheckoutPage = () => {
 

@@ -18,15 +18,10 @@ const ShopNowPage = () => {
   const backgroundY = useTransform(scrollY, [0, 500], [0, 100]);
   
   const images = [
-    "/images/shop1.jpeg",
-    "/images/abhinav1.jpeg",
-    "/images/new1.jpeg",
-    "/images/new2.jpeg",
-     "/images/21.jpeg",
-      "/images/22.jpeg",
-       "/images/23.jpeg",
-        "/images/24.jpeg",
-    // "/images/11.jpg"
+    "/images/shopnow2.jpeg",
+    "/images/shopnow1.jpeg",
+    
+   
   ];
 
   useEffect(() => {

@@ -1,10 +1,10 @@
 const PromoBadge = ({ product }) => {
     // Define category-wise discount mapping
     const discountMapping = {
-      "Oversize-Tshirt": "60% OFF",
-      "Tshirt": "50% OFF",
-      "Hoodies": "30% OFF",
-      "Couple-Tshirt": "40% OFF",
+      "Oversize-Tshirt": "SALE",
+      "Tshirt": "SALE",
+      "Hoodies": "SALE",
+      "Couple-Tshirt": "SALE",
     };
   
     // Get discount based on category or set a default message

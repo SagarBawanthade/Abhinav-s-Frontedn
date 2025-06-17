@@ -276,7 +276,7 @@ function ProductDetails() {
           />
         </div>
         
-  {product.category && (
+  {/* {product.category && (
     <div className="absolute top-0 left-0 w-24 h-24 overflow-hidden">
       <div className={`
         bg-[#0C3937]
@@ -295,7 +295,7 @@ function ProductDetails() {
         </div>
       </div>
     </div>
-  )}
+  )} */}
       </SwiperSlide>
     ))}
   </Swiper>
@@ -576,7 +576,7 @@ function ProductDetails() {
     </div>
 
 
-     <SpecialOffer /> 
+     {/* <SpecialOffer />  */}
 
 
 

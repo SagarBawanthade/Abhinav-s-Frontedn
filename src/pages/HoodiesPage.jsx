@@ -272,7 +272,7 @@ const toggleLike = (item) => {
                 <div className="relative overflow-hidden">
                   {/* <Link to={`/product-details/${item._id}`}> */}
                   {/* Corner Ribbon - Adjusted to be more in corner and longer */}
-          <div className="absolute -top-1 -left-1 overflow-hidden w-32 h-32 z-10">
+          {/* <div className="absolute -top-1 -left-1 overflow-hidden w-32 h-32 z-10">
             <div className={`
               ${item.category === "Oversize-Tshirt" ? " bg-[#0C3937]" : 
                 item.category === "Tshirt" ? " bg-[#0C3937]" : 
@@ -292,7 +292,7 @@ const toggleLike = (item) => {
                 </span>
               </div>
             </div>
-          </div>
+          </div> */}
                   <Link to="/shop/Tshirt">
                     <div className="aspect-square overflow-hidden rounded-t-xl">
                       <img
@@ -428,7 +428,7 @@ const toggleLike = (item) => {
       <div className="group relative bg-[#E9EBCA] rounded-xl shadow-sm hover:shadow-xl transition-all duration-300">
         <div className="relative overflow-hidden">
           {/* Corner Ribbon - Adjusted to be more in corner and longer */}
-          <div className="absolute -top-1 -left-1 overflow-hidden w-32 h-32 z-10">
+          {/* <div className="absolute -top-1 -left-1 overflow-hidden w-32 h-32 z-10">
             <div className={`
               ${item.category === "Oversize-Tshirt" ? " bg-[#0C3937]" : 
                 item.category === "Tshirt" ? " bg-[#0C3937]" : 
@@ -448,7 +448,7 @@ const toggleLike = (item) => {
                 </span>
               </div>
             </div>
-          </div>
+          </div> */}
           {/* Link to Product */}
           <Link to="/shop/Oversize-Tshirt">
             <div className="aspect-square overflow-hidden rounded-t-xl">
@@ -585,7 +585,7 @@ const toggleLike = (item) => {
 
 
                   {/* Corner Ribbon - Adjusted to be more in corner and longer */}
-          <div className="absolute -top-1 -left-1 overflow-hidden w-32 h-32 z-10">
+          {/* <div className="absolute -top-1 -left-1 overflow-hidden w-32 h-32 z-10">
             <div className={`
               ${item.category === "Oversize-Tshirt" ? " bg-[#0C3937]" : 
                 item.category === "Tshirt" ? " bg-[#0C3937]" : 
@@ -605,7 +605,7 @@ const toggleLike = (item) => {
                 </span>
               </div>
             </div>
-          </div>
+          </div> */}
 
                  
                     <div className="aspect-square overflow-hidden rounded-t-xl">
