@@ -3,7 +3,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
-import { CreditCard, Package, Truck, Mail, Phone, User, Home, MapPin } from "lucide-react";
+import { CreditCard, Package, Truck, Mail, Phone, User, Home, MapPin, Tag, Check, X } from "lucide-react";
 import useCartManagement from "../components/CartManagamnet.jsx";
 
 const loadRazorpayScript = () => {
@@ -36,6 +36,53 @@ const InputField = ({ icon: Icon, ...props }) => (
   </div>
 );
 
+// Promo Code Component
+const PromoCodeInput = ({ promoCode, setPromoCode, applyPromoCode, removePromoCode, appliedPromo, isApplying }) => (
+  <div className="space-y-3">
+    <div className="flex items-center gap-2">
+      <Tag className="h-5 w-5 text-gray-600" />
+      <h3 className="text-lg font-semibold text-gray-800">Promo Code</h3>
+    </div>
+    
+    {appliedPromo ? (
+      <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+        <div className="flex items-center gap-2 text-green-700">
+          <Check className="h-4 w-4" />
+          <span className="font-medium">{appliedPromo.code} Applied!</span>
+        </div>
+        <button
+          onClick={removePromoCode}
+          className="text-red-600 hover:text-red-700 transition-colors"
+          title="Remove promo code"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+    ) : (
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Tag className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            placeholder="Enter promo code"
+            value={promoCode}
+            onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+            className="pl-10 w-full px-4 py-3 bg-headerBackGround border border-gray-200 rounded-lg text-gray-800 text-sm transition duration-200"
+          />
+        </div>
+        <button
+          onClick={applyPromoCode}
+          disabled={!promoCode.trim() || isApplying}
+          className="px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition duration-200 disabled:opacity-50 disabled:hover:bg-gray-800 min-w-[100px]"
+        >
+          {isApplying ? <Spinner /> : "Apply"}
+        </button>
+      </div>
+    )}
+  </div>
+);
 
 const calculateSpecialPricing = (cartItems) => {
   // Filter and count regular t-shirts
@@ -65,115 +112,52 @@ const calculateSpecialPricing = (cartItems) => {
   };
 };
 
+// Promo code calculation function
+const calculatePromoDiscount = (cartItems, promoCode) => {
+  if (promoCode !== 'FIRST20') return { discount: 0, affectedItems: [] };
 
-// const calculateSpecialPricing = (cartItems) => {
-//   // Count regular t-shirts (price = 599)
-//   const regularTshirts = cartItems.filter(item => 
-//     (item.category === 'Tshirt' || item.product?.category === 'Tshirt') && item.price === 599
-//   );
-  
-//   const tshirtCount = regularTshirts.reduce((count, item) => count + item.quantity, 0);
+  const tshirtItems = cartItems.filter(item => 
+    item.category === 'Tshirt' || item.product?.category === 'Tshirt'
+  );
 
-//   // Count oversized t-shirts
-//   const oversizedTshirts = cartItems.filter(item => 
-//     item.category === 'Oversize-Tshirt' || item.product?.category === 'Oversize-Tshirt'
-//   );
-  
-//   const oversizedTshirtCount = oversizedTshirts.reduce((count, item) => count + item.quantity, 0);
+  if (tshirtItems.length === 0) return { discount: 0, affectedItems: [] };
 
-//   // Calculate regular t-shirt pricing
-//   let tshirtDiscount = 0;
-//   let appliedTshirtOffers = [];
-  
-//   if (tshirtCount >= 2) {
-//     // Strategy: Use 3-for-999 first, then 2-for-899 for remaining
-//     let remainingTshirts = tshirtCount;
-    
-//     // Apply 3-for-999 offers
-//     const sets3for999 = Math.floor(remainingTshirts / 3);
-//     remainingTshirts -= sets3for999 * 3;
-    
-//     // Apply 2-for-899 offers for remaining t-shirts
-//     const sets2for899 = Math.floor(remainingTshirts / 2);
-//     remainingTshirts -= sets2for899 * 2;
-    
-//     // Calculate total regular price for all t-shirts
-//     const totalRegularPrice = tshirtCount * 599;
-    
-//     // Calculate special price
-//     const specialPrice = (sets3for999 * 999) + (sets2for899 * 899) + (remainingTshirts * 599);
-    
-//     // Calculate discount
-//     tshirtDiscount = totalRegularPrice - specialPrice;
-    
-//     // Track applied offers
-//     if (sets3for999 > 0) {
-//       appliedTshirtOffers.push({
-//         type: '3for999',
-//         sets: sets3for999,
-//         description: `${sets3for999} set${sets3for999 > 1 ? 's' : ''} of 3 T-shirts for ₹999`,
-//         savings: sets3for999 * (3 * 599 - 999)
-//       });
-//     }
-    
-//     if (sets2for899 > 0) {
-//       appliedTshirtOffers.push({
-//         type: '2for899',
-//         sets: sets2for899,
-//         description: `${sets2for899} set${sets2for899 > 1 ? 's' : ''} of 2 T-shirts for ₹899`,
-//         savings: sets2for899 * (2 * 599 - 899)
-//       });
-//     }
-//   }
+  let totalDiscount = 0;
+  const affectedItems = [];
 
-//   // Calculate oversized t-shirt pricing
-//   let oversizedDiscount = 0;
-//   let appliedOversizedOffers = [];
-  
-//   if (oversizedTshirtCount >= 2) {
-//     const oversizedPairs = Math.floor(oversizedTshirtCount / 2);
-//     const remainingOversized = oversizedTshirtCount % 2;
+  tshirtItems.forEach(item => {
+    // Calculate discount per item: original price - 299
+    const discountPerItem = Math.max(0, item.price - 299);
+    const itemDiscount = discountPerItem * item.quantity;
+    totalDiscount += itemDiscount;
     
-//     // Calculate total regular price for oversized t-shirts
-//     let totalOversizedRegularPrice = 0;
-//     oversizedTshirts.forEach(item => {
-//       totalOversizedRegularPrice += item.price * item.quantity;
-//     });
-    
-//     // Calculate special price for oversized
-//     const oversizedRegularPricePerItem = oversizedTshirts.length > 0 ? oversizedTshirts[0].price : 0;
-//     const specialOversizedPrice = (oversizedPairs * 999) + (remainingOversized * oversizedRegularPricePerItem);
-    
-//     // Calculate discount
-//     oversizedDiscount = totalOversizedRegularPrice - specialOversizedPrice;
-    
-//     if (oversizedPairs > 0) {
-//       appliedOversizedOffers.push({
-//         type: 'oversized2for999',
-//         sets: oversizedPairs,
-//         description: `${oversizedPairs} set${oversizedPairs > 1 ? 's' : ''} of 2 Oversized T-shirts for ₹999`,
-//         savings: oversizedDiscount
-//       });
-//     }
-//   }
+    if (itemDiscount > 0) {
+      affectedItems.push({
+        name: item.name || item.product?.name,
+        quantity: item.quantity,
+        originalPrice: item.price,
+        discountedPrice: 299,
+        totalDiscount: itemDiscount
+      });
+    }
+  });
 
-//   return {
-//     regularTshirtDiscount: Math.max(0, tshirtDiscount),
-//     oversizedTshirtDiscount: Math.max(0, oversizedDiscount),
-//     appliedTshirtOffers,
-//     appliedOversizedOffers
-//   };
-// };
+  return { discount: totalDiscount, affectedItems };
+};
 
 const CheckoutPage = () => {
-
   const cartItems = useSelector((state) => state.cart.items);
   const userId = useSelector((state) => state.auth.id);
   const token = useSelector((state) => state.auth.token);
   const [loading, setLoading] = useState(false);
- const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const isLoggedIn = Boolean(userId && token);
   const navigate = useNavigate();
+  
+  // Promo code state
+  const [promoCode, setPromoCode] = useState('');
+  const [appliedPromo, setAppliedPromo] = useState(null);
+  const [isApplying, setIsApplying] = useState(false);
  
   const [formData, setFormData] = useState({
     firstName: "",
@@ -188,12 +172,50 @@ const CheckoutPage = () => {
   });
   const deliveryCharges = 0;
 
+  // Promo code functions
+  const applyPromoCode = async () => {
+    if (!promoCode.trim()) {
+      toast.error("Please enter a promo code");
+      return;
+    }
+
+    setIsApplying(true);
+    
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    if (promoCode === 'FIRST20') {
+      const promoDiscount = calculatePromoDiscount(cartItems, promoCode);
+      
+      if (promoDiscount.discount > 0) {
+        setAppliedPromo({
+          code: promoCode,
+          discount: promoDiscount.discount,
+          affectedItems: promoDiscount.affectedItems,
+          description: "T-shirts at ₹299 each"
+        });
+        toast.success("Promo code applied successfully!");
+      } else {
+        toast.error("This promo code is only valid for T-shirts");
+      }
+    } else {
+      toast.error("Invalid promo code");
+    }
+    
+    setIsApplying(false);
+  };
+
+  const removePromoCode = () => {
+    setAppliedPromo(null);
+    setPromoCode('');
+    toast.info("Promo code removed");
+  };
 
   const totalCartPrice = cartItems.reduce((acc, product) => {
     const productTotal = product.quantity * product.price;
     const additionalCost = product.giftWrapping ? product.quantity * 30 : 0;
     return acc + productTotal + additionalCost + deliveryCharges;
-    }, 0);
+  }, 0);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -235,7 +257,7 @@ const CheckoutPage = () => {
       return;
     }
   
-     const amount = calculateTotalPrice();
+    const amount = calculateTotalPrice();
     // Prepare order data
     const orderData = {
       user: { email: formData.email, id: userId },
@@ -265,6 +287,8 @@ const CheckoutPage = () => {
         shipping: 0,
         taxes: 0,
         total: amount,
+        promoCode: appliedPromo?.code || null,
+        promoDiscount: appliedPromo?.discount || 0,
       },
     };
   
@@ -286,7 +310,6 @@ const CheckoutPage = () => {
         toast.error("Failed to load Razorpay SDK.");
         setLoading(false);
         return;
-        
       }
   
       // Razorpay options
@@ -307,8 +330,6 @@ const CheckoutPage = () => {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
-            
-           
             };
         
             console.log("Verification Payload:", verificationPayload);
@@ -332,19 +353,13 @@ const CheckoutPage = () => {
               },
             };
         
-            
             const orderResponse = await axios.post("https://backend.abhinavsofficial.com/api/order/create-order", finalizedOrderData);
-        
-            
             const sendEmail = await axios.post("https://backend.abhinavsofficial.com/api/order/send-email", orderResponse);
-              
-              
               
             toast.success("Order placed successfully!");
             navigate("/order-confirm");
         
           } catch (error) {
-            
             toast.error("Payment verification failed. Please try again.");
             navigate("/order-fail");
           }
@@ -381,67 +396,53 @@ const CheckoutPage = () => {
       setLoading(false);
     }
   };
-  useCartManagement();
- 
-const location = useLocation();
   
-useEffect(() => {
-  window.scrollTo(0, 0); // Scroll to top of the page
-}, [location]);
+  useCartManagement();
+  const location = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to top of the page
+  }, [location]);
 
+  // Function to calculate product price
+  const calculateProductPrice = (product) => {
+    const productDetails = {
+      name: product.name || (product.product && product.product.name),
+      price: product.price,
+      quantity: product.quantity,
+      giftWrapping: product.giftWrapping
+    };
 
-
-// Function to calculate product price
-const calculateProductPrice = (product) => {
-  const productDetails = {
-    name: product.name || (product.product && product.product.name),
-    price: product.price,
-    quantity: product.quantity,
-    giftWrapping: product.giftWrapping
+    const additionalCost = productDetails.giftWrapping ? productDetails.quantity * 30 : 0;
+    return (productDetails.price * productDetails.quantity) + additionalCost;
   };
 
-  const additionalCost = productDetails.giftWrapping ? productDetails.quantity * 30 : 0;
-  return (productDetails.price * productDetails.quantity) + additionalCost;
-};
+  const calculateTotalPrice = () => {
+    // Calculate subtotal before discounts
+    const subtotalBeforeDiscount = cartItems.reduce((acc, product) => {
+      const productTotal = product.quantity * product.price;
+      const additionalCost = product.giftWrapping ? product.quantity * 30 : 0;
+      return acc + productTotal + additionalCost;
+    }, 0);
 
+    // Apply special offers
+    const specialPricing = calculateSpecialPricing(cartItems);
+    const specialOfferDiscount = specialPricing.regularTshirtDiscount + specialPricing.oversizedTshirtDiscount;
+    
+    // Apply promo code discount
+    const promoDiscount = appliedPromo ? appliedPromo.discount : 0;
 
-// Calculate total cart price with special offer
-// const calculateTotalPrice = () => {
-//   // Regular price calculation for all items
-//   return cartItems.reduce((total, item) => {
-//     return total + calculateProductPrice(item);
-//   }, 0);
-// };
+    // Return final price after all discounts
+    return subtotalBeforeDiscount - specialOfferDiscount - promoDiscount + deliveryCharges;
+  };
 
-
-const calculateTotalPrice = () => {
-  // Calculate subtotal before discounts
-  const subtotalBeforeDiscount = cartItems.reduce((acc, product) => {
-    const productTotal = product.quantity * product.price;
-    const additionalCost = product.giftWrapping ? product.quantity * 30 : 0;
-    return acc + productTotal + additionalCost;
-  }, 0);
-
-  // Apply special offers
-  const specialPricing = calculateSpecialPricing(cartItems);
-  const totalDiscount = specialPricing.regularTshirtDiscount + specialPricing.oversizedTshirtDiscount;
-
-  // Return final price after discounts
-  return subtotalBeforeDiscount - totalDiscount + deliveryCharges;
-};
-
-
-
-if (loading) {
-  return (
-   
+  if (loading) {
+    return (
       <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-[3px] flex justify-center items-center z-50">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-        
       </div>
-   
-  );
-}
+    );
+  }
 
   return (
     <div className="font-forumNormal bg-headerBackGround min-h-screen p-4">
@@ -508,43 +509,64 @@ if (loading) {
               </div>
               
               <div className="border-t border-gray-200 p-6 bg-headerBackGround rounded-b-xl">
-              <div className="space-y-3">
-                {/* Keep your existing content */}
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2 text-green-600">
-                    <Truck className="h-5 w-5" />
-                    <span>Free Delivery</span>
-                  </div>
-                  <span className="text-green-600">₹0</span>
-                </div>
-                      {/*                   
-                  {checkSpecialTshirtOffer(cartItems) && (
-                    <div className="flex justify-between items-center text-green-600 bg-green-50 p-3 rounded-lg">
-                      <span>Special T-shirt Offer Applied!</span>
-                      <span>2 T-shirts for ₹699</span>
+                <div className="space-y-3">
+                  {/* Promo Code Section */}
+                  <PromoCodeInput
+                    promoCode={promoCode}
+                    setPromoCode={setPromoCode}
+                    applyPromoCode={applyPromoCode}
+                    removePromoCode={removePromoCode}
+                    appliedPromo={appliedPromo}
+                    isApplying={isApplying}
+                  />
+                  
+                  {/* ADD THIS NEW CODE HERE */}
+{!appliedPromo && (
+  <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+    <Tag className="h-4 w-4 text-blue-600" />
+    <span className="text-sm text-blue-700">
+      Try <span className="font-semibold">FIRST20</span> to get T-shirts at ₹299 each!
+    </span>
+  </div>
+)}
+
+                  <div className="border-t border-gray-200 pt-4 mt-4">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2 text-green-600">
+                        <Truck className="h-5 w-5" />
+                        <span>Free Delivery</span>
+                      </div>
+                      <span className="text-green-600">₹0</span>
                     </div>
-                  )} */}
 
+                    {/* Special offers */}
+                    {calculateSpecialPricing(cartItems).appliedTshirtOffers.map((offer, index) => (
+                      <div key={index} className="flex justify-between items-center text-green-600 bg-green-50 p-3 rounded-lg">
+                        <span>{offer.description}</span>
+                        <span>-₹{offer.savings}</span>
+                      </div>
+                    ))}
 
-                  {/* Add the special offers */}
-                {calculateSpecialPricing(cartItems).appliedTshirtOffers.map((offer, index) => (
-                  <div key={index} className="flex justify-between items-center text-green-600 bg-green-50 p-3 rounded-lg">
-                    <span>{offer.description}</span>
-                    <span>-₹{offer.savings}</span>
-                  </div>
-              ))}
+                    {calculateSpecialPricing(cartItems).appliedOversizedOffers.map((offer, index) => (
+                      <div key={index} className="flex justify-between items-center text-green-600 bg-green-50 p-3 rounded-lg">
+                        <span>{offer.description}</span>
+                        <span>-₹{offer.savings}</span>
+                      </div>
+                    ))}
 
-                {calculateSpecialPricing(cartItems).appliedOversizedOffers.map((offer, index) => (
-                  <div key={index} className="flex justify-between items-center text-green-600 bg-green-50 p-3 rounded-lg">
-                    <span>{offer.description}</span>
-                     <span>-₹{offer.savings}</span>
-                  </div>
-              ))}
+                    {/* Promo discount display */}
+                    {appliedPromo && appliedPromo.discount > 0 && (
+                      <div className="flex justify-between items-center text-blue-600 bg-blue-50 p-3 rounded-lg">
+                        <span>Promo Code ({appliedPromo.code})</span>
+                        <span>-₹{appliedPromo.discount.toLocaleString()}</span>
+                      </div>
+                    )}
 
-                  {/* Keep your existing Total section */}
-                  <div className="flex justify-between items-center text-lg font-semibold pt-2">
-                    <span>Total</span>
-                    <span>₹{calculateTotalPrice().toLocaleString()}</span>
+                    {/* Total */}
+                    <div className="flex justify-between items-center text-lg font-semibold pt-2">
+                      <span>Total</span>
+                      <span>₹{calculateTotalPrice().toLocaleString()}</span>
+                    </div>
                   </div>
                 </div>
               </div>
