@@ -31,6 +31,7 @@ import ManageProducts from "./components/admin/ManageProducts.jsx";
 import AddProduct from "./components/admin/AddProduct.jsx";
 import EditProduct from "./components/admin/EditProduct.jsx";
 import CategoryProductsPage from "./components/admin/CategoryProducts.jsx";
+import Testimonials from "./components/Testimonials.jsx";
 
 function App() {
   const location = useLocation(); // Get the current location
@@ -51,7 +52,8 @@ function App() {
             <HomePage /> {/* Render HomePage */}
             <ShopNowPage /> {/* Render ShopNowPage */}
             <HoodiesPage /> {/* Render HoodiesPage */}
-         <Fandom />   
+            <Fandom />   
+            <Testimonials/>
             <InstagramPage /> {/* Render InstagramPage */}
             <ServicesPage /> {/* Render ServicesPage */}
           </>
