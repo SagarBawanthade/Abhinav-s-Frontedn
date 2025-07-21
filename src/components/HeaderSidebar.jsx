@@ -121,6 +121,11 @@ const HeaderSidebar = ({ isOpen, onClose, isLoggedIn, handleLogout }) => {
           label: 'T-Shirts', 
           to: '/shop/Tshirt' 
         },
+        { 
+          img: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/99f749c6-38de-419e-b722-dedbb8f67009_WhatsApp%20Image%202025-05-13%20at%206.41.18%20PM%20%281%29.jpeg", 
+          label: 'Polo T-Shirts', 
+          to: '/shop/Polo-Tshirt' 
+        },
       { 
         img: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/ea08474e-fe47-471c-a3f9-040aea4cf53d_K3.jpeg", 
         label: 'Solid Color T-Shirt & Oversized', 

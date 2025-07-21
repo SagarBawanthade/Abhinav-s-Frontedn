@@ -26,6 +26,7 @@ const HoodiesPage = () => {
   const [products2, setProducts2] = useState([]);
   const [products3, setProducts3] = useState([]);
   const [products4, setProducts4] = useState([]);
+  const [products5, setProducts5] = useState([]);
 
 
   
@@ -93,6 +94,10 @@ const toggleLike = (item) => {
         if (categorizedProducts['Hoodies']) {
           setProducts2(categorizedProducts['Hoodies'].reverse().slice(0, 5));
         }
+        if (categorizedProducts['Polo-Tshirt']) {
+        setProducts5(categorizedProducts['Polo-Tshirt'].reverse().slice(0, 5));
+        }
+
         
         setShowHeading(true);
       } catch (error) {
@@ -536,6 +541,170 @@ const toggleLike = (item) => {
     </div>
 
 
+{/*POLO TSHIRT*/} 
+
+  <div className="bg-[#E9EBCA] px-6 py-8">
+  <div className="max-w-8xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-2">
+            <TrendingUp className="w-6 h-6 text-gray-700" />
+            <h2 className="text-2xl md:text-3xl font-semibold font-forumNormal text-gray-800">
+              { "Polo-Tshirt"}
+            </h2>
+          </div>
+          {/* <Link to="/shop/hoodies" className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:text-gray-800">
+          <span className="text-sm md:text-base font-forumNormal text-gray-600 flex items-center hover:underline">
+            <Stars className="w-4 h-4 mr-2 text-black" />
+            View more
+          </span>
+          </Link> */}
+        </div>
+
+        <Swiper
+          className="sm:block lg:hidden"
+          modules={[Autoplay, Navigation]}
+          speed={1000}
+      autoplay={{
+        delay: 4500,
+        disableOnInteraction: false,
+      }}
+      loop={true}
+          spaceBetween={16}
+          slidesPerView={1.5}
+          
+          grabCursor={true}
+          onSlideChange={handleSlideChange}
+          scrollbar={{ draggable: true }}
+          pagination={{ clickable: true }}
+          breakpoints={{
+            640: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 }
+          }}
+        >
+          {products5.map((item) => (
+            <SwiperSlide key={item._id}>
+              <div className="group relative bg-[#E9EBCA] rounded-xl shadow-sm hover:shadow-xl transition-all duration-300">
+                <div className="relative overflow-hidden">
+                  {/* <Link to={`/product-details/${item._id}`}> */}
+
+
+                  {/* Corner Ribbon - Adjusted to be more in corner and longer */}
+          {/* <div className="absolute -top-1 -left-1 overflow-hidden w-32 h-32 z-10">
+            <div className={`
+              ${item.category === "Oversize-Tshirt" ? " bg-[#0C3937]" : 
+                item.category === "Tshirt" ? " bg-[#0C3937]" : 
+                item.category === "Hoodies" ? " bg-[#0C3937]" : 
+                item.category === "Couple-Tshirt" ? " bg-[#0C3937]" : " bg-[#0C3937]"} 
+              text-white shadow-lg font-bold text-xs md:text:sm font-forumNormal
+              absolute top-0 left-0 transform -rotate-45 translate-y-6 -translate-x-12 w-40 text-center md:py-1 md:text-md
+            `}>
+              <div className="flex items-center justify-center gap-1">
+                
+                <span>
+                  {item.category === "Oversize-Tshirt" ? "60%" : 
+                    item.category === "Tshirt" ? "50%" : 
+                    item.category === "Hoodies" ? "30%" : 
+                    item.category === "Couple-Tshirt" ? "40%" : "SALE"}
+                  <span className="ml-0.5">OFF</span>
+                </span>
+              </div>
+            </div>
+          </div> */}
+
+                 
+                    <div className="aspect-square overflow-hidden rounded-t-xl">
+                      <Link to="/shop/Polo-Tshirt">
+                      <img
+                        src={item.images[0]}
+                        alt={item.name}
+                        className="w-full h-full object-cover  transition-transform duration-500"
+                        // onClick={() => handleButtonClick(item)}
+                      />
+                      </Link>
+                    </div>
+             
+
+                  <button
+                  
+                    onClick={() => toggleLike(item)}
+                    className="absolute top-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-gray-100 transition-all duration-300 transform hover:scale-110"
+                  >
+                     <Heart
+    className={`w-5 h-5 ${
+      isProductInWishlist(item._id) ? 'text-red-500 fill-red-500' : 'text-gray-600'
+    } transition-colors`}
+  />
+                  </button>
+
+                  
+                </div>
+
+                <div className="p-4">
+                  <h3 className="font-forumNormal text-lg text-gray-800 mb-2 truncate group-hover:text-gray-900">
+                    {item.name}
+                  </h3>
+
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-baseline space-x-2">
+                      <span className="text-xl font-avenir font-semibold text-gray-900">
+                        ₹{item.price}
+                      </span>
+                      
+                      <span className="text-sm font-avenir  text-gray-500 line-through">
+                      
+                      ₹
+                      {item.price +
+                        (item.category === "Oversize-Tshirt"
+                          ? 1400
+                          : item.category === "Tshirt"
+                          ? 500
+                          : item.category === "Hoodies"
+                          ? 1500
+                          : item.category === "Couple-Tshirt"
+                          ? 1200
+                          : 0)}
+                    </span>
+                     
+                    </div>
+                    <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-gray-900/80 text-white backdrop-blur-sm">
+              Premium
+            </span>
+                  </div>
+
+
+                  <Link to="/shop/Polo-Tshirt">
+                  <button
+                  //  onClick={() => handleButtonClick(item) && () => handlecart(item)}
+                    // onClick={() => handleButtonClick(item)}
+                    className="w-full bg-gray-900 text-white rounded-lg py-3 flex items-center justify-center space-x-2 hover:bg-gray-800 transform transition-all duration-300 "
+                  >
+                      {/* <ShoppingCart className="w-5 h-5 mr-2" /> */}
+                      <ShoppingCart className="w-4 h-4 mr-2" />
+                      <span className="text-xl font-forumNormal">Explore more...</span>
+                      
+                  </button></Link>
+                </div>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+
+        <div className="flex justify-center gap-2 md:hidden mt-6">
+          {products2.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setActiveIndex(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 transform ${
+                activeIndex === index 
+                  ? 'bg-gray-800 scale-125' 
+                  : 'bg-gray-300 hover:bg-gray-400'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+      </div>
 
    
 
