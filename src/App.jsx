@@ -32,6 +32,8 @@ import AddProduct from "./components/admin/AddProduct.jsx";
 import EditProduct from "./components/admin/EditProduct.jsx";
 import CategoryProductsPage from "./components/admin/CategoryProducts.jsx";
 import Testimonials from "./components/Testimonials.jsx";
+import CustomStyle from "./pages/CustomStyle.jsx";
+import CustomStyleRequests from "./components/admin/CustomStyleRequests.jsx";
 
 function App() {
   const location = useLocation(); // Get the current location
@@ -61,7 +63,7 @@ function App() {
          <Route path="/shop" element={<Shop />} />
        <Route path="/shop/:category" element={<Shop />} />
        <Route path="/shop/tag/:tag" element={<Shop />} />
-        
+        <Route path="//custom-style" element={<CustomStyle/>} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/product-details/:productId" element={<ProductDetails />} />
         <Route path="/login" element={<Login />} />
@@ -86,6 +88,7 @@ function App() {
           <Route path="add-product" element={<AddProduct />} />
           <Route path="update-product/:productId" element={<EditProduct />} />
           <Route path="/admin/category/:category" element={<CategoryProductsPage />} />
+          <Route path="/admin/customize" element={<CustomStyleRequests />} />
         </Route>
       </Routes>
 

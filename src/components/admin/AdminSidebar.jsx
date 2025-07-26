@@ -6,7 +6,8 @@ import {
   Users, 
   ShoppingCart, 
   LogOut,
-  Store
+  Store,
+  Plus
 } from 'lucide-react';
 
 const AdminSidebar = () => {
@@ -35,6 +36,12 @@ const AdminSidebar = () => {
       path: "/admin/orders",
       icon: <ShoppingCart size={20} />,
       label: "Manage Orders",
+      activeColor: "border-orange-400"
+    },
+    {
+      path: "/admin/customize",
+      icon: <Plus size={20} />,
+      label: "Customize Requests",
       activeColor: "border-orange-400"
     }
   ];

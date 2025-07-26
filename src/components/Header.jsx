@@ -303,6 +303,17 @@ const handleSearch = (e) => {
                 )}
               </div>
             </div>
+            <Link to="/custom-style" className="hidden sm:block">
+              <div className="flex flex-col items-center">
+                <img
+                  src="https://img.icons8.com/color/48/paint-palette.png" // use a paint icon or Lucide icon if preferred
+                  alt="Customize"
+                  className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform"
+                />
+                <span className="font-forumNormal font-bold text-xs text-gray-600">Custom Style</span>
+              </div>
+            </Link>
+
           </div>
       
         </div>

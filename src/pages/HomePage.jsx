@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/navigation';
+import CustomizeMarketingSection from '../components/CustomizeMarketingSection';
 
 const HomepageCarousel = () => {
   const [loadedImages, setLoadedImages] = useState({});
@@ -19,12 +20,20 @@ const HomepageCarousel = () => {
   
    
     { image: '/images/1.jpeg', link: '/' },
-    
     { image: '/images/3.jpeg', link: '/' },
-     { image: '/images/4.jpeg', link: '/' },
-  
-
+    { image: '/images/4.jpeg', link: '/' },
     { image: '/images/5.jpeg', link: '/' },
+    { image: '/images/6.jpeg', link: '/' },
+    { image: '/images/7.jpeg', link: '/' },
+    { image: '/images/8.jpeg', link: '/' },
+    { image: '/images/9.jpeg', link: '/' },
+    { image: '/images/10.jpeg', link: '/' },
+    { image: '/images/11.jpeg', link: '/' },
+    { image: '/images/12.jpeg', link: '/' },
+    { image: '/images/13.jpeg', link: '/' },
+    { image: '/images/14.jpeg', link: '/' },
+    { image: '/images/15.jpeg', link: '/' },
+ 
 
   
   ];
@@ -47,7 +56,7 @@ const HomepageCarousel = () => {
          {offerVisible && <PromotionalOffer onClose={handleCloseOffer} />}
       </AnimatePresence> */}
     
-   
+   <CustomizeMarketingSection/>
     <Swiper
       modules={[Autoplay, Navigation]}
       spaceBetween={10}
