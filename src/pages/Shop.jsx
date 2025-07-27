@@ -1,7 +1,7 @@
 import { Link, useLocation, useParams } from 'react-router-dom';
 import ShopFilters from '../components/ShopFilter';
 import { useEffect, useRef, useState } from 'react';
-import { X, SlidersHorizontal, Heart, ShoppingCart } from 'lucide-react';
+import { X, Filter, Heart, ShoppingCart } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToWishlist, removeFromWishlist } from "../feature/wishlistSlice";
 import ProductsHeader from '../components/ProductsHeader';
@@ -296,7 +296,7 @@ const renderProductCard = (product) => (
             onClick={() => setDrawerOpen(!drawerOpen)}
             className="md:hidden block p-2 text-white rounded-lg"
           >
-            {drawerOpen ? <X className="w-6 h-6" /> : <SlidersHorizontal className="w-6 h-6" />}
+            {drawerOpen ? <X className="w-6 h-6" /> : <Filter className="w-6 h-6" />}
           </button>
         </div>
       </div>
