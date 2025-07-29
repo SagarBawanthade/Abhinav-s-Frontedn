@@ -116,11 +116,11 @@ const HeaderSidebar = ({ isOpen, onClose, isLoggedIn, handleLogout }) => {
   </h3>
   <ul className="space-y-1">
     {[
-      { 
-          img: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/6afaae3e-165f-4346-ab5b-f39a86eb2ff9_WhatsApp%20Image%202025-03-24%20at%201.57.18%20PM%20%289%29.jpeg", 
-          label: 'Customize your own T-Shirt', 
-          to: '/custom-style' 
-        },
+      // { 
+      //     img: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/6afaae3e-165f-4346-ab5b-f39a86eb2ff9_WhatsApp%20Image%202025-03-24%20at%201.57.18%20PM%20%289%29.jpeg", 
+      //     label: 'Customize your own T-Shirt', 
+      //     to: '/custom-style' 
+      //   },
         { 
           img: "https://abhinavs-storage-09.s3.ap-south-1.amazonaws.com/products/6afaae3e-165f-4346-ab5b-f39a86eb2ff9_WhatsApp%20Image%202025-03-24%20at%201.57.18%20PM%20%289%29.jpeg", 
           label: 'T-Shirts', 

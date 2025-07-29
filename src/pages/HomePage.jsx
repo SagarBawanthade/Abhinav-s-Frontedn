@@ -56,7 +56,7 @@ const HomepageCarousel = () => {
          {offerVisible && <PromotionalOffer onClose={handleCloseOffer} />}
       </AnimatePresence> */}
     
-   <CustomizeMarketingSection/>
+   {/* <CustomizeMarketingSection/> */}
     <Swiper
       modules={[Autoplay, Navigation]}
       spaceBetween={10}
