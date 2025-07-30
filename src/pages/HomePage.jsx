@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation } from 'swiper/modules';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-// import PromotionalOffer from '../components/PromotionalOffer';
+import PromotionalOffer from '../components/PromotionalOffer';
 
 
 // Import Swiper styles
@@ -51,10 +51,10 @@ const HomepageCarousel = () => {
 
   return (
     <> 
-{/* 
+
  <AnimatePresence>
          {offerVisible && <PromotionalOffer onClose={handleCloseOffer} />}
-      </AnimatePresence> */}
+      </AnimatePresence>
     
    {/* <CustomizeMarketingSection/> */}
     <Swiper

@@ -277,9 +277,9 @@ const renderProductCard = (product) => (
 
   return (
     <>
-{/* <AnimatePresence>
+ <AnimatePresence>
         {offerVisible && <PromotionalOffer onClose={handleCloseOffer} />}
-      </AnimatePresence> */}
+      </AnimatePresence> 
     
         
 

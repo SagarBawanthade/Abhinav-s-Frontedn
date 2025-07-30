@@ -51,21 +51,23 @@ const PromotionalOffer = ({ onClose }) => {
         <div className="container mx-auto px-4 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between">
           <div className="flex items-center space-x-2 mb-2 sm:mb-0">
             <ShoppingBag className="w-5 h-5" />
-            <div className="text-lg font-bold">LIMITED TIME OFFER</div>
+            <div className="text-lg font-bold">RAKHI SPECIAL🏵️📿</div>
           </div>
           
-          <div className="flex flex-col sm:flex-row items-center">
-          <div className="font-semibold text-base sm:text-xl mb-2 sm:mb-0 sm:mr-4 text-center flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
-            <div className="sm:inline">
-    <span className="hidden sm:inline">|</span> T-SHIRTS: BUY ANY 2 @ ₹899 <span className="hidden sm:inline">|</span>
-  </div>
+          <div className="text-sm flex flex-col sm:flex-row items-center">
+          <div className="font-semibold text-base sm:text-lg mb-2 sm:mb-0 sm:mr-4 text-center flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
+            
+  {/* <div className="sm:inline">
+    <span className="hidden sm:inline">|</span> T-SHIRTS: BUY ANY 5 @ ₹999 <span className="hidden sm:inline">|</span>
+  </div> */}
   <div className="sm:inline">
-    <span className="hidden sm:inline">|</span> T-SHIRTS: BUY ANY 3 @ ₹999 <span className="hidden sm:inline">|</span>
+    <span className="hidden sm:inline">|</span> OVERSIZED-TSHIRTS: BUY 1 GET 1 @ ₹799 <span className="hidden sm:inline">|</span>
   </div>
-  <div className="sm:inline">
-    <span className="hidden sm:inline">|</span> OVERSIZED: BUY ANY 2 @ ₹999 <span className="hidden sm:inline">|</span>
-  </div>
+  {/* <div className="sm:inline">
+    <span className="hidden sm:inline">|</span> T-SHIRTS: BUY ANY 2 @ ₹599 <span className="hidden sm:inline">|</span>
+  </div> */}
 </div>
+
 
 {/*             
             <div className="flex items-center space-x-1 text-yellow-200">

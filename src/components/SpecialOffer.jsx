@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react";
 import { Timer, Tag, ShoppingBag } from "lucide-react";
 
-const SpecialOffer = () => {
+const SpecialOffer = ({ productCategory, productPrice }) => {
   const [timeLeft, setTimeLeft] = useState({
     hours: 23,
     minutes: 59,
     seconds: 59,
   });
-
-  const categories = ["Tshirt", "Oversize-Tshirt"]; // Array of categories
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -28,6 +26,56 @@ const SpecialOffer = () => {
     return () => clearInterval(timer);
   }, []);
 
+  // Function to get relevant offers based on category and price
+  const getRelevantOffers = () => {
+    const offers = [];
+
+    // OVERSIZED T-SHIRT offers
+    if (productCategory === "Oversize-Tshirt" && productPrice === 799) {
+      offers.push({
+        id: 1,
+        text: "OVERSIZED T-SHIRT: BUY 1 GET 1 @ ₹799",
+        description: "Add 2 Oversized T-shirts to cart for just ₹799"
+      });
+    }
+
+    // T-SHIRT offers based on price
+    if (productCategory === "Tshirt") {
+      if (productPrice === 249) {
+        offers.push({
+          id: 2,
+          text: "T-SHIRTS: BUY ANY 5 @ ₹999",
+          description: "Add any 5 T-shirts to cart for just ₹999 "
+        });
+      }
+      
+      if (productPrice === 399) {
+        offers.push({
+          id: 3,
+          text: "T-SHIRTS: BUY ANY 3 @ ₹799",
+          description: "Add any 3 T-shirts to cart for just ₹799 "
+        });
+      }
+      
+      if (productPrice === 599) {
+        offers.push({
+          id: 4,
+          text: "T-SHIRTS: BUY ANY 2 @ ₹599",
+          description: "Add any 2 T-shirts to cart for just ₹599"
+        });
+      }
+    }
+
+    return offers;
+  };
+
+  const relevantOffers = getRelevantOffers();
+
+  // Don't show the component if no relevant offers
+  if (relevantOffers.length === 0) {
+    return null;
+  }
+
   return (
     <div className="mt-6 space-y-4">
       {/* Main Offer Box */}
@@ -35,44 +83,32 @@ const SpecialOffer = () => {
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
             <Tag className="w-5 h-5 text-red-500" />
-            <h3 className="text-lg font-semibold text-gray-800">Special Offer</h3>
+            <h3 className="text-lg font-semibold text-gray-800">Special Rakshabandhan Offer</h3>
           </div>
-          <div className="flex items-center space-x-2 text-gray-600">
+          {/* <div className="flex items-center space-x-2 text-gray-600">
             <Timer className="w-5 h-5 animate-pulse text-red-500" />
             <span className="font-mono text-sm">
               {String(timeLeft.hours).padStart(2, "0")}:
               {String(timeLeft.minutes).padStart(2, "0")}:
               {String(timeLeft.seconds).padStart(2, "0")}
             </span>
-          </div>
+          </div> */}
         </div>
 
-        {/* Offer Details */}
+        {/* Dynamic Offer Details */}
         <div className="space-y-3">
-          {categories.includes("Tshirt") && (
-            <div className="flex items-center space-x-2 bg-headerBackGround p-3 rounded-md border border-gray-200 transition-transform hover:scale-102">
+          {relevantOffers.map((offer) => (
+            <div 
+              key={offer.id}
+              className="flex items-center space-x-2 bg-headerBackGround p-3 rounded-md border border-gray-200 transition-transform hover:scale-102"
+            >
               <ShoppingBag className="w-5 h-5 text-green-500" />
-              <p className="text-gray-700 font-medium">
-                Add any 3 T-shirts to cart for just ₹999
-              </p>
+              <div>
+                <p className="text-gray-700 font-medium">{offer.description}</p>
+                <p className="text-sm text-gray-600 mt-1">{offer.text}</p>
+              </div>
             </div>
-          )}
-          {categories.includes("Tshirt") && (
-            <div className="flex items-center space-x-2 bg-headerBackGround p-3 rounded-md border border-gray-200 transition-transform hover:scale-102">
-              <ShoppingBag className="w-5 h-5 text-green-500" />
-              <p className="text-gray-700 font-medium">
-                Add any 2 T-shirts to cart for just ₹899
-              </p>
-            </div>
-          )}
-          {categories.includes("Oversize-Tshirt") && (
-            <div className="flex items-center space-x-2 bg-headerBackGround p-3 rounded-md border border-gray-200 transition-transform hover:scale-102">
-              <ShoppingBag className="w-5 h-5 text-green-500" />
-              <p className="text-gray-700 font-medium">
-                Add any 2 Oversized-Tshirts to cart for just ₹999
-              </p>
-            </div>
-          )}
+          ))}
 
           {/* Additional Offer Details */}
           <div className="text-sm text-gray-600 space-y-2 pl-2">
@@ -87,8 +123,6 @@ const SpecialOffer = () => {
           </div>
         </div>
       </div>
-
-      
     </div>
   );
 };

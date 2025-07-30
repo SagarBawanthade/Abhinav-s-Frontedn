@@ -85,30 +85,98 @@ const PromoCodeInput = ({ promoCode, setPromoCode, applyPromoCode, removePromoCo
 );
 
 const calculateSpecialPricing = (cartItems) => {
-  // Filter and count regular t-shirts
-  const regularTshirts = cartItems.filter(item => 
-    item.category === 'Tshirt' || item.product?.category === 'Tshirt'
-  );
-  const tshirtCount = regularTshirts.reduce((count, item) => count + item.quantity, 0);
-  const tshirtTotalPrice = regularTshirts.reduce((total, item) => total + item.price * item.quantity, 0);
+  let tshirtCount = 0;
+  let oversizedTshirtCount = 0;
+  let tshirtTotalPrice = 0;
+  let oversizedTotalPrice = 0;
+  let tshirtItems = [];
+  let oversizedItems = [];
 
-  // Filter and count oversized t-shirts
-  const oversizedTshirts = cartItems.filter(item => 
-    item.category === 'Oversize-Tshirt' || item.product?.category === 'Oversize-Tshirt'
-  );
-  const oversizedTshirtCount = oversizedTshirts.reduce((count, item) => count + item.quantity, 0);
-  const oversizedTotalPrice = oversizedTshirts.reduce((total, item) => total + item.price * item.quantity, 0);
+  // Loop through cart items and categorize them
+  cartItems.forEach(item => {
+    const category = item.category || item.product?.category;
+    const price = item.price;
+    const quantity = item.quantity;
+
+    if (category === 'Tshirt') {
+      tshirtCount += quantity;
+      tshirtTotalPrice += price * quantity;
+      tshirtItems.push({ ...item, price, quantity });
+    }
+
+    if (category === 'Oversize-Tshirt') {
+      oversizedTshirtCount += quantity;
+      oversizedTotalPrice += price * quantity;
+      oversizedItems.push({ ...item, price, quantity });
+    }
+  });
+
+  let tshirtDiscount = 0;
+  let oversizedDiscount = 0;
+  let appliedTshirtOffers = [];
+  let appliedOversizedOffers = [];
+
+  // T-shirt offers logic
+  if (tshirtCount >= 5) {
+    // Buy 5 for ₹999 (for ₹249 products)
+    const setsOf5 = Math.floor(tshirtCount / 5);
+    const offer5Price = setsOf5 * 999;
+    const regularPrice5 = setsOf5 * 5 * 249;
+    if (regularPrice5 > offer5Price) {
+      tshirtDiscount += regularPrice5 - offer5Price;
+      appliedTshirtOffers.push({
+        description: `T-SHIRTS: ${setsOf5} set(s) of 5 @ ₹999`,
+        savings: regularPrice5 - offer5Price,
+        count: setsOf5 * 5
+      });
+    }
+  }
+  
+ 
+  
+  if (tshirtCount >= 2 && tshirtCount < 3) {
+    // Buy 2 for ₹599 (for ₹599 products)
+    const setsOf2 = Math.floor(tshirtCount / 2);
+    const offer2Price = setsOf2 * 599;
+    const regularPrice2 = setsOf2 * 2 * 599;
+    if (regularPrice2 > offer2Price && tshirtTotalPrice >= regularPrice2) {
+      tshirtDiscount += regularPrice2 - offer2Price;
+      appliedTshirtOffers.push({
+        description: `T-SHIRTS: ${setsOf2} set(s) of 2 @ ₹599`,
+        savings: regularPrice2 - offer2Price,
+        count: setsOf2 * 2
+      });
+    }
+  }
+
+  // Oversized T-shirt offers logic
+  if (oversizedTshirtCount >= 2) {
+    // Buy 1 Get 1 @ ₹799 (effectively 2 for ₹799)
+    const setsOf2 = Math.floor(oversizedTshirtCount / 2);
+    const offer2Price = setsOf2 * 799;
+    const regularPrice2 = setsOf2 * 2 * 799;
+    if (regularPrice2 > offer2Price) {
+      oversizedDiscount += regularPrice2 - offer2Price;
+      appliedOversizedOffers.push({
+        description: `OVERSIZED: ${setsOf2} set(s) of BUY 1 GET 1 @ ₹799`,
+        savings: regularPrice2 - offer2Price,
+        count: setsOf2 * 2
+      });
+    }
+  }
+
+  const totalSpecialDiscount = tshirtDiscount + oversizedDiscount;
 
   return {
     tshirtCount,
     oversizedTshirtCount,
-    regularTshirtDiscount: 0,
-    oversizedTshirtDiscount: 0,
-    appliedTshirtOffers: [],
-    appliedOversizedOffers: [],
+    regularTshirtDiscount: tshirtDiscount,
+    oversizedTshirtDiscount: oversizedDiscount,
+    appliedTshirtOffers,
+    appliedOversizedOffers,
     tshirtTotalPrice,
     oversizedTotalPrice,
-    totalPrice: tshirtTotalPrice + oversizedTotalPrice
+    totalPrice: tshirtTotalPrice + oversizedTotalPrice - totalSpecialDiscount
   };
 };
 
@@ -509,67 +577,168 @@ const CheckoutPage = () => {
               </div>
               
               <div className="border-t border-gray-200 p-6 bg-headerBackGround rounded-b-xl">
-                <div className="space-y-3">
-                  {/* Promo Code Section */}
-                  <PromoCodeInput
-                    promoCode={promoCode}
-                    setPromoCode={setPromoCode}
-                    applyPromoCode={applyPromoCode}
-                    removePromoCode={removePromoCode}
-                    appliedPromo={appliedPromo}
-                    isApplying={isApplying}
-                  />
-                  
-                  {/* ADD THIS NEW CODE HERE */}
-{!appliedPromo && (
-  <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-    <Tag className="h-4 w-4 text-blue-600" />
-    <span className="text-sm text-blue-700">
-      Try <span className="font-semibold">FIRST20</span> to get T-shirts at ₹299 each!
-    </span>
-  </div>
-)}
+  <div className="space-y-3">
+    {/* Promo Code Section */}
+    {/* <PromoCodeInput
+      promoCode={promoCode}
+      setPromoCode={setPromoCode}
+      applyPromoCode={applyPromoCode}
+      removePromoCode={removePromoCode}
+      appliedPromo={appliedPromo}
+      isApplying={isApplying}
+    /> */}
+    
+    {/* Promo Code Suggestion
+    {!appliedPromo && (
+      // <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+      //   <Tag className="h-4 w-4 text-blue-600" />
+      //   <span className="text-sm text-blue-700">
+      //     Try <span className="font-semibold">FIRST20</span> to get T-shirts at ₹299 each!
+      //   </span>
+      // </div>
+    )} */}
 
-                  <div className="border-t border-gray-200 pt-4 mt-4">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2 text-green-600">
-                        <Truck className="h-5 w-5" />
-                        <span>Free Delivery</span>
+    {/* Applied Special Offers Section */}
+    {(calculateSpecialPricing(cartItems).appliedTshirtOffers.length > 0 || 
+      calculateSpecialPricing(cartItems).appliedOversizedOffers.length > 0) && (
+      <div className="bg-gradient-to-br from-emerald-500 via-green-500 to-teal-600 rounded-xl p-1 shadow-lg">
+        <div className="bg-white rounded-lg p-4">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center space-x-2">
+              <div className="relative">
+                <div className="absolute inset-0 bg-emerald-400 rounded-full animate-ping opacity-75"></div>
+                <div className="relative bg-emerald-500 rounded-full p-1">
+                  <Tag className="text-white text-xs" />
+                </div>
+              </div>
+              <h3 className="font-semibold text-emerald-700 text-sm">
+                🎉 Active Offers
+              </h3>
+            </div>
+            <div className="bg-emerald-100 px-2 py-1 rounded-full">
+              <span className="text-emerald-700 font-bold text-xs">
+                SAVE ₹{calculateSpecialPricing(cartItems).regularTshirtDiscount + calculateSpecialPricing(cartItems).oversizedTshirtDiscount}
+              </span>
+            </div>
+          </div>
+          
+          {/* T-shirt Offers */}
+          {calculateSpecialPricing(cartItems).appliedTshirtOffers.map((offer, index) => (
+            <div key={`tshirt-${index}`} className="mb-2 last:mb-0">
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-3 border-l-4 border-blue-500">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2 mb-1">
+                      <div className="bg-blue-500 rounded-full p-0.5">
+                        <Package className="text-white text-xs w-3 h-3" />
                       </div>
-                      <span className="text-green-600">₹0</span>
+                      <span className="font-bold text-blue-700 text-xs">
+                        T-SHIRT COMBO
+                      </span>
                     </div>
-
-                    {/* Special offers */}
-                    {calculateSpecialPricing(cartItems).appliedTshirtOffers.map((offer, index) => (
-                      <div key={index} className="flex justify-between items-center text-green-600 bg-green-50 p-3 rounded-lg">
-                        <span>{offer.description}</span>
-                        <span>-₹{offer.savings}</span>
-                      </div>
-                    ))}
-
-                    {calculateSpecialPricing(cartItems).appliedOversizedOffers.map((offer, index) => (
-                      <div key={index} className="flex justify-between items-center text-green-600 bg-green-50 p-3 rounded-lg">
-                        <span>{offer.description}</span>
-                        <span>-₹{offer.savings}</span>
-                      </div>
-                    ))}
-
-                    {/* Promo discount display */}
-                    {appliedPromo && appliedPromo.discount > 0 && (
-                      <div className="flex justify-between items-center text-blue-600 bg-blue-50 p-3 rounded-lg">
-                        <span>Promo Code ({appliedPromo.code})</span>
-                        <span>-₹{appliedPromo.discount.toLocaleString()}</span>
-                      </div>
-                    )}
-
-                    {/* Total */}
-                    <div className="flex justify-between items-center text-lg font-semibold pt-2">
-                      <span>Total</span>
-                      <span>₹{calculateTotalPrice().toLocaleString()}</span>
+                    <p className="text-blue-600 text-xs font-medium">
+                      {offer.description}
+                    </p>
+                    <div className="text-xs text-blue-500 mt-1">
+                      {offer.count} items included
+                    </div>
+                  </div>
+                  <div className="ml-3 text-right">
+                    <div className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                      -₹{offer.savings}
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
+          ))}
+          
+          {/* Oversized Offers */}
+          {calculateSpecialPricing(cartItems).appliedOversizedOffers.map((offer, index) => (
+            <div key={`oversized-${index}`} className="mb-2 last:mb-0">
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-3 border-l-4 border-purple-500">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2 mb-1">
+                      <div className="bg-purple-500 rounded-full p-0.5">
+                        <Package className="text-white text-xs w-3 h-3" />
+                      </div>
+                      <span className="font-bold text-purple-700 text-xs">
+                        OVERSIZED SPECIAL
+                      </span>
+                    </div>
+                    <p className="text-purple-600 text-xs font-medium">
+                      {offer.description}
+                    </p>
+                    <div className="text-xs text-purple-500 mt-1">
+                      {offer.count} items included
+                    </div>
+                  </div>
+                  <div className="ml-3 text-right">
+                    <div className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                      -₹{offer.savings}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <div className="border-t border-gray-200 pt-4 mt-4">
+      {/* Free Delivery */}
+      <div className="flex justify-between items-center mb-3">
+        <div className="flex items-center gap-2 text-green-600">
+          <Truck className="h-5 w-5" />
+          <span>Free Delivery</span>
+        </div>
+        <span className="text-green-600">₹0</span>
+      </div>
+
+      {/* Original Subtotal */}
+      <div className="flex justify-between items-center mb-2">
+        <span className="text-gray-600">Original Price</span>
+        <span className="text-gray-800">₹{cartItems.reduce((acc, product) => {
+          const productTotal = product.quantity * product.price;
+          const additionalCost = product.giftWrapping ? product.quantity * 30 : 0;
+          return acc + productTotal + additionalCost;
+        }, 0).toLocaleString()}</span>
+      </div>
+
+      {/* Special Offer Discounts */}
+      {calculateSpecialPricing(cartItems).regularTshirtDiscount > 0 && (
+        <div className="flex justify-between items-center text-green-600 mb-2">
+          <span className="text-sm">T-shirt Offers</span>
+          <span>-₹{calculateSpecialPricing(cartItems).regularTshirtDiscount.toLocaleString()}</span>
+        </div>
+      )}
+
+      {calculateSpecialPricing(cartItems).oversizedTshirtDiscount > 0 && (
+        <div className="flex justify-between items-center text-green-600 mb-2">
+          <span className="text-sm">Oversized Offers</span>
+          <span>-₹{calculateSpecialPricing(cartItems).oversizedTshirtDiscount.toLocaleString()}</span>
+        </div>
+      )}
+
+      {/* Promo discount display */}
+      {appliedPromo && appliedPromo.discount > 0 && (
+        <div className="flex justify-between items-center text-blue-600 mb-2">
+          <span className="text-sm">Promo Code ({appliedPromo.code})</span>
+          <span>-₹{appliedPromo.discount.toLocaleString()}</span>
+        </div>
+      )}
+
+      {/* Total */}
+      <div className="flex justify-between items-center text-lg font-semibold pt-2 border-t border-gray-200">
+        <span>Total</span>
+        <span>₹{calculateTotalPrice().toLocaleString()}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
             </div>
           </div>
 

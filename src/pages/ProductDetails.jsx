@@ -576,7 +576,12 @@ function ProductDetails() {
     </div>
 
 
-     {/* <SpecialOffer />  */}
+  
+   
+<SpecialOffer productCategory={product.category} productPrice={product.price} />
+
+
+
 
 
 
