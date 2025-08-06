@@ -53,10 +53,14 @@ const Cart = () => {
   const calculateSpecialPricing = () => {
   let tshirtCount = 0;
   let oversizedTshirtCount = 0;
+  let hoodieCount = 0;
   let tshirtTotalPrice = 0;
   let oversizedTotalPrice = 0;
+  let hoodieTotalPrice = 0;
   let tshirtItems = [];
+
   let oversizedItems = [];
+  let hoodieItems = [];
 
   // Loop through cart items and categorize them
   cartItems.forEach(item => {
@@ -75,16 +79,23 @@ const Cart = () => {
       oversizedTotalPrice += price * quantity;
       oversizedItems.push({ ...item, price, quantity });
     }
+    if (category === 'Hoodies') {
+      hoodieCount += quantity;
+      hoodieTotalPrice += price * quantity;
+      hoodieItems.push({ ...item, price, quantity });
+    }
   });
 
   let tshirtDiscount = 0;
   let oversizedDiscount = 0;
+   let hoodieDiscount = 0;
   let appliedTshirtOffers = [];
   let appliedOversizedOffers = [];
+   let appliedHoodieOffers = [];
 
   // T-shirt offers logic
   if (tshirtCount >= 5) {
-    // Buy 5 for ₹999 (for ₹249 products)
+    // Buy 5 for ₹999 (for ₹249 products)ss
     const setsOf5 = Math.floor(tshirtCount / 5);
     const offer5Price = setsOf5 * 999;
     const regularPrice5 = setsOf5 * 5 * 249;
@@ -144,17 +155,50 @@ const Cart = () => {
     }
   }
 
-  const totalDiscount = tshirtDiscount + oversizedDiscount;
+  // Hoodie offers logic
+  if (hoodieCount >= 3) {
+    // Buy any 3 hoodies for ₹1599
+    const setsOf3 = Math.floor(hoodieCount / 3);
+    const offer3Price = setsOf3 * 1599;
+    
+    // Calculate what the regular price would be for these hoodies
+    // Sort hoodie items by price (descending) to apply discount to most expensive ones first
+    const sortedHoodieItems = [...hoodieItems].sort((a, b) => b.price - a.price);
+    let regularPrice3 = 0;
+    let itemsProcessed = 0;
+    
+    for (let i = 0; i < sortedHoodieItems.length && itemsProcessed < setsOf3 * 3; i++) {
+      const item = sortedHoodieItems[i];
+      const itemsToProcess = Math.min(item.quantity, setsOf3 * 3 - itemsProcessed);
+      regularPrice3 += item.price * itemsToProcess;
+      itemsProcessed += itemsToProcess;
+    }
+    
+    if (regularPrice3 > offer3Price) {
+      hoodieDiscount += regularPrice3 - offer3Price;
+      appliedHoodieOffers.push({
+        description: `Hoodies: ${setsOf3} set(s) of 3 @ ₹1599`,
+        savings: regularPrice3 - offer3Price,
+        count: setsOf3 * 3
+      });
+    }
+  }
+
+
+  const totalDiscount = tshirtDiscount + oversizedDiscount + hoodieDiscount;
 
   return {
     tshirtCount,
+     hoodieCount,
     oversizedTshirtCount,
     tshirtDiscount,
     oversizedDiscount,
     appliedTshirtOffers,
     appliedOversizedOffers,
+    hoodieDiscount,
     totalDiscount,
-    totalPrice: tshirtTotalPrice + oversizedTotalPrice - totalDiscount
+    appliedHoodieOffers,
+    totalPrice: tshirtTotalPrice + oversizedTotalPrice + hoodieTotalPrice - totalDiscount
   };
 };
 
@@ -224,6 +268,7 @@ const getPromotionalMessages = () => {
   let tshirt399Count = 0;
   let tshirt599Count = 0;
   let oversized799Count = 0;
+  let hoodieCount = 0;
   
   cartItems.forEach(item => {
     const category = item.category || item.product?.category;
@@ -238,6 +283,9 @@ const getPromotionalMessages = () => {
     
     if (category === 'Oversize-Tshirt' && price === 799) {
       oversized799Count += quantity;
+    } 
+    if (category === 'Hoodies') {
+      hoodieCount += quantity;
     }
   });
   
@@ -305,6 +353,31 @@ const getPromotionalMessages = () => {
   
   // Success messages for applied offers
   if (pricingData.appliedTshirtOffers.length > 0 || pricingData.appliedOversizedOffers.length > 0) {
+    messages.push({
+      type: 'success',
+      icon: '✅',
+      text: `You saved ₹${pricingData.totalDiscount} with our special offers!`
+    });
+  }
+
+    
+  // For Hoodies (Buy any 3 @ ₹1599 offer)
+  if (hoodieCount === 1) {
+    messages.push({
+      type: 'info',
+      icon: '🧥',
+      text: 'Add 2 more Hoodies to get ANY 3 for ₹1599!'
+    });
+  } else if (hoodieCount === 2) {
+    messages.push({
+      type: 'info',
+      icon: '🔥',
+      text: 'Add 1 more Hoodie to get ANY 3 for ₹1599!'
+    });
+  }
+
+  // Success messages for applied offers
+  if (pricingData.appliedTshirtOffers.length > 0 || pricingData.appliedOversizedOffers.length > 0 || pricingData.appliedHoodieOffers.length > 0) {
     messages.push({
       type: 'success',
       icon: '✅',

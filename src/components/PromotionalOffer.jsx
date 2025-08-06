@@ -57,9 +57,9 @@ const PromotionalOffer = ({ onClose }) => {
           <div className="text-sm flex flex-col sm:flex-row items-center">
           <div className="font-semibold text-base sm:text-lg mb-2 sm:mb-0 sm:mr-4 text-center flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2">
             
-  {/* <div className="sm:inline">
-    <span className="hidden sm:inline">|</span> T-SHIRTS: BUY ANY 5 @ ₹999 <span className="hidden sm:inline">|</span>
-  </div> */}
+  <div className="sm:inline">
+    <span className="hidden sm:inline">|</span> HOODIES: BUY ANY 3 @ ₹1599 <span className="hidden sm:inline">|</span>
+  </div>
   <div className="sm:inline">
     <span className="hidden sm:inline">|</span> OVERSIZED-TSHIRTS: BUY 1 GET 1 @ ₹799 <span className="hidden sm:inline">|</span>
   </div>

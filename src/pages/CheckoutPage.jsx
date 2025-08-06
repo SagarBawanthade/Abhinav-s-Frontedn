@@ -88,9 +88,12 @@ const calculateSpecialPricing = (cartItems) => {
   let tshirtCount = 0;
   let oversizedTshirtCount = 0;
   let tshirtTotalPrice = 0;
+    let hoodieCount = 0;
   let oversizedTotalPrice = 0;
+    let hoodieTotalPrice = 0;
   let tshirtItems = [];
   let oversizedItems = [];
+   let hoodieItems = [];
 
   // Loop through cart items and categorize them
   cartItems.forEach(item => {
@@ -109,12 +112,19 @@ const calculateSpecialPricing = (cartItems) => {
       oversizedTotalPrice += price * quantity;
       oversizedItems.push({ ...item, price, quantity });
     }
+    if (category === 'Hoodies') {
+      hoodieCount += quantity;
+      hoodieTotalPrice += price * quantity;
+      hoodieItems.push({ ...item, price, quantity });
+    }
   });
 
   let tshirtDiscount = 0;
   let oversizedDiscount = 0;
+   let hoodieDiscount = 0;
   let appliedTshirtOffers = [];
   let appliedOversizedOffers = [];
+    let appliedHoodieOffers = [];
 
   // T-shirt offers logic
   if (tshirtCount >= 5) {
@@ -164,22 +174,50 @@ const calculateSpecialPricing = (cartItems) => {
       });
     }
   }
+  if (hoodieCount >= 3) {
+    // Buy any 3 hoodies for ₹1599
+    const setsOf3 = Math.floor(hoodieCount / 3);
+    const offer3Price = setsOf3 * 1599;
+    
+    // Calculate what the regular price would be for these hoodies
+    // Sort hoodie items by price (descending) to apply discount to most expensive ones first
+    const sortedHoodieItems = [...hoodieItems].sort((a, b) => b.price - a.price);
+    let regularPrice3 = 0;
+    let itemsProcessed = 0;
+    
+    for (let i = 0; i < sortedHoodieItems.length && itemsProcessed < setsOf3 * 3; i++) {
+      const item = sortedHoodieItems[i];
+      const itemsToProcess = Math.min(item.quantity, setsOf3 * 3 - itemsProcessed);
+      regularPrice3 += item.price * itemsToProcess;
+      itemsProcessed += itemsToProcess;
+    }
+    
+    if (regularPrice3 > offer3Price) {
+      hoodieDiscount += regularPrice3 - offer3Price;
+      appliedHoodieOffers.push({
+        description: `HOODIES: ${setsOf3} set(s) of 3 @ ₹1599`,
+        savings: regularPrice3 - offer3Price,
+        count: setsOf3 * 3
+      });
+    }
+  }
 
-  const totalSpecialDiscount = tshirtDiscount + oversizedDiscount;
+  const totalDiscount = tshirtDiscount + oversizedDiscount + hoodieDiscount;
 
   return {
     tshirtCount,
+    hoodieCount,
     oversizedTshirtCount,
-    regularTshirtDiscount: tshirtDiscount,
-    oversizedTshirtDiscount: oversizedDiscount,
+    tshirtDiscount,
+    oversizedDiscount,
+    hoodieDiscount,
     appliedTshirtOffers,
     appliedOversizedOffers,
-    tshirtTotalPrice,
-    oversizedTotalPrice,
-    totalPrice: tshirtTotalPrice + oversizedTotalPrice - totalSpecialDiscount
+    appliedHoodieOffers,
+    totalDiscount,
+    totalPrice: tshirtTotalPrice + oversizedTotalPrice + hoodieTotalPrice - totalDiscount
   };
 };
-
 // Promo code calculation function
 const calculatePromoDiscount = (cartItems, promoCode) => {
   if (promoCode !== 'FIRST20') return { discount: 0, affectedItems: [] };
@@ -486,23 +524,23 @@ const CheckoutPage = () => {
   };
 
   const calculateTotalPrice = () => {
-    // Calculate subtotal before discounts
-    const subtotalBeforeDiscount = cartItems.reduce((acc, product) => {
-      const productTotal = product.quantity * product.price;
-      const additionalCost = product.giftWrapping ? product.quantity * 30 : 0;
-      return acc + productTotal + additionalCost;
-    }, 0);
+  // Calculate subtotal before discounts
+  const subtotalBeforeDiscount = cartItems.reduce((acc, product) => {
+    const productTotal = product.quantity * product.price;
+    const additionalCost = product.giftWrapping ? product.quantity * 30 : 0;
+    return acc + productTotal + additionalCost;
+  }, 0);
 
-    // Apply special offers
-    const specialPricing = calculateSpecialPricing(cartItems);
-    const specialOfferDiscount = specialPricing.regularTshirtDiscount + specialPricing.oversizedTshirtDiscount;
-    
-    // Apply promo code discount
-    const promoDiscount = appliedPromo ? appliedPromo.discount : 0;
+  // Apply special offers (this now includes hoodie discounts)
+  const specialPricing = calculateSpecialPricing(cartItems);
+  const specialOfferDiscount = specialPricing.totalDiscount; // Use totalDiscount instead
+  
+  // Apply promo code discount
+  const promoDiscount = appliedPromo ? appliedPromo.discount : 0;
 
-    // Return final price after all discounts
-    return subtotalBeforeDiscount - specialOfferDiscount - promoDiscount + deliveryCharges;
-  };
+  // Return final price after all discounts
+  return subtotalBeforeDiscount - specialOfferDiscount - promoDiscount + deliveryCharges;
+};
 
   if (loading) {
     return (
