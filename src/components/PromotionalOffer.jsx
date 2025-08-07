@@ -63,9 +63,9 @@ const PromotionalOffer = ({ onClose }) => {
   <div className="sm:inline">
     <span className="hidden sm:inline">|</span> OVERSIZED-TSHIRTS: BUY 1 GET 1 @ ₹799 <span className="hidden sm:inline">|</span>
   </div>
-  {/* <div className="sm:inline">
+  <div className="sm:inline">
     <span className="hidden sm:inline">|</span> T-SHIRTS: BUY ANY 2 @ ₹599 <span className="hidden sm:inline">|</span>
-  </div> */}
+  </div>
 </div>
 
 
